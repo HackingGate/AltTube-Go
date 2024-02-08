@@ -1,0 +1,42 @@
+services:
+    piped:
+        image: 1337kavin/piped:latest
+        restart: unless-stopped
+        ports:
+            - "8060:8080"
+        volumes:
+            - ./config.properties:/app/config.properties
+        depends_on:
+            - postgres
+        container_name: piped-backend
+    postgres:
+        image: postgres:16-alpine
+        restart: unless-stopped
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=piped
+            - POSTGRES_USER=piped
+            - POSTGRES_PASSWORD=changeme
+        container_name: postgres
+    pipedfrontend:
+        image: 1337kavin/piped-frontend:latest
+        restart: unless-stopped
+        ports:
+            - "8062:80"
+        depends_on:
+            - piped
+        container_name: piped-frontend
+        entrypoint: ash -c 'sed -i "s/https:\/\/pipedapi.kavin.rocks/http:\/\/localhost:8060/g" /usr/share/nginx/html/assets/* && /docker-entrypoint.sh && nginx -g "daemon off;"'
+        environment:
+            - BACKEND_HOSTNAME=localhost:8060
+    piped-proxy:
+        image: 1337kavin/piped-proxy:latest
+        restart: unless-stopped
+        ports:
+            - "8061:8080"
+        environment:
+            - UDS=1
+        volumes:
+            - piped-proxy:/app/socket
+        container_name: piped-proxy
