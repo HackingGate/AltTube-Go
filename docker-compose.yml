@@ -7,18 +7,20 @@ services:
         volumes:
             - ./config.properties:/app/config.properties
         depends_on:
-            - postgres
+            - piped-postgres
         container_name: piped-backend
-    postgres:
+    piped-postgres:
         image: postgres:16-alpine
         restart: unless-stopped
+        ports:
+            - "8063:5432"
         volumes:
-            - ./data/db:/var/lib/postgresql/data
+            - ./piped-data/db:/var/lib/postgresql/data
         environment:
             - POSTGRES_DB=piped
             - POSTGRES_USER=piped
             - POSTGRES_PASSWORD=changeme
-        container_name: postgres
+        container_name: piped-postgres
     pipedfrontend:
         image: 1337kavin/piped-frontend:latest
         restart: unless-stopped
