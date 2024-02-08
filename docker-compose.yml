@@ -9,6 +9,7 @@ services:
             - "5432:5432"
         volumes:
             - ./data:/var/lib/postgresql/data
+        container_name: postgres
     piped:
         image: 1337kavin/piped:latest
         restart: unless-stopped
