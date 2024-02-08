@@ -35,8 +35,4 @@ services:
         restart: unless-stopped
         ports:
             - "8061:8080"
-        environment:
-            - UDS=1
-        volumes:
-            - piped-proxy:/app/socket
         container_name: piped-proxy
