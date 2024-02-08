@@ -1,4 +1,14 @@
 services:
+    postgres:
+        image: postgres:16-alpine
+        environment:
+            - POSTGRES_USER=AltTube
+            - POSTGRES_PASSWORD=AltTube
+            - POSTGRES_DB=AltTube
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./data:/var/lib/postgresql/data
     piped:
         image: 1337kavin/piped:latest
         restart: unless-stopped

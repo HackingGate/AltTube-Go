@@ -22,3 +22,6 @@ go.work
 
 # Piped data
 piped-data/
+
+# AltTube data
+data/
