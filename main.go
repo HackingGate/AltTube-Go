@@ -1,7 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -10,8 +15,20 @@ var db *gorm.DB
 var err error
 
 func main() {
-	// Set up the database connection string
-	dsn := "host=localhost dbname=AltTube user=AltTube password=AltTube port=5432 sslmode=disable"
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Construct DSN from .env variables
+	dsn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s port=%s sslmode=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_SSLMODE"),
+	)
 
 	// Initialize GORM with Postgres
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -44,7 +61,6 @@ func main() {
 	}
 }
 
-// Example model
 type Video struct {
 	gorm.Model
 	v string

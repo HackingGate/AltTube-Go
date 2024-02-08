@@ -2,9 +2,9 @@ services:
     postgres:
         image: postgres:16-alpine
         environment:
+            - POSTGRES_DB=AltTube
             - POSTGRES_USER=AltTube
             - POSTGRES_PASSWORD=AltTube
-            - POSTGRES_DB=AltTube
         ports:
             - "5432:5432"
         volumes:
