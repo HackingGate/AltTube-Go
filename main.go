@@ -36,14 +36,13 @@ func main() {
 	// Initialize GORM with Postgres
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("Failed to connect to database")
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
 	// Migrate the schema
 	err := db.AutoMigrate(&Video{})
 	if err != nil {
-		panic("Failed to migrate the schema")
-		return
+		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
 	startApi()
