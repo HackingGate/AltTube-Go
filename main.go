@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AltTube-Go/handlers"
 	"fmt"
 	"log"
 	"os"
@@ -13,6 +14,8 @@ import (
 
 var db *gorm.DB
 var err error
+
+var r *gin.Engine
 
 func main() {
 	// Load .env file
@@ -43,21 +46,16 @@ func main() {
 		return
 	}
 
-	// Initialize Gin
-	r := gin.Default()
+	startApi()
+}
 
-	// Define a simple route
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "hello world",
-		})
-	})
+func startApi() {
+	r = gin.Default()
 
-	// Run the server
-	err = r.Run()
-	if err != nil {
-		panic("Failed to start the server")
-		return
+	r.GET("/ping", handlers.Ping)
+
+	if err := r.Run(); err != nil {
+		log.Fatalf("API failed to start: %v", err)
 	}
 }
 
