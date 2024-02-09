@@ -1,4 +1,13 @@
 services:
+    alttube-go:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8080:8080"
+        volumes:
+            - .env.docker:/app/.env
+        container_name: alttube-go
     postgres:
         image: postgres:16-alpine
         environment:
