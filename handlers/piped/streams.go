@@ -3,6 +3,7 @@ package piped
 import (
 	"AltTube-Go/database"
 	"AltTube-Go/model"
+	"AltTube-Go/utils"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -53,11 +54,18 @@ func Streams(ctx *gin.Context) {
 		return
 	}
 
+	// Call the RewriteURLsInJSON utility
+	modifiedBody, err := utils.RewriteURLsInJSON(body, os.Getenv("PIPED_PROXY_URL"), "/pipedproxy")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to modify URLs in response"})
+		return
+	}
+
 	// Add Video to database if it doesn't exist
 	if resp.StatusCode == 200 {
 		var video model.Video
 		// Decode JSON and store in video
-		err := json.Unmarshal(body, &video)
+		err := json.Unmarshal(modifiedBody, &video)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal response from backend"})
 			return
@@ -80,5 +88,5 @@ func Streams(ctx *gin.Context) {
 	}
 
 	// Return the response body as is
-	ctx.Data(resp.StatusCode, "application/json", body)
+	ctx.Data(resp.StatusCode, "application/json", modifiedBody)
 }
