@@ -2,7 +2,7 @@ package opensearch
 
 import (
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 )
@@ -34,10 +34,16 @@ func Suggestions(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to request backend"})
 		return
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to close response body"})
+			return
+		}
+	}(resp.Body)
 
 	// Read the response body
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		// Handle any error that occurred while reading the response body
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response from backend"})
