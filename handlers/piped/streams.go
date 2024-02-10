@@ -1,6 +1,9 @@
 package piped
 
 import (
+	"AltTube-Go/database"
+	"AltTube-Go/model"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
@@ -48,6 +51,32 @@ func Streams(ctx *gin.Context) {
 		// Handle any error that occurred while reading the response body
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read response from backend"})
 		return
+	}
+
+	// Add Video to database if it doesn't exist
+	if resp.StatusCode == 200 {
+		var video model.Video
+		// Decode JSON and store in video
+		err := json.Unmarshal(body, &video)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal response from backend"})
+			return
+		}
+
+		video.ID = videoID
+
+		// Check if video already exists in the database
+		existingVideo := database.VideoExists(video.ID)
+
+		if !existingVideo {
+			// Save the new video to the database
+			err = database.AddVideo(video)
+			if err != nil {
+				// Handle potential database error
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save video to database"})
+				return
+			}
+		}
 	}
 
 	// Return the response body as is
