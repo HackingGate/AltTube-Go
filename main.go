@@ -2,6 +2,7 @@ package main
 
 import (
 	"AltTube-Go/handlers"
+	"AltTube-Go/handlers/piped"
 	"AltTube-Go/handlers/piped/opensearch"
 	"fmt"
 	"log"
@@ -54,6 +55,7 @@ func startApi() {
 
 	r.GET("/ping", handlers.Ping)
 	r.GET("/piped/opensearch/suggestions", opensearch.Suggestions)
+	r.GET("/piped/search", piped.Search)
 
 	if err := r.Run(); err != nil {
 		log.Fatalf("API failed to start: %v", err)
