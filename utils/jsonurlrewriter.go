@@ -1,41 +1,16 @@
 package utils
 
 import (
-	"encoding/json"
 	"strings"
 )
 
-// RewriteURLsInJSON takes a JSON byte slice and rewrites all occurrences of the targetURL with replacementURL.
-func RewriteURLsInJSON(jsonData []byte, targetURL, replacementURL string) ([]byte, error) {
-	var data interface{}
-	err := json.Unmarshal(jsonData, &data)
-	if err != nil {
-		return nil, err
-	}
+// RewriteURLsInJSONStringBased takes a JSON byte slice and rewrites all occurrences of the targetURL with replacementURL, attempting to preserve the order of elements.
+func RewriteURLsInJSONStringBased(jsonData []byte, targetURL, replacementURL string) ([]byte, error) {
+	// This is a simplified example that directly manipulates the JSON as a string.
+	// For real applications, more sophisticated parsing and replacement logic might be required.
+	jsonString := string(jsonData)
+	// A simple string replacement; this might need to be more complex to avoid false matches.
+	modifiedString := strings.ReplaceAll(jsonString, targetURL, replacementURL)
 
-	// Define the recursive function to search and replace URLs in the decoded JSON.
-	var replaceURLs func(data interface{})
-	replaceURLs = func(data interface{}) {
-		switch v := data.(type) {
-		case map[string]interface{}:
-			for key, value := range v {
-				if strValue, ok := value.(string); ok && strings.Contains(strValue, targetURL) {
-					v[key] = strings.ReplaceAll(strValue, targetURL, replacementURL)
-				} else {
-					replaceURLs(value)
-				}
-			}
-		case []interface{}:
-			for i, item := range v {
-				replaceURLs(item)
-				v[i] = item
-			}
-		}
-	}
-
-	// Apply the URL replacement.
-	replaceURLs(data)
-
-	// Re-encode the modified data to JSON.
-	return json.Marshal(data)
+	return []byte(modifiedString), nil
 }

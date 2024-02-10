@@ -55,7 +55,7 @@ func Streams(ctx *gin.Context) {
 	}
 
 	// Call the RewriteURLsInJSON utility
-	modifiedBody, err := utils.RewriteURLsInJSON(body, os.Getenv("PIPED_PROXY_URL"), "/pipedproxy")
+	modifiedBody, err := utils.RewriteURLsInJSONStringBased(body, os.Getenv("PIPED_PROXY_URL"), "/pipedproxy")
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to modify URLs in response"})
 		return
