@@ -1,6 +1,7 @@
 package piped
 
 import (
+	"AltTube-Go/utils"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
@@ -50,6 +51,13 @@ func Search(ctx *gin.Context) {
 		return
 	}
 
+	// Call the RewriteURLsInJSON utility
+	modifiedBody, err := utils.RewriteURLsInJSONStringBased(body, os.Getenv("PIPED_PROXY_URL"), "/pipedproxy")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to modify URLs in response"})
+		return
+	}
+
 	// Return the response body as is
-	ctx.Data(resp.StatusCode, "application/json", body)
+	ctx.Data(resp.StatusCode, "application/json", modifiedBody)
 }
