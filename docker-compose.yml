@@ -57,4 +57,4 @@ services:
         restart: unless-stopped
         ports:
             - "8061:8080"
-        container_name: piped-proxy
+        container_name: pipedproxy
