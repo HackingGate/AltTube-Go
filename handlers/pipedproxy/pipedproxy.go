@@ -8,6 +8,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -52,7 +53,7 @@ func PipedProxy(ctx *gin.Context) {
 			}
 			body = bytes.ReplaceAll(body, []byte("/api/manifest/hls_playlist"), []byte("/pipedproxy/api/manifest/hls_playlist"))
 			res.Body = io.NopCloser(bytes.NewReader(body))
-			res.Header["Content-Length"] = []string{string(len(body))}
+			res.Header.Set("Content-Length", strconv.Itoa(len(body)))
 		}
 		return nil
 	}
