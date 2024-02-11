@@ -12,7 +12,7 @@ COPY . .
 RUN go build -o /app/AltTube-Go .
 
 # deployment image
-FROM alpine:3.5
+FROM alpine
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /app
