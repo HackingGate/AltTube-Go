@@ -20,4 +20,4 @@ COPY --from=builder /app/AltTube-Go ./
 
 CMD [ "./AltTube-Go" ]
 
-EXPOSE 8080
+EXPOSE 8072
