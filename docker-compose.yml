@@ -4,7 +4,7 @@ services:
             context: .
             dockerfile: Dockerfile
         ports:
-            - "8072:8080"
+            - "8072:8072"
         volumes:
             - .env.docker:/app/.env
         container_name: alttube-go

@@ -8,6 +8,7 @@ import (
 	"AltTube-Go/handlers/pipedproxy"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 )
 
 var r *gin.Engine
@@ -25,7 +26,7 @@ func startApi() {
 	r.GET("/piped/search", piped.Search)
 	r.GET("/streams/:videoID", piped.Streams)
 	r.GET("/pipedproxy/*action", pipedproxy.PipedProxy)
-	if err := r.Run(); err != nil {
+	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatalf("API failed to start: %v", err)
 	}
 }
