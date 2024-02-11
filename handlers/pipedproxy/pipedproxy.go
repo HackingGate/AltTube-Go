@@ -1,7 +1,9 @@
 package pipedproxy
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -35,6 +37,24 @@ func PipedProxy(ctx *gin.Context) {
 		if ctx.Request.URL.RawQuery != "" {
 			req.URL.RawQuery = ctx.Request.URL.RawQuery
 		}
+	}
+
+	// Modify the response function to replace all "/api/manifest/hls_playlist" with "/pipedproxy/api/manifest/hls_playlist"
+	proxy.ModifyResponse = func(res *http.Response) error {
+		if strings.HasPrefix(ctx.Request.URL.Path, "/pipedproxy/api/manifest/hls_variant") {
+			body, err := io.ReadAll(res.Body)
+			if err != nil {
+				return err
+			}
+			err = res.Body.Close()
+			if err != nil {
+				return err
+			}
+			body = bytes.ReplaceAll(body, []byte("/api/manifest/hls_playlist"), []byte("/pipedproxy/api/manifest/hls_playlist"))
+			res.Body = io.NopCloser(bytes.NewReader(body))
+			res.Header["Content-Length"] = []string{string(len(body))}
+		}
+		return nil
 	}
 
 	// Remove the Accept-Encoding header to avoid compressed responses that Gin cannot handle directly
