@@ -51,7 +51,7 @@ func PipedProxy(ctx *gin.Context) {
 			if err != nil {
 				return err
 			}
-			body = bytes.ReplaceAll(body, []byte("/api/manifest/hls_playlist"), []byte("/pipedproxy/api/manifest/hls_playlist"))
+			body = bytes.ReplaceAll(body, []byte("/api/manifest/hls_playlist"), []byte(os.Getenv("ALTTUBE_GO_PIPED_PROXY_BACKEND_URL")+"/api/manifest/hls_playlist"))
 			res.Body = io.NopCloser(bytes.NewReader(body))
 			res.Header.Set("Content-Length", strconv.Itoa(len(body)))
 		}
