@@ -8,6 +8,10 @@ services:
         volumes:
             - .env.docker:/app/.env
         container_name: alttube-go
+        depends_on:
+            - postgres
+            - piped
+            - piped-proxy
     postgres:
         image: postgres:16-alpine
         environment:
