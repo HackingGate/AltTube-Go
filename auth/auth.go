@@ -1,27 +1,35 @@
 package auth
 
 import (
-	"crypto/rand"
-	"encoding/hex"
+	"AltTube-Go/model"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"time"
 )
 
+var jwtKey = []byte("my_secret_key")
 var tokens []string
 
-func GetTokens() []string {
-	return tokens
+func GetJwtKey() []byte {
+	return jwtKey
 }
 
 func AddToken(token string) {
 	tokens = append(tokens, token)
 }
 
-func RandomHex(length int) (string, error) {
-	bytes := make([]byte, length)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
+func GenerateJWT() (string, error) {
+	expirationTime := time.Now().Add(5 * time.Minute)
+	claims := &model.Claims{
+		Username: "username",
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
 	}
-	return hex.EncodeToString(bytes), nil
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	return token.SignedString(jwtKey)
 }
 
 func BasicAuth() gin.HandlerFunc {

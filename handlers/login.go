@@ -6,7 +6,7 @@ import (
 )
 
 func Login(ctx *gin.Context) {
-	token, _ := auth.RandomHex(20)
+	token, _ := auth.GenerateJWT()
 	auth.AddToken(token)
 
 	ctx.JSON(200, gin.H{
