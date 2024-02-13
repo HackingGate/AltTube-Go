@@ -1,0 +1,4 @@
+GET http://localhost:8072/resource
+Accept: application/json
+
+###
