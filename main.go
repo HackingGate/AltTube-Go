@@ -27,7 +27,9 @@ func startApi() {
 	r.GET("/piped/search", piped.Search)
 	r.GET("/streams/:videoID", piped.Streams)
 	r.GET("/pipedproxy/*action", pipedproxy.PipedProxy)
-	r.GET("/resource", resource.Resource)
+	r.GET("/resource", gin.BasicAuth(gin.Accounts{
+		"admin": "secret",
+	}), resource.Resource)
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatalf("API failed to start: %v", err)
 	}

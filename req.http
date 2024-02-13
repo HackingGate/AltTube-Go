@@ -1,4 +1,4 @@
-GET http://localhost:8072/resource
+GET http://admin:secret@localhost:8072/resource
 Accept: application/json
 
 ###
