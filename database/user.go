@@ -62,3 +62,5 @@ func DeleteUserByEmail(email string) error {
 	}
 	return nil
 }
+
+// TODO: Logout user and set the JWT token to be invalid
