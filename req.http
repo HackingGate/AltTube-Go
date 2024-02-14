@@ -16,6 +16,10 @@ Content-Type: application/json
   "password": "password"
 }
 
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
+
 ### Login with username and password and save token.
 POST http://0.0.0.0:8072/user/login
 Content-Type: application/json
@@ -33,6 +37,10 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{auth_token}}
 
 newEmail=user2@example.com
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
 
 ### Delete user.
 DELETE http://0.0.0.0:8072/user
