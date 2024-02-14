@@ -1,7 +1,6 @@
 package main
 
 import (
-	"AltTube-Go/auth"
 	"AltTube-Go/database"
 	"AltTube-Go/handlers"
 	"AltTube-Go/handlers/piped"
@@ -27,7 +26,8 @@ func startApi() {
 	r.GET("/piped/search", piped.Search)
 	r.GET("/streams/:videoID", piped.Streams)
 	r.GET("/pipedproxy/*action", pipedproxy.PipedProxy)
-	r.POST("/login", auth.BasicAuth(), handlers.Login)
+	r.POST("/login", handlers.Login)
+	r.POST("/signup", handlers.Signup)
 	r.GET("/resource", handlers.Resource)
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatalf("API failed to start: %v", err)

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"AltTube-Go/auth"
-	"AltTube-Go/model"
+	"AltTube-Go/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
@@ -18,7 +18,7 @@ func Resource(ctx *gin.Context) {
 		return
 	}
 	reqToken := strings.Split(bearerToken, " ")[1]
-	claims := &model.Claims{}
+	claims := &models.Claims{}
 	token, err := jwt.ParseWithClaims(reqToken, claims, func(token *jwt.Token) (interface{}, error) {
 		return auth.GetJwtKey(), nil
 	})

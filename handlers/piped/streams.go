@@ -2,7 +2,7 @@ package piped
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/model"
+	"AltTube-Go/models"
 	"AltTube-Go/utils"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -63,7 +63,7 @@ func Streams(ctx *gin.Context) {
 
 	// Add Video to database if it doesn't exist
 	if resp.StatusCode == 200 {
-		var video model.Video
+		var video models.Video
 		// Decode JSON and store in video
 		err := json.Unmarshal(modifiedBody, &video)
 		if err != nil {

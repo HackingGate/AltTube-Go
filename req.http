@@ -1,9 +1,23 @@
-### Authorization by token, part 1. Retrieve and save token.
-POST http://admin:secret@0.0.0.0:8072/login
+### Signup with username and password.
+POST http://0.0.0.0:8072/signup
 Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
+
+### Login with username and password and save token.
+POST http://0.0.0.0:8072/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
 
 > {% client.global.set("auth_token", response.body.token); %}
 
-### Authorization by token, part 2. Use token to authorize.
+### Use token to authorize.
 GET http://0.0.0.0:8072/resource
 Authorization: Bearer {{auth_token}}

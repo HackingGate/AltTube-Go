@@ -1,8 +1,7 @@
 package auth
 
 import (
-	"AltTube-Go/model"
-	"github.com/gin-gonic/gin"
+	"AltTube-Go/models"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
@@ -18,10 +17,10 @@ func AddToken(token string) {
 	tokens = append(tokens, token)
 }
 
-func GenerateJWT() (string, error) {
+func GenerateJWT(email string) (string, error) {
 	expirationTime := time.Now().Add(5 * time.Minute)
-	claims := &model.Claims{
-		Username: "username",
+	claims := &models.Claims{
+		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -30,10 +29,4 @@ func GenerateJWT() (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString(jwtKey)
-}
-
-func BasicAuth() gin.HandlerFunc {
-	return gin.BasicAuth(gin.Accounts{
-		"admin": "secret",
-	})
 }
