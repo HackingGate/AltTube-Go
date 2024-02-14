@@ -1,5 +1,5 @@
 ### Signup with username and password.
-POST http://0.0.0.0:8072/signup
+POST http://0.0.0.0:8072/user/signup
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### Login with username and password and save token.
-POST http://0.0.0.0:8072/login
+POST http://0.0.0.0:8072/user/login
 Content-Type: application/json
 
 {
@@ -17,6 +17,13 @@ Content-Type: application/json
 }
 
 > {% client.global.set("auth_token", response.body.token); %}
+
+### Edit email address of a user.
+PATCH http://0.0.0.0:8072/user/user1@example.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{auth_token}}
+
+newEmail=user2@example.com
 
 ### Use token to authorize.
 GET http://0.0.0.0:8072/resource

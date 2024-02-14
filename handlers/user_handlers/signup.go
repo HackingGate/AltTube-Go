@@ -1,4 +1,4 @@
-package handlers
+package user_handlers
 
 import (
 	"AltTube-Go/database"
