@@ -37,7 +37,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "newEmail": "newEmail=user2@example.com"
+  "Email": "user2@example.com"
 }
 
 ### Logout user.
