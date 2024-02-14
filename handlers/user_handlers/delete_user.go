@@ -1,6 +1,7 @@
 package user_handlers
 
 import (
+	"AltTube-Go/auth"
 	"AltTube-Go/database"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -27,6 +28,8 @@ func DeleteUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting user"})
 		return
 	}
+
+	auth.RemoveToken(ctx.GetHeader("Authorization"))
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
