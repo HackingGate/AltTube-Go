@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AltTube-Go/auth"
 	"AltTube-Go/database"
 	"AltTube-Go/handlers"
 	"AltTube-Go/handlers/piped"
@@ -31,7 +32,7 @@ func startApi() {
 	{
 		user.POST("/login", user_handlers.Login)
 		user.POST("/signup", user_handlers.Signup)
-		user.PATCH("/:email", user_handlers.EditEmail)
+		user.PATCH("/email", auth.AuthMiddleware(), user_handlers.EditEmail)
 	}
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatalf("API failed to start: %v", err)

@@ -19,7 +19,7 @@ Content-Type: application/json
 > {% client.global.set("auth_token", response.body.token); %}
 
 ### Edit email address of a user.
-PATCH http://0.0.0.0:8072/user/user1@example.com
+PATCH http://0.0.0.0:8072/user/email
 Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{auth_token}}
 
