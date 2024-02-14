@@ -54,6 +54,13 @@ func AuthMiddleware() gin.HandlerFunc {
 			return jwtKey, nil
 		})
 
+		// If token is not in tokens, it is logged out
+		if !contains(tokens, tokenString) {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			ctx.Abort()
+			return
+		}
+
 		if err != nil || !token.Valid {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			ctx.Abort()
@@ -64,4 +71,14 @@ func AuthMiddleware() gin.HandlerFunc {
 		ctx.Set("uuid", claims.UUID)
 		ctx.Next()
 	}
+}
+
+// contains checks if the tokens slice contains a specific token.
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }
