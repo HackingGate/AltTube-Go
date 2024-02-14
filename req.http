@@ -24,7 +24,3 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{auth_token}}
 
 newEmail=user2@example.com
-
-### Use token to authorize.
-GET http://0.0.0.0:8072/resource
-Authorization: Bearer {{auth_token}}
