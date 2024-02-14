@@ -33,7 +33,7 @@ func GetUserByEmail(email string) (*models.User, error) {
 	return &result, nil
 }
 
-func UpdateUserByEmail(email string, user models.User) error {
+func UpdateUserByEmail(email string, editEmail models.EditEmail) error {
 	// Check if the user exists
 	var existingUser models.User
 	dbResult := dbInstance.Where("email = ?", email).First(&existingUser)
@@ -47,7 +47,7 @@ func UpdateUserByEmail(email string, user models.User) error {
 	}
 
 	// Perform the update
-	dbResult = dbInstance.Model(&existingUser).Updates(user)
+	dbResult = dbInstance.Model(&existingUser).Updates(editEmail)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}
@@ -62,5 +62,3 @@ func DeleteUserByEmail(email string) error {
 	}
 	return nil
 }
-
-// TODO: Logout user and set the JWT token to be invalid

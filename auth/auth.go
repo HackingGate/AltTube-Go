@@ -12,12 +12,20 @@ import (
 var jwtKey = []byte("my_secret_key")
 var tokens []string
 
-func GetJwtKey() []byte {
-	return jwtKey
-}
-
 func AddToken(token string) {
 	tokens = append(tokens, token)
+}
+
+func RemoveToken(tokenString string) {
+	// Normalize tokenString by removing potential "Bearer " prefix
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	for i, t := range tokens {
+		if t == tokenString {
+			tokens = append(tokens[:i], tokens[i+1:]...)
+			break
+		}
+	}
 }
 
 func GenerateJWT(email string) (string, error) {

@@ -8,6 +8,12 @@ import (
 )
 
 func EditEmail(ctx *gin.Context) {
+	var editEmail models.EditEmail
+	if err := ctx.ShouldBindJSON(&editEmail); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	authEmailInterface, exists := ctx.Get("email")
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No email found in token"})
@@ -20,9 +26,7 @@ func EditEmail(ctx *gin.Context) {
 		return
 	}
 
-	newEmail := ctx.PostForm("newEmail")
-
-	err := database.UpdateUserByEmail(authEmail, models.User{Email: newEmail})
+	err := database.UpdateUserByEmail(authEmail, editEmail)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating email"})
 		return

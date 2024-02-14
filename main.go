@@ -34,6 +34,7 @@ func startApi() {
 		user.POST("/signup", user_handlers.Signup)
 		user.PATCH("/email", auth.AuthMiddleware(), user_handlers.EditEmail)
 		user.DELETE("/", auth.AuthMiddleware(), user_handlers.DeleteUser)
+		user.GET("/logout", auth.AuthMiddleware(), user_handlers.LogoutUser)
 	}
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatalf("API failed to start: %v", err)

@@ -33,10 +33,31 @@ Content-Type: application/json
 
 ### Edit email address of a user.
 PATCH http://0.0.0.0:8072/user/email
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
-newEmail=user2@example.com
+{
+  "newEmail": "newEmail=user2@example.com"
+}
+
+### Logout user.
+GET http://0.0.0.0:8072/user/logout
+Authorization: Bearer {{auth_token}}
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
+
+### Login with username and password and save token.
+POST http://0.0.0.0:8072/user/login
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "password"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}
 
 ### Delete user.
 DELETE http://0.0.0.0:8072/user
