@@ -25,3 +25,12 @@ func UpdateUserByEmail(email string, user models.User) error {
 	}
 	return nil
 }
+
+func DeleteUserByEmail(email string) error {
+	// Perform a hard delete (completely remove) the user by email
+	dbResult := dbInstance.Unscoped().Where("email = ?", email).Delete(&models.User{})
+	if dbResult.Error != nil {
+		return dbResult.Error
+	}
+	return nil
+}

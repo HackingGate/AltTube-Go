@@ -7,6 +7,15 @@ Content-Type: application/json
   "password": "password"
 }
 
+### Signup with username and password.
+POST http://0.0.0.0:8072/user/signup
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
+
 ### Login with username and password and save token.
 POST http://0.0.0.0:8072/user/login
 Content-Type: application/json
@@ -24,3 +33,7 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{auth_token}}
 
 newEmail=user2@example.com
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
