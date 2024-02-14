@@ -28,10 +28,10 @@ func RemoveToken(tokenString string) {
 	}
 }
 
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT(uuid string) (string, error) {
 	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := &models.Claims{
-		Email: email,
+		UUID: uuid,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -61,7 +61,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// Token is valid, set email in context, so it can be used in the handler
-		ctx.Set("email", claims.Email)
+		ctx.Set("uuid", claims.UUID)
 		ctx.Next()
 	}
 }

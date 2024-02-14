@@ -15,6 +15,8 @@ func Signup(c *gin.Context) {
 		return
 	}
 
+	user.UUID = utils.GenerateUUID()
+
 	hashedPassword, _ := utils.HashPassword(user.Password) // Hash the password
 	user.Password = hashedPassword
 

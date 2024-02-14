@@ -27,7 +27,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateJWT(foundUser.Email)
+	token, err := auth.GenerateJWT(foundUser.UUID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
 		return
