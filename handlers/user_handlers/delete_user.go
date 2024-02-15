@@ -23,7 +23,7 @@ func DeleteUser(ctx *gin.Context) {
 	}
 
 	// Delete user from database
-	err := database.DeleteUserByUUID(authUUID)
+	err := database.DeleteUserByUserID(authUUID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting user"})
 		return

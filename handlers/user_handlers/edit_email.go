@@ -14,19 +14,19 @@ func EditEmail(ctx *gin.Context) {
 		return
 	}
 
-	authUUIDInterface, exists := ctx.Get("uuid")
+	authUserIDInterface, exists := ctx.Get("uuid")
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in token"})
 		return
 	}
 
-	authUUID, ok := authUUIDInterface.(string)
+	authUserID, ok := authUserIDInterface.(string)
 	if !ok {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UUID format invalid"})
 		return
 	}
 
-	err := database.UpdateUserByUUID(authUUID, editEmail)
+	err := database.UpdateUserByUserID(authUserID, editEmail)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating email"})
 		return

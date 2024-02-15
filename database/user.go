@@ -33,10 +33,10 @@ func GetUserByEmail(email string) (*models.User, error) {
 	return &result, nil
 }
 
-func UpdateUserByUUID(uuid string, editEmail models.EditEmail) error {
+func UpdateUserByUserID(userID string, editEmail models.EditEmail) error {
 	// Check if the user exists
 	var existingUser models.User
-	dbResult := dbInstance.Where("uuid = ?", uuid).First(&existingUser)
+	dbResult := dbInstance.Where("user_id = ?", userID).First(&existingUser)
 	if dbResult.Error != nil {
 		if dbResult.Error == gorm.ErrRecordNotFound {
 			// User does not exist
@@ -54,9 +54,9 @@ func UpdateUserByUUID(uuid string, editEmail models.EditEmail) error {
 	return nil
 }
 
-func DeleteUserByUUID(uuid string) error {
-	// Perform a hard delete (completely remove) the user by uuid
-	dbResult := dbInstance.Unscoped().Where("uuid = ?", uuid).Delete(&models.User{})
+func DeleteUserByUserID(userID string) error {
+	// Perform a hard delete (completely remove) the user by userID
+	dbResult := dbInstance.Unscoped().Where("user_id = ?", userID).Delete(&models.User{})
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}

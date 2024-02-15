@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	gorm.Model
-	UUID     string `gorm:"unique"`
+	UserID   string `gorm:"unique"`
 	Email    string `gorm:"unique"`
 	Password string
 }
