@@ -31,5 +31,19 @@ func DeleteUser(ctx *gin.Context) {
 
 	auth.RemoveToken(ctx.GetHeader("Authorization"))
 
+	refreshTokens, err := database.GetAllRefreshTokensByUserID(authUUID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh tokens"})
+		return
+	}
+
+	for _, token := range refreshTokens {
+		err = database.RemoveRefreshToken(token)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh token"})
+			return
+		}
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }

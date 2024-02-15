@@ -30,3 +30,20 @@ func RemoveRefreshToken(token string) error {
 	result := dbInstance.Unscoped().Where("token = ?", token).Delete(&models.RefreshToken{})
 	return result.Error
 }
+
+func GetAllRefreshTokensByUserID(userID string) ([]string, error) {
+	var refreshTokens []models.RefreshToken // Use a slice to hold multiple tokens
+	result := dbInstance.Where("user_id = ? AND expiry > ?", userID, time.Now()).Find(&refreshTokens)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// Extract the token strings from the refreshTokens slice
+	var tokens []string
+	for _, refreshToken := range refreshTokens {
+		tokens = append(tokens, refreshToken.Token)
+	}
+
+	return tokens, nil
+}
