@@ -1,0 +1,132 @@
+### Signup with username and password.
+POST http://0.0.0.0:8072/user/signup
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+
+    client.test("Response content-type is json", function () {
+        const type = response.contentType.mimeType;
+        client.assert(type === "application/json", `Expected 'application/json' but received '${type}'`);
+    });
+%}
+
+### Signup with username and password.
+POST http://0.0.0.0:8072/user/signup
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
+
+> {%
+    client.test("Response status is 500", function() {
+        client.assert(response.status === 500, "Expected response status to be 500, but received " + response.status);
+    });
+%}
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("Response status is 401", function() {
+        client.assert(response.status === 401, "Expected response status to be 401, but received " + response.status);
+    });
+%}
+
+### Login with username and password and save token.
+POST http://0.0.0.0:8072/user/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+    client.global.set("auth_token", response.body.token);
+%}
+
+
+### Edit email address of a user.
+PATCH http://0.0.0.0:8072/user/email
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "Email": "user2@example.com"
+}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+%}
+
+### Logout user.
+GET http://0.0.0.0:8072/user/logout
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+%}
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("Response status is 401", function() {
+        client.assert(response.status === 401, "Expected response status to be 401, but received " + response.status);
+    });
+%}
+
+### Login with username and password and save token.
+POST http://0.0.0.0:8072/user/login
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "password"
+}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+    client.global.set("auth_token", response.body.token);
+%}
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+%}
+
+### Delete user.
+DELETE http://0.0.0.0:8072/user
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("Response status is 401", function() {
+        client.assert(response.status === 401, "Expected response status to be 401, but received " + response.status);
+    });
+%}
