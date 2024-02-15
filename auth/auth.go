@@ -26,37 +26,22 @@ func RemoveToken(tokenString string) {
 	}
 }
 
-var refreshTokens map[string]string // Maps refresh token to UUID
-
-func init() {
-	refreshTokens = make(map[string]string)
-}
-
-func AddRefreshToken(token, uuid string) {
-	refreshTokens[token] = uuid
-}
-
-func ValidateRefreshToken(token string) (string, bool) {
-	uuid, exists := refreshTokens[token]
-	return uuid, exists
-}
-
-func RemoveRefreshToken(token string) {
-	delete(refreshTokens, token)
-}
-
-// Generate Access Token
+// GenerateAccessToken Generate access token with a short expiration
 func GenerateAccessToken(uuid string) (string, error) {
-	return generateToken(uuid, "access", 5*time.Minute) // Shorter expiration for access token
+	expiration := 5 * time.Minute // Short expiration
+	token, _, err := generateToken(uuid, "access", expiration)
+	return token, err
 }
 
-// Generate Refresh Token
-func GenerateRefreshToken(uuid string) (string, error) {
-	return generateToken(uuid, "refresh", 24*time.Hour) // Longer expiration for refresh token
+// GenerateRefreshToken Generate refresh token with a longer expiration
+func GenerateRefreshToken(uuid string) (string, time.Time, error) {
+	expiration := 24 * 30 * time.Hour // Longer expiration
+	token, expiry, err := generateToken(uuid, "refresh", expiration)
+	return token, expiry, err
 }
 
-// Helper function to generate tokens
-func generateToken(uuid string, tokenType string, expiration time.Duration) (string, error) {
+// Unified token generation function
+func generateToken(uuid string, tokenType string, expiration time.Duration) (string, time.Time, error) {
 	expirationTime := time.Now().Add(expiration)
 	claims := &models.Claims{
 		UUID:      uuid,
@@ -67,5 +52,6 @@ func generateToken(uuid string, tokenType string, expiration time.Duration) (str
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
+	tokenString, err := token.SignedString(jwtKey)
+	return tokenString, expirationTime, err
 }

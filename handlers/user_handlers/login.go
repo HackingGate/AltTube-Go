@@ -35,14 +35,18 @@ func Login(ctx *gin.Context) {
 	}
 
 	// Generate refresh token
-	refreshToken, err := auth.GenerateRefreshToken(foundUser.UserID)
+	refreshToken, refreshTokenExpiry, err := auth.GenerateRefreshToken(foundUser.UserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
 		return
 	}
 
 	// Store refresh token
-	auth.AddRefreshToken(refreshToken, foundUser.UserID)
+	err = database.AddRefreshToken(refreshToken, foundUser.UserID, refreshTokenExpiry)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token"})
+		return
+	}
 
 	// You may also want to add the access token to a list of valid tokens if you're tracking those
 	auth.AddToken(accessToken)

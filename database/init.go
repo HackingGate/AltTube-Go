@@ -35,6 +35,10 @@ func Init() {
 	}
 
 	// Migrate the schema
+	err = db.AutoMigrate(&models.RefreshToken{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
 	err = db.AutoMigrate(&models.User{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)

@@ -60,6 +60,21 @@ Content-Type: application/json
     client.global.set("refresh_token", response.body.refresh_token);
 %}
 
+### Edit email address of a user.
+PATCH http://0.0.0.0:8072/user/email
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "Email": "user1@example.com"
+}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+%}
+
 ### Refresh token.
 POST http://0.0.0.0:8072/user/refresh_token
 Authorization: Bearer {{refresh_token}}
