@@ -45,6 +45,8 @@ func RefreshToken(ctx *gin.Context) {
 		return
 	}
 
+	auth.AddToken(accessToken)
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
