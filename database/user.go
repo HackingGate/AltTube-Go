@@ -38,7 +38,7 @@ func UpdateUserByUserID(userID string, editEmail models.EditEmail) error {
 	var existingUser models.User
 	dbResult := dbInstance.Where("user_id = ?", userID).First(&existingUser)
 	if dbResult.Error != nil {
-		if dbResult.Error == gorm.ErrRecordNotFound {
+		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
 			// User does not exist
 			return errors.New("user not found")
 		}
