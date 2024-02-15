@@ -30,3 +30,9 @@ func RemoveRefreshToken(token string) error {
 	result := dbInstance.Unscoped().Where("token = ?", token).Delete(&models.RefreshToken{})
 	return result.Error
 }
+
+func GetRefreshTokenByUserID(userID string) (string, error) {
+	var refreshToken models.RefreshToken
+	result := dbInstance.Where("user_id = ? AND expiry > ?", userID, time.Now()).First(&refreshToken)
+	return refreshToken.Token, result.Error
+}
