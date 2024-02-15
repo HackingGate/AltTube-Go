@@ -41,21 +41,6 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	// Get refresh token if the user is already issued a refresh token
-	oldRefreshToken, err := database.GetRefreshTokenByUserID(foundUser.UserID)
-	if err != nil && err.Error() != "record not found" {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting old refresh token"})
-		return
-	}
-	if oldRefreshToken != "" {
-		// Remove the old refresh token
-		err = database.RemoveRefreshToken(oldRefreshToken)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
-			return
-		}
-	}
-
 	// Store refresh token
 	err = database.AddRefreshToken(refreshToken, foundUser.UserID, refreshTokenExpiry)
 	if err != nil {
