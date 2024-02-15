@@ -27,15 +27,28 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateJWT(foundUser.UserID)
+	// Generate access token
+	accessToken, err := auth.GenerateAccessToken(foundUser.UserID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
 	}
 
-	auth.AddToken(token)
+	// Generate refresh token
+	refreshToken, err := auth.GenerateRefreshToken(foundUser.UserID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
+		return
+	}
 
-	ctx.JSON(200, gin.H{
-		"token": token,
+	// Store refresh token
+	auth.AddRefreshToken(refreshToken, foundUser.UserID)
+
+	// You may also want to add the access token to a list of valid tokens if you're tracking those
+	auth.AddToken(accessToken)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
 	})
 }

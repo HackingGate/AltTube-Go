@@ -38,3 +38,13 @@ func Middleware() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+// contains checks if the tokens slice contains a specific token.
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
+}

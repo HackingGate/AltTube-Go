@@ -26,26 +26,46 @@ func RemoveToken(tokenString string) {
 	}
 }
 
-func GenerateJWT(uuid string) (string, error) {
-	expirationTime := time.Now().Add(5 * time.Minute)
+var refreshTokens map[string]string // Maps refresh token to UUID
+
+func init() {
+	refreshTokens = make(map[string]string)
+}
+
+func AddRefreshToken(token, uuid string) {
+	refreshTokens[token] = uuid
+}
+
+func ValidateRefreshToken(token string) (string, bool) {
+	uuid, exists := refreshTokens[token]
+	return uuid, exists
+}
+
+func RemoveRefreshToken(token string) {
+	delete(refreshTokens, token)
+}
+
+// Generate Access Token
+func GenerateAccessToken(uuid string) (string, error) {
+	return generateToken(uuid, "access", 5*time.Minute) // Shorter expiration for access token
+}
+
+// Generate Refresh Token
+func GenerateRefreshToken(uuid string) (string, error) {
+	return generateToken(uuid, "refresh", 24*time.Hour) // Longer expiration for refresh token
+}
+
+// Helper function to generate tokens
+func generateToken(uuid string, tokenType string, expiration time.Duration) (string, error) {
+	expirationTime := time.Now().Add(expiration)
 	claims := &models.Claims{
-		UUID: uuid,
+		UUID:      uuid,
+		TokenType: tokenType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
 	return token.SignedString(jwtKey)
-}
-
-// contains checks if the tokens slice contains a specific token.
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
 }

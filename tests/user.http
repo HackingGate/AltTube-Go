@@ -35,7 +35,7 @@ Content-Type: application/json
 
 ### Delete user.
 DELETE http://0.0.0.0:8072/user
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 > {%
     client.test("Response status is 401", function() {
@@ -56,14 +56,26 @@ Content-Type: application/json
     client.test("Response status is 200", function() {
         client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
     });
-    client.global.set("auth_token", response.body.token);
+    client.global.set("access_token", response.body.access_token);
+    client.global.set("refresh_token", response.body.refresh_token);
 %}
 
+### Refresh token.
+POST http://0.0.0.0:8072/user/refresh_token
+Authorization: Bearer {{refresh_token}}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+    client.global.set("access_token", response.body.access_token);
+    client.global.set("refresh_token", response.body.refresh_token);
+%}
 
 ### Edit email address of a user.
 PATCH http://0.0.0.0:8072/user/email
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 {
   "Email": "user2@example.com"
@@ -77,7 +89,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Logout user.
 GET http://0.0.0.0:8072/user/logout
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 > {%
     client.test("Response status is 200", function() {
@@ -87,7 +99,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Delete user.
 DELETE http://0.0.0.0:8072/user
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 > {%
     client.test("Response status is 401", function() {
@@ -108,12 +120,12 @@ Content-Type: application/json
     client.test("Response status is 200", function() {
         client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
     });
-    client.global.set("auth_token", response.body.token);
+    client.global.set("access_token", response.body.access_token);
 %}
 
 ### Delete user.
 DELETE http://0.0.0.0:8072/user
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 > {%
     client.test("Response status is 200", function() {
@@ -123,7 +135,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Delete user.
 DELETE http://0.0.0.0:8072/user
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 > {%
     client.test("Response status is 401", function() {

@@ -5,6 +5,7 @@ import (
 )
 
 type Claims struct {
-	UUID string `json:"uuid"`
+	UUID      string `json:"uuid"`
+	TokenType string `json:"token_type"`
 	jwt.RegisteredClaims
 }
