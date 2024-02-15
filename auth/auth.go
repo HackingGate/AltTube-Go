@@ -3,11 +3,12 @@ package auth
 import (
 	"AltTube-Go/models"
 	"github.com/golang-jwt/jwt/v5"
+	"os"
 	"strings"
 	"time"
 )
 
-var jwtKey = []byte("my_secret_key")
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 var tokens []string
 
 func AddToken(token string) {
