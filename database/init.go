@@ -1,7 +1,7 @@
 package database
 
 import (
-	"AltTube-Go/model"
+	"AltTube-Go/models"
 	"fmt"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -35,7 +35,15 @@ func Init() {
 	}
 
 	// Migrate the schema
-	err = db.AutoMigrate(&model.Video{})
+	err = db.AutoMigrate(&models.RefreshToken{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
+	err = db.AutoMigrate(&models.Video{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
