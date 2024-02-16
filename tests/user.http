@@ -113,6 +113,7 @@ Authorization: Bearer {{access_token}}
 %}
 
 ### Delete user.
+# @delay 1000
 DELETE http://0.0.0.0:8072/user
 Authorization: Bearer {{access_token}}
 
