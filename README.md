@@ -31,12 +31,12 @@ sed -i '' "s/JWT_SECRET=.*/JWT_SECRET=$NEW_SECRET/" .env.docker
 Build and run
 
 ```sh
-docker-compose build
-docker-compose up
+docker compose build
+docker compose up
 ```
 
 Build and run in background in one command
 
 ```sh
-docker-compose up --build -d
+docker compose up --build -d
 ```
