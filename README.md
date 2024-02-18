@@ -6,6 +6,12 @@
 
 #### Generate
 
+Install [swag](https://github.com/swaggo/swag)
+
+```sh
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
 At the root of the project, run
 
 ```sh
