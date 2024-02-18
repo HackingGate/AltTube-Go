@@ -3,12 +3,12 @@ package main
 import (
 	"AltTube-Go/auth"
 	"AltTube-Go/database"
+	docs "AltTube-Go/docs"
 	"AltTube-Go/handlers"
 	"AltTube-Go/handlers/piped"
 	"AltTube-Go/handlers/piped/opensearch"
 	"AltTube-Go/handlers/pipedproxy"
 	"AltTube-Go/handlers/user_handlers"
-	docs "github.com/HackingGate/AltTube-Go/docs"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
