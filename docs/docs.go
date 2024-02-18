@@ -182,12 +182,9 @@ const docTemplate = `{
                 "summary": "Get devices",
                 "responses": {
                     "200": {
-                        "description": "GetDevices",
+                        "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Device"
-                            }
+                            "$ref": "#/definitions/models.DeviceList"
                         }
                     }
                 }
@@ -412,6 +409,20 @@ const docTemplate = `{
                 },
                 "user_agent": {
                     "type": "string"
+                }
+            }
+        },
+        "models.DeviceList": {
+            "type": "object",
+            "properties": {
+                "current_device_id": {
+                    "type": "integer"
+                },
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Device"
+                    }
                 }
             }
         },

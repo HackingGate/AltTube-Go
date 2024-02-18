@@ -14,7 +14,7 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} models.Device "GetDevices"
+// @Success 200 {object} models.DeviceList
 // @Security AccessToken
 // @Router /user/devices [get]
 func GetDevices(ctx *gin.Context) {

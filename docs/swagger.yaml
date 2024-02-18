@@ -10,6 +10,15 @@ definitions:
       user_agent:
         type: string
     type: object
+  models.DeviceList:
+    properties:
+      current_device_id:
+        type: integer
+      devices:
+        items:
+          $ref: '#/definitions/models.Device'
+        type: array
+    type: object
   models.EditEmail:
     properties:
       email:
@@ -164,11 +173,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: GetDevices
+          description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Device'
-            type: array
+            $ref: '#/definitions/models.DeviceList'
       security:
       - AccessToken: []
       summary: Get devices
