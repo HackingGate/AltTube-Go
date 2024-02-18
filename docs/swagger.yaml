@@ -1,5 +1,28 @@
+definitions:
+  models.EditEmail:
+    properties:
+      email:
+        type: string
+    type: object
+  models.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.Signup:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
 info:
   contact: {}
+  description: This is the API documentation for the AltTube application.
+  title: AltTube API
+  version: "1.0"
 paths:
   /ping:
     get:
@@ -16,4 +39,132 @@ paths:
       summary: ping
       tags:
       - ping
+  /user/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "User deleted successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Delete user
+      tags:
+      - user
+  /user/email:
+    patch:
+      consumes:
+      - application/json
+      description: Edit email
+      parameters:
+      - description: EditEmail
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.EditEmail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Email updated successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Edit email
+      tags:
+      - user
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"access_token": "access_token", "refresh_token": "refresh_token"}'
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - user
+  /user/logout:
+    get:
+      consumes:
+      - application/json
+      description: Logout user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Logged out successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Logout user
+      tags:
+      - user
+  /user/refresh_token:
+    post:
+      consumes:
+      - application/json
+      description: Refresh token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"access_token": "access_token", "refresh_token": "refresh_token"}'
+          schema:
+            type: string
+      security:
+      - RefreshToken: []
+      summary: Refresh token
+      tags:
+      - user
+  /user/signup:
+    post:
+      consumes:
+      - application/json
+      description: Signup
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.Signup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Registration successful"}'
+          schema:
+            type: string
+      summary: Signup
+      tags:
+      - user
+securityDefinitions:
+  AccessToken:
+    in: header
+    name: Authorization
+    type: apiKey
+  RefreshToken:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

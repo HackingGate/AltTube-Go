@@ -9,20 +9,29 @@ import (
 	"net/http"
 )
 
+// Login godoc
+// @Summary Login
+// @Description Login
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param user body models.Login true "User"
+// @Success 200 {string} JSON "{"access_token": "access_token", "refresh_token": "refresh_token"}"
+// @Router /user/login [post]s
 func Login(ctx *gin.Context) {
-	var user models.User
-	if err := ctx.ShouldBindJSON(&user); err != nil {
+	var login models.Login
+	if err := ctx.ShouldBindJSON(&login); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	foundUser, err := database.GetUserByEmail(user.Email)
+	foundUser, err := database.GetUserByEmail(login.Email)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email"})
 		return
 	}
 
-	if !utils.CheckPasswordHash(user.Password, foundUser.Password) {
+	if !utils.CheckPasswordHash(login.Password, foundUser.Password) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
 		return
 	}

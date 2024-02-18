@@ -7,6 +7,15 @@ import (
 	"net/http"
 )
 
+// DeleteUser godoc
+// @Summary Delete user
+// @Description Delete user
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} JSON "{"message": "User deleted successfully"}"
+// @Security AccessToken
+// @Router /user/ [delete]
 func DeleteUser(ctx *gin.Context) {
 	authUUIDInterface, exists := ctx.Get("uuid")
 	if !exists {
