@@ -5,6 +5,7 @@ import (
 	"AltTube-Go/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 // GetDevices godoc
@@ -17,9 +18,14 @@ import (
 // @Security AccessToken
 // @Router /user/devices [get]
 func GetDevices(ctx *gin.Context) {
+	// Get authorization header
+	tokenString := ctx.GetHeader("Authorization")
+	// Assuming currentRefreshToken is provided as 'Bearer <currentRefreshToken>'
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
 	authUserIDInterface, exists := ctx.Get("uuid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in token"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in currentRefreshToken"})
 		return
 	}
 
@@ -49,5 +55,15 @@ func GetDevices(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(http.StatusOK, devices)
+	currentRefreshToken, err := database.GetRefreshTokenByAccessToken(tokenString)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting current device"})
+		return
+	}
+
+	var deviceList models.DeviceList
+	deviceList.CurrentDeviceID = currentRefreshToken.ID
+	deviceList.Devices = devices
+
+	ctx.JSON(http.StatusOK, deviceList)
 }

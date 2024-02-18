@@ -118,3 +118,10 @@ func GetRefreshTokenByToken(token string) (models.RefreshToken, error) {
 	result := dbInstance.Where("token = ?", token).First(&refreshToken)
 	return refreshToken, result.Error
 }
+
+func GetRefreshTokenByAccessToken(accessToken string) (models.RefreshToken, error) {
+	var refreshToken models.RefreshToken
+	// AccessToken belongs to RefreshToken, AccessToken has a foreign key AccessToken.RefreshTokenID to RefreshToken
+	result := dbInstance.Joins("join access_tokens on access_tokens.refresh_token_id = refresh_tokens.id").Where("access_tokens.token = ?", accessToken).First(&refreshToken)
+	return refreshToken, result.Error
+}
