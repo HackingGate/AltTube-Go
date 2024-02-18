@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-### Generate Docuemntation
+### Generate API Documentation
 
 At the root of the project, run
 
