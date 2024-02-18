@@ -2,13 +2,21 @@
 
 ## Getting Started
 
-### Generate API Documentation
+### API Documentation
+
+#### Generate
 
 At the root of the project, run
 
 ```sh
 swag init --parseDependency --parseInternal --parseDepth 1
 ```
+
+#### Access
+
+http://localhost:8072/swagger/index.html
+
+https://efficiency-node-alttube.hackinggate.com/swagger/index.html
 
 ### Local environment
 
