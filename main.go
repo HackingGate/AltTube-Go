@@ -18,6 +18,18 @@ import (
 
 var r *gin.Engine
 
+// @title AltTube API
+// @version 1.0
+// @description This is the API documentation for the AltTube application.
+
+// @SecurityDefinitions.apiKey AccessToken
+// @in header
+// @name Authorization
+
+// @SecurityDefinitions.apiKey RefreshToken
+// @in header
+// @name Authorization
+
 func main() {
 	database.Init()
 	startApi()

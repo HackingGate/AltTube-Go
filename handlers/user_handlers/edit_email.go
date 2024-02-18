@@ -7,6 +7,16 @@ import (
 	"net/http"
 )
 
+// EditEmail godoc
+// @Summary Edit email
+// @Description Edit email
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param user body models.EditEmail true "EditEmail"
+// @Success 200 {string} JSON "{"message": "Email updated successfully"}"
+// @Security AccessToken
+// @Router /user/email [patch]
 func EditEmail(ctx *gin.Context) {
 	var editEmail models.EditEmail
 	if err := ctx.ShouldBindJSON(&editEmail); err != nil {

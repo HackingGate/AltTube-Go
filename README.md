@@ -2,6 +2,13 @@
 
 ## Getting Started
 
+### Generate Docuemntation
+
+At the root of the project, run
+
+```sh
+swag init --parseDependency --parseInternal --parseDepth 1
+```
 
 ### Local environment
 

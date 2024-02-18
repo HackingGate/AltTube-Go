@@ -8,13 +8,25 @@ import (
 	"net/http"
 )
 
+// Signup godoc
+// @Summary Signup
+// @Description Signup
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param user body models.Signup true "User"
+// @Success 200 {string} JSON "{"message": "Registration successful"}"
+// @Router /user/signup [post]
 func Signup(c *gin.Context) {
-	var user models.User
-	if err := c.ShouldBindJSON(&user); err != nil {
+	var signup models.Signup
+	if err := c.ShouldBindJSON(&signup); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	var user models.User
+	user.Email = signup.Email
+	user.Password = signup.Password
 	user.UserID = utils.GenerateUUID()
 
 	hashedPassword, _ := utils.HashPassword(user.Password) // Hash the password

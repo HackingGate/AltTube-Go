@@ -8,6 +8,15 @@ import (
 	"strings"
 )
 
+// RefreshToken godoc
+// @Summary Refresh token
+// @Description Refresh token
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} JSON "{"access_token": "access_token", "refresh_token": "refresh_token"}"
+// @Security RefreshToken
+// @Router /user/refresh_token [post]
 func RefreshToken(ctx *gin.Context) {
 	// Get authorization header
 	tokenString := ctx.GetHeader("Authorization")
