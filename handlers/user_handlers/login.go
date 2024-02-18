@@ -37,7 +37,7 @@ func Login(ctx *gin.Context) {
 	}
 
 	// Generate access token
-	accessToken, err := auth.GenerateAccessToken(foundUser.UserID)
+	accessToken, accessTokenExpiry, err := auth.GenerateAccessToken(foundUser.UserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
@@ -63,8 +63,12 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	// You may also want to add the access token to a list of valid tokens if you're tracking those
-	auth.AddToken(accessToken)
+	// Store access token
+	err = database.AddAccessToken(accessToken, foundUser.UserID, accessTokenExpiry)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token"})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"access_token":  accessToken,

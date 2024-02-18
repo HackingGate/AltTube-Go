@@ -5,6 +5,50 @@ import (
 	"time"
 )
 
+// AddAccessToken creates and stores a new access token in the database.
+func AddAccessToken(token, userID string, expiry time.Time) error {
+	accessToken := models.AccessToken{
+		Token:  token,
+		UserID: userID,
+		Expiry: expiry,
+	}
+	return dbInstance.Create(&accessToken).Error
+}
+
+// ValidateAccessToken checks if the given token exists and is not expired.
+func ValidateAccessToken(token string) (string, bool) {
+	var accessToken models.AccessToken
+	result := dbInstance.Where("token = ? AND expiry > ?", token, time.Now()).First(&accessToken)
+	if result.Error != nil || result.RowsAffected == 0 {
+		return "", false // Token not found or expired
+	}
+	return accessToken.UserID, true
+}
+
+// RemoveAccessToken deletes an access token from the database.
+func RemoveAccessToken(token string) error {
+	result := dbInstance.Unscoped().Where("token = ?", token).Delete(&models.AccessToken{})
+	return result.Error
+}
+
+// GetAllAccessTokensByUserID returns all access tokens for a given user.
+func GetAllAccessTokensByUserID(userID string) ([]string, error) {
+	var accessTokens []models.AccessToken // Use a slice to hold multiple tokens
+	result := dbInstance.Where("user_id = ? AND expiry > ?", userID, time.Now()).Find(&accessTokens)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// Extract the token strings from the accessTokens slice
+	var tokens []string
+	for _, accessToken := range accessTokens {
+		tokens = append(tokens, accessToken.Token)
+	}
+
+	return tokens, nil
+}
+
 // AddRefreshToken creates and stores a new refresh token in the database.
 func AddRefreshToken(token, userID string, expiry time.Time, userAgent string, ipAddress string) error {
 	refreshToken := models.RefreshToken{

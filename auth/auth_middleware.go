@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"AltTube-Go/database"
 	"AltTube-Go/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -20,9 +21,9 @@ func Middleware() gin.HandlerFunc {
 			return jwtKey, nil
 		})
 
-		// If token is not in tokens, it is logged out
-		if !contains(tokens, tokenString) {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		_, exists := database.ValidateAccessToken(tokenString)
+		if !exists {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid access token"})
 			ctx.Abort()
 			return
 		}
@@ -37,14 +38,4 @@ func Middleware() gin.HandlerFunc {
 		ctx.Set("uuid", claims.UUID)
 		ctx.Next()
 	}
-}
-
-// contains checks if the tokens slice contains a specific token.
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
 }

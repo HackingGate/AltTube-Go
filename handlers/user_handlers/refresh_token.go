@@ -30,7 +30,7 @@ func RefreshToken(ctx *gin.Context) {
 	}
 
 	// Generate new tokens
-	accessToken, err := auth.GenerateAccessToken(uuid)
+	accessToken, accessTokenExpiry, err := auth.GenerateAccessToken(uuid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
@@ -62,7 +62,11 @@ func RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	auth.AddToken(accessToken)
+	err = database.AddAccessToken(accessToken, uuid, accessTokenExpiry)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token " + err.Error()})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"access_token":  accessToken,
