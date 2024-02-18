@@ -404,13 +404,13 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "ipaddress": {
+                "ip_address": {
                     "type": "string"
                 },
-                "lastActive": {
+                "last_active": {
                     "type": "string"
                 },
-                "userAgent": {
+                "user_agent": {
                     "type": "string"
                 }
             }

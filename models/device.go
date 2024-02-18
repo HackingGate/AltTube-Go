@@ -5,8 +5,8 @@ import (
 )
 
 type Device struct {
-	ID         uint
-	LastActive time.Time
-	UserAgent  string
-	IPAddress  string
+	ID         uint      `json:"id"`
+	LastActive time.Time `json:"last_active"`
+	UserAgent  string    `json:"user_agent"`
+	IPAddress  string    `json:"ip_address"`
 }
