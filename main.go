@@ -9,6 +9,7 @@ import (
 	"AltTube-Go/handlers/piped/opensearch"
 	"AltTube-Go/handlers/pipedproxy"
 	"AltTube-Go/handlers/user_handlers"
+	"AltTube-Go/handlers/user_handlers/devices"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -51,6 +52,8 @@ func startApi() {
 		user.DELETE("/", auth.Middleware(), user_handlers.DeleteUser)
 		user.GET("/logout", auth.Middleware(), user_handlers.LogoutUser)
 		user.POST("/refresh_token", user_handlers.RefreshToken)
+		user.GET("/devices", auth.Middleware(), devices.GetDevices)
+		user.DELETE("/devices", auth.Middleware(), devices.DeleteDevices)
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {

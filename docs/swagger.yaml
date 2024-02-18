@@ -1,4 +1,15 @@
 definitions:
+  models.Device:
+    properties:
+      id:
+        type: integer
+      ipaddress:
+        type: string
+      lastActive:
+        type: string
+      userAgent:
+        type: string
+    type: object
   models.EditEmail:
     properties:
       email:
@@ -117,6 +128,50 @@ paths:
       security:
       - AccessToken: []
       summary: Delete user
+      tags:
+      - user
+  /user/devices:
+    delete:
+      consumes:
+      - application/json
+      description: Delete devices
+      parameters:
+      - description: Devices to be deleted
+        in: body
+        name: devices
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Devices deleted successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Delete devices
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get devices
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GetDevices
+          schema:
+            items:
+              $ref: '#/definitions/models.Device'
+            type: array
+      security:
+      - AccessToken: []
+      summary: Get devices
       tags:
       - user
   /user/email:
