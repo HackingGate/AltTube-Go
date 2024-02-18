@@ -51,6 +51,11 @@ func GetAllAccessTokensByUserID(userID string) ([]string, error) {
 	return tokens, nil
 }
 
+func RemoveAllAccessTokensByRefreshTokenID(refreshTokenID uint) error {
+	result := dbInstance.Unscoped().Where("refresh_token_id = ?", refreshTokenID).Delete(&models.AccessToken{})
+	return result.Error
+}
+
 // AddRefreshToken creates and stores a new refresh token in the database.
 func AddRefreshToken(token, userID string, expiry time.Time, userAgent string, ipAddress string) error {
 	refreshToken := models.RefreshToken{
@@ -75,6 +80,18 @@ func ValidateRefreshToken(token string) (string, bool) {
 
 // RemoveRefreshToken deletes a refresh token from the database.
 func RemoveRefreshToken(token string) error {
+	// First, get the refresh token to get its ID
+	refreshToken, err := GetRefreshTokenByToken(token)
+	if err != nil {
+		return err
+	}
+
+	// Delete all access tokens associated with the refresh token
+	err = RemoveAllAccessTokensByRefreshTokenID(refreshToken.ID)
+	if err != nil {
+		return err
+	}
+
 	result := dbInstance.Unscoped().Where("token = ?", token).Delete(&models.RefreshToken{})
 	return result.Error
 }
