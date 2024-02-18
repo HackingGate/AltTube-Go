@@ -6,11 +6,13 @@ import (
 )
 
 // AddAccessToken creates and stores a new access token in the database.
-func AddAccessToken(token, userID string, expiry time.Time) error {
+func AddAccessToken(token, userID string, expiry time.Time, refreshToken models.RefreshToken) error {
 	accessToken := models.AccessToken{
-		Token:  token,
-		UserID: userID,
-		Expiry: expiry,
+		Token:          token,
+		UserID:         userID,
+		Expiry:         expiry,
+		RefreshTokenID: refreshToken.ID,
+		RefreshToken:   refreshToken,
 	}
 	return dbInstance.Create(&accessToken).Error
 }
@@ -92,4 +94,10 @@ func GetAllRefreshTokensByUserID(userID string) ([]string, error) {
 	}
 
 	return tokens, nil
+}
+
+func GetRefreshTokenByToken(token string) (models.RefreshToken, error) {
+	var refreshToken models.RefreshToken
+	result := dbInstance.Where("token = ?", token).First(&refreshToken)
+	return refreshToken, result.Error
 }
