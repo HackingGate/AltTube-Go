@@ -8,6 +8,15 @@ import (
 	"os"
 )
 
+// Search godoc
+// @Summary Search
+// @Description Search
+// @Tags piped
+// @Accept  json
+// @Produce  json
+// @Param q query string true "Query"
+// @Success 200 {string} JSON "Search results"
+// @Router /piped/search [get]
 func Search(ctx *gin.Context) {
 	// Retrieve the backend URL from an environment variable
 	backendURL := os.Getenv("PIPED_BACKEND_URL")

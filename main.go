@@ -41,7 +41,7 @@ func startApi() {
 	r.GET("/ping", handlers.Ping)
 	r.GET("/piped/opensearch/suggestions", opensearch.Suggestions)
 	r.GET("/piped/search", piped.Search)
-	r.GET("/streams/:videoID", piped.Streams)
+	r.GET("/piped/streams/:videoID", piped.Streams)
 	r.GET("/pipedproxy/*action", pipedproxy.PipedProxy)
 	user := r.Group("/user")
 	{

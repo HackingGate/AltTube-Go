@@ -39,6 +39,69 @@ paths:
       summary: ping
       tags:
       - ping
+  /piped/opensearch/suggestions:
+    get:
+      consumes:
+      - application/json
+      description: Suggestions
+      parameters:
+      - description: Query
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Suggestions
+          schema:
+            type: string
+      summary: Suggestions
+      tags:
+      - piped
+  /piped/search:
+    get:
+      consumes:
+      - application/json
+      description: Search
+      parameters:
+      - description: Query
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Search results
+          schema:
+            type: string
+      summary: Search
+      tags:
+      - piped
+  /piped/streams/{videoID}:
+    get:
+      consumes:
+      - application/json
+      description: Get video streams by video ID
+      parameters:
+      - description: Video ID
+        in: path
+        name: videoID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Video streams
+          schema:
+            type: string
+      summary: Get video streams
+      tags:
+      - piped
   /user/:
     delete:
       consumes:

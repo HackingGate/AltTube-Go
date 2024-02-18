@@ -7,6 +7,15 @@ import (
 	"os"
 )
 
+// Suggestions godoc
+// @Summary Suggestions
+// @Description Suggestions
+// @Tags piped
+// @Accept  json
+// @Produce  json
+// @Param query query string true "Query"
+// @Success 200 {string} JSON "Suggestions"
+// @Router /piped/opensearch/suggestions [get]
 func Suggestions(ctx *gin.Context) {
 	// Retrieve the backend URL from an environment variable
 	backendURL := os.Getenv("PIPED_BACKEND_URL")

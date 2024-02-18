@@ -11,6 +11,15 @@ import (
 	"os"
 )
 
+// Streams godoc
+// @Summary Get video streams
+// @Description Get video streams by video ID
+// @Tags piped
+// @Accept  json
+// @Produce  json
+// @Param videoID path string true "Video ID"
+// @Success 200 {string} JSON "Video streams"
+// @Router /piped/streams/{videoID} [get]
 func Streams(ctx *gin.Context) {
 	// Retrieve the backend URL from an environment variable
 	backendURL := os.Getenv("PIPED_BACKEND_URL")
