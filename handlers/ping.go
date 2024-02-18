@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// Create ping handler
+// Ping godoc
 // @Summary ping
 // @Description ping
 // @Tags ping
@@ -13,7 +13,6 @@ import (
 // @Produce  json
 // @Success 200 {string} JSON "{"message": "pong"}"
 // @Router /ping [get]
-
 func Ping(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "pong",

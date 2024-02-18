@@ -1,4 +1,19 @@
 info:
   contact: {}
-paths: {}
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "pong"}'
+          schema:
+            type: string
+      summary: ping
+      tags:
+      - ping
 swagger: "2.0"
