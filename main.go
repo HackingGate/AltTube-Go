@@ -8,7 +8,10 @@ import (
 	"AltTube-Go/handlers/piped/opensearch"
 	"AltTube-Go/handlers/pipedproxy"
 	"AltTube-Go/handlers/user_handlers"
+	docs "github.com/HackingGate/AltTube-Go/docs"
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"os"
 )
@@ -22,7 +25,7 @@ func main() {
 
 func startApi() {
 	r = gin.Default()
-
+	docs.SwaggerInfo.BasePath = "/"
 	r.GET("/ping", handlers.Ping)
 	r.GET("/piped/opensearch/suggestions", opensearch.Suggestions)
 	r.GET("/piped/search", piped.Search)
@@ -37,6 +40,7 @@ func startApi() {
 		user.GET("/logout", auth.Middleware(), user_handlers.LogoutUser)
 		user.POST("/refresh_token", user_handlers.RefreshToken)
 	}
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
 		log.Fatalf("API failed to start: %v", err)
 	}
