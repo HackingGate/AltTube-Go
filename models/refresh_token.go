@@ -7,7 +7,9 @@ import (
 
 type RefreshToken struct {
 	gorm.Model
-	Token  string `gorm:"index:idx_token"`
-	UserID string `gorm:"index"`
-	Expiry time.Time
+	Token     string `gorm:"index:idx_token"`
+	UserID    string `gorm:"index"`
+	Expiry    time.Time
+	UserAgent string
+	IPAddress string
 }

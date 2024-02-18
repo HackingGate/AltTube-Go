@@ -50,8 +50,14 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
+	// Get user_agent from request header
+	userAgent := ctx.GetHeader("User-Agent")
+
+	// Get IP address from request
+	ipAddress := ctx.ClientIP()
+
 	// Store refresh token
-	err = database.AddRefreshToken(refreshToken, foundUser.UserID, refreshTokenExpiry)
+	err = database.AddRefreshToken(refreshToken, foundUser.UserID, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token"})
 		return

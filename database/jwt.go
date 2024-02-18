@@ -6,11 +6,13 @@ import (
 )
 
 // AddRefreshToken creates and stores a new refresh token in the database.
-func AddRefreshToken(token, userID string, expiry time.Time) error {
+func AddRefreshToken(token, userID string, expiry time.Time, userAgent string, ipAddress string) error {
 	refreshToken := models.RefreshToken{
-		Token:  token,
-		UserID: userID,
-		Expiry: expiry,
+		Token:     token,
+		UserID:    userID,
+		Expiry:    expiry,
+		UserAgent: userAgent,
+		IPAddress: ipAddress,
 	}
 	return dbInstance.Create(&refreshToken).Error
 }

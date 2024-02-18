@@ -48,7 +48,15 @@ func RefreshToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
 		return
 	}
-	err = database.AddRefreshToken(refreshToken, uuid, refreshTokenExpiry)
+
+	// Get user_agent from request header
+	userAgent := ctx.GetHeader("User-Agent")
+
+	// Get IP address from request
+	ipAddress := ctx.ClientIP()
+
+	// Store the new refresh token
+	err = database.AddRefreshToken(refreshToken, uuid, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token " + err.Error()})
 		return
