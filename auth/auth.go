@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var jwtKey = []byte(os.Getenv("JWT_SECRET"))
+var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 // GenerateAccessToken Generate access token with a short expiration
 func GenerateAccessToken(uuid string) (string, time.Time, error) {

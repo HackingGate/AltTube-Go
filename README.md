@@ -4,7 +4,7 @@
 
 ### Local environment
 
-Generate `JWT_SECRET` and `DB_PASSWORD` in `.env` file
+Generate `JWT_KEY` and `DB_PASSWORD` in `.env` file
 
 ```sh
 python3 generate_credentials.py .env
@@ -32,7 +32,7 @@ go run main.go
 
 ### Docker environment
 
-Generate `JWT_SECRET` and `DB_PASSWORD` in `.env.docker` file
+Generate `JWT_KEY` and `DB_PASSWORD` in `.env.docker` file
 
 ```sh
 python3 generate_credentials.py .env.docker

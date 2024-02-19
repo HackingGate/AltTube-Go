@@ -23,7 +23,7 @@ def main():
     file_name = sys.argv[1]
 
     new_secret = generate_secret()
-    replace_in_file(file_name, r'JWT_SECRET=.*', f'JWT_SECRET={new_secret}')
+    replace_in_file(file_name, r'JWT_KEY=.*', f'JWT_KEY={new_secret}')
 
     new_password = generate_secret()
     replace_in_file(file_name, r'DB_PASSWORD=.*', f'DB_PASSWORD={new_password}')
