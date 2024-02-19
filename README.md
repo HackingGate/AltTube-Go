@@ -2,12 +2,12 @@
 
 ## Getting Started
 
-### Local environment
+### Common steps
 
-Generate `JWT_KEY` and `DB_PASSWORD` in `.env` file
+Generate `DB_PASSWORD` and `JWT_KEY` in `.env` and `.env.docker` file
 
 ```sh
-python3 generate_credentials.py .env
+python3 generate_credentials.py
 ```
 
 Remove `data/` directory after generating `DB_PASSWORD`
@@ -16,13 +16,9 @@ Remove `data/` directory after generating `DB_PASSWORD`
 rm -rf data/
 ```
 
-Source `.env` file
+### Local environment
 
-```sh
-. ./.env
-```
-
-Run
+Build and run
 
 ```sh
 docker compose up -d --build alttube-postgres piped piped-postgres piped-proxy
@@ -31,24 +27,6 @@ go run main.go
 ```
 
 ### Docker environment
-
-Generate `JWT_KEY` and `DB_PASSWORD` in `.env.docker` file
-
-```sh
-python3 generate_credentials.py .env.docker
-```
-
-Remove `data/` directory after generating `DB_PASSWORD`
-
-```sh
-rm -rf data/
-```
-
-Source `.env.docker` file
-
-```sh
-. ./.env.docker
-```
 
 Build and run
 
