@@ -9,10 +9,10 @@ services:
             - .env.docker:/app/.env
         container_name: alttube-go
         depends_on:
-            - postgres
+            - alttube-postgres
             - piped
             - piped-proxy
-    postgres:
+    alttube-postgres:
         image: postgres:16-alpine
         environment:
             - POSTGRES_DB=${DB_NAME}
@@ -22,7 +22,7 @@ services:
             - "5432:5432"
         volumes:
             - ./data:/var/lib/postgresql/data
-        container_name: postgres
+        container_name: alttube-postgres
     piped:
         image: 1337kavin/piped:latest
         restart: unless-stopped

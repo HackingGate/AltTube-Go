@@ -25,7 +25,7 @@ Source `.env` file
 Run
 
 ```sh
-docker compose up -d --build postgres piped piped-postgres piped-proxy
+docker compose up -d --build alttube-postgres piped piped-postgres piped-proxy
 go mod download
 go run main.go
 ```
