@@ -15,9 +15,9 @@ services:
     postgres:
         image: postgres:16-alpine
         environment:
-            - POSTGRES_DB=AltTube
-            - POSTGRES_USER=AltTube
-            - POSTGRES_PASSWORD=AltTube
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
         ports:
             - "5432:5432"
         volumes:

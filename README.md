@@ -4,27 +4,50 @@
 
 ### Local environment
 
-Change `JWT_SECRET` in `.env` file
+Generate `JWT_KEY` and `DB_PASSWORD` in `.env` file
 
 ```sh
-NEW_SECRET=$(openssl rand -base64 32)
-sed -i '' "s/JWT_SECRET=.*/JWT_SECRET=$NEW_SECRET/" .env
+python3 generate_credentials.py .env
+```
+
+Remove `data/` directory after generating `DB_PASSWORD`
+
+```sh
+rm -rf data/
+```
+
+Source `.env` file
+
+```sh
+source .env
 ```
 
 Run
 
 ```sh
+docker compose up -d --build postgres piped piped-postgres piped-proxy
 go mod download
 go run main.go
 ```
 
 ### Docker environment
 
-Change `JWT_SECRET` in `.env` file
+Generate `JWT_KEY` and `DB_PASSWORD` in `.env.docker` file
 
 ```sh
-NEW_SECRET=$(openssl rand -base64 32)
-sed -i '' "s/JWT_SECRET=.*/JWT_SECRET=$NEW_SECRET/" .env.docker
+python3 generate_credentials.py .env.docker
+```
+
+Remove `data/` directory after generating `DB_PASSWORD`
+
+```sh
+rm -rf data/
+```
+
+Source `.env.docker` file
+
+```sh
+source .env.docker
 ```
 
 Build and run
