@@ -222,7 +222,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"message\": \"Devices deleted successfully\"}",
+                        "description": "{\"message\": \"Devices deleted successfully\", \"deleted\": [1, 2, 3]}",
                         "schema": {
                             "type": "string"
                         }

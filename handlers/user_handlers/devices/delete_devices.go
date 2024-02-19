@@ -13,7 +13,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param devices body []uint true "Devices to be deleted"
-// @Success 200 {string} JSON "{"message": "Devices deleted successfully"}"
+// @Success 200 {string} JSON "{"message": "Devices deleted successfully", "deleted": [1, 2, 3]}"
 // @Security AccessToken
 // @Router /user/devices [delete]
 func DeleteDevices(ctx *gin.Context) {
@@ -64,5 +64,8 @@ func DeleteDevices(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Devices deleted successfully"})
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Devices deleted successfully",
+		"deleted": deleteIDs,
+	})
 }
