@@ -37,31 +37,47 @@ func Login(ctx *gin.Context) {
 	}
 
 	// Generate access token
-	accessToken, err := auth.GenerateAccessToken(foundUser.UserID)
+	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(foundUser.UserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
 	}
 
 	// Generate refresh token
-	refreshToken, refreshTokenExpiry, err := auth.GenerateRefreshToken(foundUser.UserID)
+	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(foundUser.UserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
 		return
 	}
 
+	// Get user_agent from request header
+	userAgent := ctx.GetHeader("User-Agent")
+
+	// Get IP address from request
+	ipAddress := ctx.ClientIP()
+
 	// Store refresh token
-	err = database.AddRefreshToken(refreshToken, foundUser.UserID, refreshTokenExpiry)
+	err = database.AddRefreshToken(refreshTokenString, foundUser.UserID, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token"})
 		return
 	}
 
-	// You may also want to add the access token to a list of valid tokens if you're tracking those
-	auth.AddToken(accessToken)
+	refreshToken, err := database.GetRefreshTokenByToken(refreshTokenString)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh token"})
+		return
+	}
+
+	// Store access token
+	err = database.AddAccessToken(accessTokenString, foundUser.UserID, accessTokenExpiry, refreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token"})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"access_token":  accessTokenString,
+		"refresh_token": refreshTokenString,
 	})
 }

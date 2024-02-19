@@ -1,0 +1,26 @@
+### Login with username and password and save token.
+POST http://0.0.0.0:8072/user/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password"
+}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+    client.global.set("access_token", response.body.access_token);
+    client.global.set("refresh_token", response.body.refresh_token);
+%}
+
+### Get user device list
+GET http://0.0.0.0:8072/user/devices
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+%}

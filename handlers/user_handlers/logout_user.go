@@ -1,7 +1,7 @@
 package user_handlers
 
 import (
-	"AltTube-Go/auth"
+	"AltTube-Go/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +15,10 @@ import (
 // @Security AccessToken
 // @Router /user/logout [get]
 func LogoutUser(ctx *gin.Context) {
-	auth.RemoveToken(ctx.GetHeader("Authorization"))
+	err := database.RemoveAccessToken(ctx.GetHeader("Authorization"))
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": "Error removing access token"})
+		return
+	}
 	ctx.JSON(200, gin.H{"message": "Logged out successfully"})
 }

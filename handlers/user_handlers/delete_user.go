@@ -1,7 +1,6 @@
 package user_handlers
 
 import (
-	"AltTube-Go/auth"
 	"AltTube-Go/database"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -19,7 +18,7 @@ import (
 func DeleteUser(ctx *gin.Context) {
 	authUUIDInterface, exists := ctx.Get("uuid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in token"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in refreshToken"})
 		ctx.Abort()
 		return
 	}
@@ -38,7 +37,19 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	auth.RemoveToken(ctx.GetHeader("Authorization"))
+	accessTokens, err := database.GetAllAccessTokensByUserID(authUUID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting access tokens"})
+		return
+	}
+
+	for _, accessToken := range accessTokens {
+		err = database.RemoveAccessToken(accessToken)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access refreshToken"})
+			return
+		}
+	}
 
 	refreshTokens, err := database.GetAllRefreshTokensByUserID(authUUID)
 	if err != nil {
@@ -46,10 +57,10 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	for _, token := range refreshTokens {
-		err = database.RemoveRefreshToken(token)
+	for _, refreshToken := range refreshTokens {
+		err = database.RemoveRefreshToken(refreshToken)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh token"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh refreshToken"})
 			return
 		}
 	}

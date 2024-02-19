@@ -4,34 +4,16 @@ import (
 	"AltTube-Go/models"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
-	"strings"
 	"time"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_SECRET"))
-var tokens []string
-
-func AddToken(token string) {
-	tokens = append(tokens, token)
-}
-
-func RemoveToken(tokenString string) {
-	// Normalize tokenString by removing potential "Bearer " prefix
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-
-	for i, t := range tokens {
-		if t == tokenString {
-			tokens = append(tokens[:i], tokens[i+1:]...)
-			break
-		}
-	}
-}
 
 // GenerateAccessToken Generate access token with a short expiration
-func GenerateAccessToken(uuid string) (string, error) {
+func GenerateAccessToken(uuid string) (string, time.Time, error) {
 	expiration := 5 * time.Minute // Short expiration
-	token, _, err := generateToken(uuid, "access", expiration)
-	return token, err
+	token, expiry, err := generateToken(uuid, "access", expiration)
+	return token, expiry, err
 }
 
 // GenerateRefreshToken Generate refresh token with a longer expiration
