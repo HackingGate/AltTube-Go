@@ -19,7 +19,7 @@ rm -rf data/
 Source `.env` file
 
 ```sh
-source .env
+. ./.env
 ```
 
 Run
@@ -47,7 +47,7 @@ rm -rf data/
 Source `.env.docker` file
 
 ```sh
-source .env.docker
+. ./.env.docker
 ```
 
 Build and run
