@@ -13,3 +13,9 @@ type LikeVideo struct {
 type LikeVideoRequest struct {
 	VideoID string `json:"video_id" binding:"required"`
 }
+
+type LikeVideoResponse struct {
+	ID           string `json:"id"`
+	Title        string `json:"title"`
+	ThumbnailUrl string `json:"thumbnail_url"`
+}

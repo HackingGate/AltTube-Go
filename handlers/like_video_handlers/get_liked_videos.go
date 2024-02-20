@@ -13,7 +13,7 @@ import (
 // @Tags like
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} models.Video
+// @Success 200 {array} models.LikeVideoResponse
 // @Security AccessToken
 // @Router /like/ [get]
 func GetLikedVideos(ctx *gin.Context) {
@@ -46,5 +46,15 @@ func GetLikedVideos(ctx *gin.Context) {
 		videos = append(videos, video)
 	}
 
-	ctx.JSON(http.StatusOK, videos)
+	// Map videos to LikeVideoResponse
+	var likeVideosResponse []models.LikeVideoResponse
+	for _, video := range videos {
+		likeVideosResponse = append(likeVideosResponse, models.LikeVideoResponse{
+			ID:           video.ID,
+			Title:        video.Title,
+			ThumbnailUrl: video.ThumbnailUrl,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, likeVideosResponse)
 }

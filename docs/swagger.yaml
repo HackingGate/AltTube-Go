@@ -1,12 +1,4 @@
 definitions:
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
-    type: object
   models.Device:
     properties:
       id:
@@ -32,6 +24,15 @@ definitions:
       email:
         type: string
     type: object
+  models.LikeVideoResponse:
+    properties:
+      id:
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+    type: object
   models.Login:
     properties:
       email:
@@ -44,29 +45,6 @@ definitions:
       email:
         type: string
       password:
-        type: string
-    type: object
-  models.Video:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      id:
-        type: string
-      thumbnailUrl:
-        type: string
-      title:
-        type: string
-      updatedAt:
-        type: string
-      uploadDate:
-        type: string
-      uploader:
-        type: string
-      uploaderUrl:
         type: string
     type: object
 info:
@@ -87,7 +65,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Video'
+              $ref: '#/definitions/models.LikeVideoResponse'
             type: array
       security:
       - AccessToken: []

@@ -39,7 +39,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Video"
+                                "$ref": "#/definitions/models.LikeVideoResponse"
                             }
                         }
                     }
@@ -533,18 +533,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "gorm.DeletedAt": {
-            "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
-                }
-            }
-        },
         "models.Device": {
             "type": "object",
             "properties": {
@@ -584,6 +572,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.LikeVideoResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "thumbnail_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Login": {
             "type": "object",
             "properties": {
@@ -602,41 +604,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Video": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "thumbnailUrl": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "uploadDate": {
-                    "type": "string"
-                },
-                "uploader": {
-                    "type": "string"
-                },
-                "uploaderUrl": {
                     "type": "string"
                 }
             }
