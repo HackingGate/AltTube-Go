@@ -58,6 +58,7 @@ func startApi() {
 	}
 	like := r.Group("/like")
 	{
+		like.GET("/:videoID", auth.Middleware(), like_video_handlers.GetLikeVideo)
 		like.POST("/:videoID", auth.Middleware(), like_video_handlers.AddLikeVideo)
 		like.DELETE("/:videoID", auth.Middleware(), like_video_handlers.RemoveLikeVideo)
 		like.GET("/", auth.Middleware(), like_video_handlers.GetLikedVideos)

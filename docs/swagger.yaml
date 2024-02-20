@@ -56,6 +56,8 @@ definitions:
         type: string
       id:
         type: string
+      thumbnailUrl:
+        type: string
       title:
         type: string
       updatedAt:
@@ -113,6 +115,28 @@ paths:
       security:
       - AccessToken: []
       summary: Remove like from video
+      tags:
+      - like
+    get:
+      consumes:
+      - application/json
+      description: Get like status of video
+      parameters:
+      - description: Video ID
+        in: path
+        name: videoID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"is_liked": "true"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Get like status of video
       tags:
       - like
     post:
