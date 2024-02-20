@@ -8,7 +8,7 @@
     },
     "paths": {
         "/like/{videoID}": {
-            "put": {
+            "post": {
                 "security": [
                     {
                         "AccessToken": []

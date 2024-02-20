@@ -16,7 +16,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/like/{videoID}": {
-            "put": {
+            "post": {
                 "security": [
                     {
                         "AccessToken": []

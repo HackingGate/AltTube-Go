@@ -44,8 +44,8 @@ GET http://0.0.0.0:8072/piped/streams/Kt8RupLIkBQ
     });
 %}
 
-### Like video
-PUT http://0.0.0.0:8072/like/Kt8RupLIkBQ
+### Add like video
+POST http://0.0.0.0:8072/like/Kt8RupLIkBQ
 Authorization: Bearer {{access_token}}
 
 > {%
@@ -53,3 +53,4 @@ Authorization: Bearer {{access_token}}
         client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
     });
 %}
+

@@ -45,7 +45,7 @@ info:
   version: "1.0"
 paths:
   /like/{videoID}:
-    put:
+    post:
       consumes:
       - application/json
       description: Add like to video

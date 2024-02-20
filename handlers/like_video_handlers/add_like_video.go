@@ -15,7 +15,7 @@ import (
 // @Param videoID path string true "Video ID"
 // @Success 200 {string} JSON "{"message": "Video liked successfully"}"
 // @Security AccessToken
-// @Router /like/{videoID} [put]
+// @Router /like/{videoID} [post]
 func AddLikeVideo(ctx *gin.Context) {
 	videoID := ctx.Param("videoID")
 
