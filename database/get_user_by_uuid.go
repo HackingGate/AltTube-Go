@@ -2,9 +2,9 @@ package database
 
 import "AltTube-Go/models"
 
-func GetUserByUUID(uuid string) (*models.User, error) {
+func GetUserByID(id string) (*models.User, error) {
 	result := models.User{}
-	dbResult := dbInstance.Where("uuid = ?", uuid).First(&result)
+	dbResult := dbInstance.Where("id = ?", id).First(&result)
 	if dbResult.Error != nil {
 		return nil, dbResult.Error
 	}

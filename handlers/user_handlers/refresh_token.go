@@ -43,13 +43,13 @@ func RefreshToken(ctx *gin.Context) {
 	}
 
 	// Replace the old refresh token with the new one
-	err = database.RemoveRefreshToken(tokenString)
+	err = database.RemoveRefreshTokenByToken(tokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
 		return
 	}
 
-	user, err := database.GetUserByUUID(uuid)
+	user, err := database.GetUserByID(uuid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
 		return
