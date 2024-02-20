@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// AddLike godoc
+// AddLikeVideo godoc
 // @Summary Add like to video
 // @Description Add like to video
 // @Tags like
@@ -16,7 +16,7 @@ import (
 // @Success 200 {string} JSON "{"message": "Video liked successfully"}"
 // @Security AccessToken
 // @Router /like/{videoID} [put]
-func AddLike(ctx *gin.Context) {
+func AddLikeVideo(ctx *gin.Context) {
 	videoID := ctx.Param("videoID")
 
 	authUserIDInterface, exists := ctx.Get("UserID")
