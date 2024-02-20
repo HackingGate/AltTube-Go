@@ -54,3 +54,12 @@ Authorization: Bearer {{access_token}}
     });
 %}
 
+### Remove like video
+DELETE http://0.0.0.0:8072/like/Kt8RupLIkBQ
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.test("Response status is 200", function() {
+        client.assert(response.status === 200, "Expected response status to be 200, but received " + response.status);
+    });
+%}

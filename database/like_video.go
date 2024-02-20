@@ -27,3 +27,7 @@ func ReadIsLikedVideo(user *models.User, video *models.Video) (bool, error) {
 	}
 	return true, nil
 }
+
+func RemoveLikeVideo(user *models.User, video *models.Video) error {
+	return dbInstance.Where("user_id = ? AND video_id = ?", user.ID, video.ID).Delete(&models.LikeVideo{}).Error
+}

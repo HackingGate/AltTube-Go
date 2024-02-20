@@ -50,6 +50,41 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Remove like from video",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "like"
+                ],
+                "summary": "Remove like from video",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Video ID",
+                        "name": "videoID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"Video like removed successfully\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/ping": {

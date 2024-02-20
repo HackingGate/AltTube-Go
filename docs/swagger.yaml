@@ -45,6 +45,28 @@ info:
   version: "1.0"
 paths:
   /like/{videoID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove like from video
+      parameters:
+      - description: Video ID
+        in: path
+        name: videoID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Video like removed successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Remove like from video
+      tags:
+      - like
     post:
       consumes:
       - application/json
