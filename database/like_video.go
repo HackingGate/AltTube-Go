@@ -35,3 +35,9 @@ func RemoveLikeVideo(user *models.User, video *models.Video) error {
 func RemoveAllLikesByUserID(userID string) error {
 	return dbInstance.Unscoped().Where("user_id = ?", userID).Delete(&models.LikeVideo{}).Error
 }
+
+func GetAllLikesByUserID(userID string) ([]models.LikeVideo, error) {
+	var likes []models.LikeVideo
+	dbResult := dbInstance.Where("user_id = ?", userID).Find(&likes)
+	return likes, dbResult.Error
+}

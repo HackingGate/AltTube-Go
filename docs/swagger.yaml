@@ -1,4 +1,12 @@
 definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
   models.Device:
     properties:
       id:
@@ -38,12 +46,52 @@ definitions:
       password:
         type: string
     type: object
+  models.Video:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      uploadDate:
+        type: string
+      uploader:
+        type: string
+      uploaderUrl:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is the API documentation for the AltTube application.
   title: AltTube API
   version: "1.0"
 paths:
+  /like/:
+    get:
+      consumes:
+      - application/json
+      description: Get liked videos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Video'
+            type: array
+      security:
+      - AccessToken: []
+      summary: Get liked videos
+      tags:
+      - like
   /like/{videoID}:
     delete:
       consumes:
