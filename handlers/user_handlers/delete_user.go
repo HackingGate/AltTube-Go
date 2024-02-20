@@ -36,18 +36,22 @@ func DeleteUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh tokens"})
 		return
 	}
+	var refreshTokensIDs []uint
 	for _, refreshToken := range refreshTokens {
+		// Delete access tokens associated with the refresh token
 		err = database.RemoveAllAccessTokensByRefreshTokenID(refreshToken.ID)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access tokens associated with refresh refreshToken"})
 			return
 		}
 
-		err = database.RemoveRefreshTokenByToken(refreshToken.Token)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refreshTokens"})
-			return
-		}
+		refreshTokensIDs = append(refreshTokensIDs, refreshToken.ID)
+	}
+
+	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh tokens"})
+		return
 	}
 
 	// Delete user from database
@@ -55,20 +59,6 @@ func DeleteUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting user"})
 		return
-	}
-
-	accessTokens, err := database.GetAllAccessTokensByUserID(authUUID)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting access tokens"})
-		return
-	}
-
-	for _, accessToken := range accessTokens {
-		err = database.RemoveAccessToken(accessToken)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access refreshToken"})
-			return
-		}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})

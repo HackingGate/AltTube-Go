@@ -26,8 +26,13 @@ func LogoutUser(ctx *gin.Context) {
 		return
 	}
 
-	err = database.RemoveRefreshTokensByID([]uint{refreshToken.ID})
+	err = database.RemoveAccessToken(tokenString)
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": "Error removing access token"})
+		return
+	}
 
+	err = database.RemoveRefreshTokensByID([]uint{refreshToken.ID})
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Error removing refresh token"})
 		return

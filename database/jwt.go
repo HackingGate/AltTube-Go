@@ -98,9 +98,13 @@ func RemoveRefreshTokenByToken(token string) error {
 	return result.Error
 }
 
+func RemoveRefreshTokensByID(ids []uint) error {
+	return dbInstance.Unscoped().Where("id IN ?", ids).Delete(&models.RefreshToken{}).Error
+}
+
 func GetAllRefreshTokensByUserID(userID string) ([]models.RefreshToken, error) {
 	var refreshTokens []models.RefreshToken // Use a slice to hold multiple tokens
-	result := dbInstance.Where("user_id = ? AND expiry > ?", userID, time.Now()).Find(&refreshTokens)
+	result := dbInstance.Where("user_id = ?", userID).Find(&refreshTokens)
 
 	if result.Error != nil {
 		return nil, result.Error
