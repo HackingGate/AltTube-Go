@@ -12,5 +12,5 @@ type RefreshToken struct {
 	UserAgent string
 	IPAddress string
 	UserID    string `gorm:"index"`
-	User      User   `gorm:"foreignKey:ID"`
+	User      User   `gorm:"foreignKey:UserID"`
 }

@@ -9,7 +9,7 @@ type AccessToken struct {
 	gorm.Model
 	Token          string `gorm:"index:idx_token"`
 	UserID         string `gorm:"index"`
-	User           User   `gorm:"foreignKey:ID"`
+	User           User   `gorm:"foreignKey:UserID"`
 	Expiry         time.Time
 	RefreshTokenID uint         `gorm:"index"`
 	RefreshToken   RefreshToken `gorm:"foreignKey:RefreshTokenID"`
