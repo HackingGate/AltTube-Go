@@ -3,6 +3,7 @@ package user_handlers
 import (
 	"AltTube-Go/database"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 // LogoutUser godoc
@@ -13,9 +14,14 @@ import (
 // @Produce  json
 // @Success 200 {string} JSON "{"message": "Logged out successfully"}"
 // @Security AccessToken
-// @Router /user/logout [get]
+// @Router /user/logout [post]
 func LogoutUser(ctx *gin.Context) {
-	err := database.RemoveAccessToken(ctx.GetHeader("Authorization"))
+	// Get authorization header
+	tokenString := ctx.GetHeader("Authorization")
+	// Assuming currentRefreshToken is provided as 'Bearer <currentRefreshToken>'
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	err := database.RemoveAccessToken(tokenString)
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Error removing access token"})
 		return

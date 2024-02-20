@@ -50,7 +50,7 @@ func startApi() {
 		user.POST("/signup", user_handlers.Signup)
 		user.PATCH("/email", auth.Middleware(), user_handlers.EditEmail)
 		user.DELETE("/", auth.Middleware(), user_handlers.DeleteUser)
-		user.GET("/logout", auth.Middleware(), user_handlers.LogoutUser)
+		user.POST("/logout", auth.Middleware(), user_handlers.LogoutUser)
 		user.POST("/refresh_token", user_handlers.RefreshToken)
 		user.GET("/devices", auth.Middleware(), devices.GetDevices)
 		user.DELETE("/devices", auth.Middleware(), devices.DeleteDevices)

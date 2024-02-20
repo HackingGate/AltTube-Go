@@ -296,7 +296,7 @@
             }
         },
         "/user/logout": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "AccessToken": []

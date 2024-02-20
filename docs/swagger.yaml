@@ -229,7 +229,7 @@ paths:
       tags:
       - user
   /user/logout:
-    get:
+    post:
       consumes:
       - application/json
       description: Logout user

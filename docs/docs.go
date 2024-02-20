@@ -304,7 +304,7 @@ const docTemplate = `{
             }
         },
         "/user/logout": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "AccessToken": []

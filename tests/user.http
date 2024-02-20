@@ -103,7 +103,7 @@ Authorization: Bearer {{access_token}}
 %}
 
 ### Logout user.
-GET http://0.0.0.0:8072/user/logout
+POST http://0.0.0.0:8072/user/logout
 Authorization: Bearer {{access_token}}
 
 > {%
@@ -113,7 +113,6 @@ Authorization: Bearer {{access_token}}
 %}
 
 ### Delete user.
-# @delay 3000
 DELETE http://0.0.0.0:8072/user
 Authorization: Bearer {{access_token}}
 
