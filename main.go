@@ -5,6 +5,7 @@ import (
 	"AltTube-Go/database"
 	docs "AltTube-Go/docs"
 	"AltTube-Go/handlers"
+	"AltTube-Go/handlers/like_video_handlers"
 	"AltTube-Go/handlers/piped"
 	"AltTube-Go/handlers/piped/opensearch"
 	"AltTube-Go/handlers/pipedproxy"
@@ -54,6 +55,10 @@ func startApi() {
 		user.POST("/refresh_token", user_handlers.RefreshToken)
 		user.GET("/devices", auth.Middleware(), devices.GetDevices)
 		user.DELETE("/devices", auth.Middleware(), devices.DeleteDevices)
+	}
+	like := r.Group("/like")
+	{
+		like.POST("/video", auth.Middleware(), like_video_handlers.AddLike)
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {
