@@ -47,10 +47,16 @@ func DeleteUser(ctx *gin.Context) {
 
 		refreshTokensIDs = append(refreshTokensIDs, refreshToken.ID)
 	}
-
 	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh tokens"})
+		return
+	}
+
+	// Delete like videos associated with the user
+	err = database.RemoveAllLikesByUserID(authUUID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing like videos"})
 		return
 	}
 

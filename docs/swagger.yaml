@@ -24,6 +24,15 @@ definitions:
       email:
         type: string
     type: object
+  models.LikeVideoResponse:
+    properties:
+      id:
+        type: string
+      thumbnail_url:
+        type: string
+      title:
+        type: string
+    type: object
   models.Login:
     properties:
       email:
@@ -44,6 +53,92 @@ info:
   title: AltTube API
   version: "1.0"
 paths:
+  /like/:
+    get:
+      consumes:
+      - application/json
+      description: Get liked videos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.LikeVideoResponse'
+            type: array
+      security:
+      - AccessToken: []
+      summary: Get liked videos
+      tags:
+      - like
+  /like/{videoID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove like from video
+      parameters:
+      - description: Video ID
+        in: path
+        name: videoID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Video like removed successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Remove like from video
+      tags:
+      - like
+    get:
+      consumes:
+      - application/json
+      description: Get like status of video
+      parameters:
+      - description: Video ID
+        in: path
+        name: videoID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"is_liked": "true"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Get like status of video
+      tags:
+      - like
+    post:
+      consumes:
+      - application/json
+      description: Add like to video
+      parameters:
+      - description: Video ID
+        in: path
+        name: videoID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "Video liked successfully"}'
+          schema:
+            type: string
+      security:
+      - AccessToken: []
+      summary: Add like to video
+      tags:
+      - like
   /ping:
     get:
       consumes:

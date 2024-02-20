@@ -63,6 +63,10 @@ func Init() {
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
+	err = db.AutoMigrate(&models.LikeVideo{})
+	if err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
 
 	dbInstance = db
 }
