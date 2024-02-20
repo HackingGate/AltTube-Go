@@ -35,7 +35,7 @@ func GetDevices(ctx *gin.Context) {
 		return
 	}
 
-	refreshTokens, err := database.GetRefreshTokenByUserID(authUserID)
+	refreshTokens, err := database.GetAllRefreshTokensByUserID(authUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting devices for user"})
 		return

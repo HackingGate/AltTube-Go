@@ -2,6 +2,7 @@ package devices
 
 import (
 	"AltTube-Go/database"
+	"AltTube-Go/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -36,29 +37,46 @@ func DeleteDevices(ctx *gin.Context) {
 		return
 	}
 
-	refreshTokens, err := database.GetRefreshTokenByUserID(authUserID)
+	// Delete refresh tokens associated with the user
+	refreshTokens, err := database.GetAllRefreshTokensByUserID(authUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting devices for user"})
 		return
 	}
+	// Filter refreshTokens with deleteDevices
+	filteredRefreshTokens := make([]models.RefreshToken, 0)
+	for _, refreshToken := range refreshTokens {
+		for _, device := range deleteDevices {
+			if refreshToken.ID == device {
+				filteredRefreshTokens = append(filteredRefreshTokens, refreshToken)
+				break
+			}
+		}
+	}
+	refreshTokens = filteredRefreshTokens
 	if len(refreshTokens) == 0 {
 		ctx.JSON(http.StatusOK, gin.H{"message": "No devices can be deleted"})
 		return
 	}
-
-	// Filter only the refresh tokens that are to be deleted
-	// Prepare IDs to be deleted
-	var deleteIDs []uint
-	for i := range refreshTokens {
-		for j := range deleteDevices {
-			if refreshTokens[i].ID == deleteDevices[j] {
-				deleteIDs = append(deleteIDs, refreshTokens[i].ID)
-			}
+	var refreshTokensIDs []uint
+	for _, refreshToken := range refreshTokens {
+		// Delete access tokens associated with the refresh token
+		err = database.RemoveAllAccessTokensByRefreshTokenID(refreshToken.ID)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access tokens associated with refresh refreshToken"})
+			return
 		}
+
+		refreshTokensIDs = append(refreshTokensIDs, refreshToken.ID)
+	}
+	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh tokens"})
+		return
 	}
 
 	// Delete the refresh tokens
-	err = database.RemoveRefreshTokensByID(deleteIDs)
+	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting devices"})
 		return
@@ -66,6 +84,6 @@ func DeleteDevices(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Devices deleted successfully",
-		"deleted": deleteIDs,
+		"deleted": refreshTokensIDs,
 	})
 }
