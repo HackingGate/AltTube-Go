@@ -23,15 +23,15 @@ func GetDevices(ctx *gin.Context) {
 	// Assuming currentRefreshToken is provided as 'Bearer <currentRefreshToken>'
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-	authUserIDInterface, exists := ctx.Get("uuid")
+	authUserIDInterface, exists := ctx.Get("UserID")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in currentRefreshToken"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UserID found in currentRefreshToken"})
 		return
 	}
 
 	authUserID, ok := authUserIDInterface.(string)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UUID format invalid"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UserID format invalid"})
 		return
 	}
 

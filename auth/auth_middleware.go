@@ -34,8 +34,8 @@ func Middleware() gin.HandlerFunc {
 			return
 		}
 
-		// Token is valid, set email in context, so it can be used in the handler
-		ctx.Set("uuid", claims.UUID)
+		// Token is valid, set UserID in context, so it can be used in the handler
+		ctx.Set("UserID", claims.UserID)
 		ctx.Next()
 	}
 }

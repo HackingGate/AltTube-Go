@@ -16,16 +16,16 @@ import (
 // @Security AccessToken
 // @Router /user/ [delete]
 func DeleteUser(ctx *gin.Context) {
-	authUUIDInterface, exists := ctx.Get("uuid")
+	authUUIDInterface, exists := ctx.Get("UserID")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UUID found in refreshToken"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - No UserID found in refreshToken"})
 		ctx.Abort()
 		return
 	}
 
 	authUUID, ok := authUUIDInterface.(string)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UUID format invalid"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UserID format invalid"})
 		ctx.Abort()
 		return
 	}

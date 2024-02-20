@@ -27,7 +27,7 @@ func GenerateRefreshToken(uuid string) (string, time.Time, error) {
 func generateToken(uuid string, tokenType string, expiration time.Duration) (string, time.Time, error) {
 	expirationTime := time.Now().Add(expiration)
 	claims := &models.Claims{
-		UUID:      uuid,
+		UserID:    uuid,
 		TokenType: tokenType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
