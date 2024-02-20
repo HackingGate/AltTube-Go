@@ -21,9 +21,15 @@ func LogoutUser(ctx *gin.Context) {
 	// Assuming currentRefreshToken is provided as 'Bearer <currentRefreshToken>'
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-	err := database.RemoveAccessToken(tokenString)
+	refreshToken, err := database.GetRefreshTokenByAccessToken(tokenString)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Error removing access token"})
+		return
+	}
+
+	err = database.RemoveRefreshTokensByID([]uint{refreshToken.ID})
+
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": "Error removing refresh token"})
 		return
 	}
 	ctx.JSON(200, gin.H{"message": "Logged out successfully"})
