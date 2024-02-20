@@ -41,7 +41,7 @@ Build and run in background in one command
 docker compose up --build -d
 ```
 
-### API Documentation
+## API Documentation
 
 #### Generate
 
@@ -63,7 +63,7 @@ http://localhost:8072/swagger/index.html
 
 https://efficiency-node-alttube.hackinggate.com/swagger/index.html
 
-### Database Diagram
+## Database Diagram
 
 ![DB_Diagram](https://github.com/HackingGate/AltTube-Go/assets/8541644/d5eee81d-75be-489c-8db9-91b0a054b642)
 
