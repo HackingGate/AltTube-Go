@@ -24,13 +24,6 @@ definitions:
       email:
         type: string
     type: object
-  models.LikeVideoRequest:
-    properties:
-      video_id:
-        type: string
-    required:
-    - video_id
-    type: object
   models.Login:
     properties:
       email:
@@ -51,18 +44,17 @@ info:
   title: AltTube API
   version: "1.0"
 paths:
-  /like/video:
-    post:
+  /like/{videoID}:
+    put:
       consumes:
       - application/json
       description: Add like to video
       parameters:
-      - description: Like Video Request
-        in: body
-        name: likeVideoRequest
+      - description: Video ID
+        in: path
+        name: videoID
         required: true
-        schema:
-          $ref: '#/definitions/models.LikeVideoRequest'
+        type: string
       produces:
       - application/json
       responses:

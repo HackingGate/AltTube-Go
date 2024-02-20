@@ -58,7 +58,7 @@ func startApi() {
 	}
 	like := r.Group("/like")
 	{
-		like.POST("/video", auth.Middleware(), like_video_handlers.AddLike)
+		like.PUT("/:videoID", auth.Middleware(), like_video_handlers.AddLike)
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	if err := r.Run(":" + os.Getenv("PORT")); err != nil {

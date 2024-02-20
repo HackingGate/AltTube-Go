@@ -2,7 +2,6 @@ package like_video_handlers
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,16 +12,12 @@ import (
 // @Tags like
 // @Accept  json
 // @Produce  json
-// @Param likeVideoRequest body models.LikeVideoRequest true "Like Video Request"
+// @Param videoID path string true "Video ID"
 // @Success 200 {string} JSON "{"message": "Video liked successfully"}"
 // @Security AccessToken
-// @Router /like/video [post]
+// @Router /like/{videoID} [put]
 func AddLike(ctx *gin.Context) {
-	var likeVideoRequest models.LikeVideoRequest
-	if err := ctx.ShouldBindJSON(&likeVideoRequest); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	videoID := ctx.Param("videoID")
 
 	authUserIDInterface, exists := ctx.Get("UserID")
 	if !exists {
@@ -42,7 +37,7 @@ func AddLike(ctx *gin.Context) {
 		return
 	}
 
-	video, err := database.GetVideoByV(likeVideoRequest.VideoID)
+	video, err := database.GetVideoByV(videoID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting video"})
 		return

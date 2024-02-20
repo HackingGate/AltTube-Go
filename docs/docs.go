@@ -15,8 +15,8 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/like/video": {
-            "post": {
+        "/like/{videoID}": {
+            "put": {
                 "security": [
                     {
                         "AccessToken": []
@@ -35,13 +35,11 @@ const docTemplate = `{
                 "summary": "Add like to video",
                 "parameters": [
                     {
-                        "description": "Like Video Request",
-                        "name": "likeVideoRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.LikeVideoRequest"
-                        }
+                        "type": "string",
+                        "description": "Video ID",
+                        "name": "videoID",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -469,17 +467,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.LikeVideoRequest": {
-            "type": "object",
-            "required": [
-                "video_id"
-            ],
-            "properties": {
-                "video_id": {
                     "type": "string"
                 }
             }
