@@ -6,10 +6,11 @@ import (
 )
 
 // AddAccessToken creates and stores a new access token in the database.
-func AddAccessToken(token, userID string, expiry time.Time, refreshToken models.RefreshToken) error {
+func AddAccessToken(token string, user *models.User, expiry time.Time, refreshToken models.RefreshToken) error {
 	accessToken := models.AccessToken{
 		Token:          token,
-		UserID:         userID,
+		UserID:         user.ID,
+		User:           *user,
 		Expiry:         expiry,
 		RefreshTokenID: refreshToken.ID,
 		RefreshToken:   refreshToken,
@@ -57,10 +58,11 @@ func RemoveAllAccessTokensByRefreshTokenID(refreshTokenID uint) error {
 }
 
 // AddRefreshToken creates and stores a new refresh token in the database.
-func AddRefreshToken(token, userID string, expiry time.Time, userAgent string, ipAddress string) error {
+func AddRefreshToken(token string, user *models.User, expiry time.Time, userAgent string, ipAddress string) error {
 	refreshToken := models.RefreshToken{
 		Token:     token,
-		UserID:    userID,
+		UserID:    user.ID,
+		User:      *user,
 		Expiry:    expiry,
 		UserAgent: userAgent,
 		IPAddress: ipAddress,
@@ -78,8 +80,8 @@ func ValidateRefreshToken(token string) (string, bool) {
 	return refreshToken.UserID, true
 }
 
-// RemoveRefreshToken deletes a refresh token from the database.
-func RemoveRefreshToken(token string) error {
+// RemoveRefreshTokenByToken deletes a refresh token from the database.
+func RemoveRefreshTokenByToken(token string) error {
 	// First, get the refresh token to get its ID
 	refreshToken, err := GetRefreshTokenByToken(token)
 	if err != nil {
@@ -96,7 +98,7 @@ func RemoveRefreshToken(token string) error {
 	return result.Error
 }
 
-func GetAllRefreshTokensByUserID(userID string) ([]string, error) {
+func GetAllRefreshTokensByUserID(userID string) ([]models.RefreshToken, error) {
 	var refreshTokens []models.RefreshToken // Use a slice to hold multiple tokens
 	result := dbInstance.Where("user_id = ? AND expiry > ?", userID, time.Now()).Find(&refreshTokens)
 
@@ -104,13 +106,7 @@ func GetAllRefreshTokensByUserID(userID string) ([]string, error) {
 		return nil, result.Error
 	}
 
-	// Extract the token strings from the refreshTokens slice
-	var tokens []string
-	for _, refreshToken := range refreshTokens {
-		tokens = append(tokens, refreshToken.Token)
-	}
-
-	return tokens, nil
+	return refreshTokens, nil
 }
 
 func GetRefreshTokenByToken(token string) (models.RefreshToken, error) {

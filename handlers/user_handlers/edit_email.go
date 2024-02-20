@@ -36,7 +36,7 @@ func EditEmail(ctx *gin.Context) {
 		return
 	}
 
-	err := database.UpdateUserByUserID(authUserID, editEmail)
+	err := database.UpdateUserByID(authUserID, editEmail)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating email"})
 		return

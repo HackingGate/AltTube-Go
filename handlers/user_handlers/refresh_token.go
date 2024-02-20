@@ -43,9 +43,15 @@ func RefreshToken(ctx *gin.Context) {
 	}
 
 	// Replace the old refresh token with the new one
-	err = database.RemoveRefreshToken(tokenString)
+	err = database.RemoveRefreshTokenByToken(tokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
+		return
+	}
+
+	user, err := database.GetUserByID(uuid)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
 		return
 	}
 
@@ -56,7 +62,7 @@ func RefreshToken(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store the new refresh token
-	err = database.AddRefreshToken(refreshTokenString, uuid, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(refreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token " + err.Error()})
 		return
@@ -68,7 +74,7 @@ func RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	err = database.AddAccessToken(accessTokenString, uuid, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(accessTokenString, user, accessTokenExpiry, refreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token " + err.Error()})
 		return

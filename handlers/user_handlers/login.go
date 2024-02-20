@@ -37,14 +37,14 @@ func Login(ctx *gin.Context) {
 	}
 
 	// Generate access token
-	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(foundUser.UserID)
+	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(foundUser.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
 	}
 
 	// Generate refresh token
-	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(foundUser.UserID)
+	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(foundUser.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
 		return
@@ -57,7 +57,7 @@ func Login(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store refresh token
-	err = database.AddRefreshToken(refreshTokenString, foundUser.UserID, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(refreshTokenString, foundUser, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token"})
 		return
@@ -70,7 +70,7 @@ func Login(ctx *gin.Context) {
 	}
 
 	// Store access token
-	err = database.AddAccessToken(accessTokenString, foundUser.UserID, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(accessTokenString, foundUser, accessTokenExpiry, refreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token"})
 		return
