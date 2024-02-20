@@ -6,10 +6,11 @@ import (
 )
 
 // AddAccessToken creates and stores a new access token in the database.
-func AddAccessToken(token, userID string, expiry time.Time, refreshToken models.RefreshToken) error {
+func AddAccessToken(token string, user *models.User, expiry time.Time, refreshToken models.RefreshToken) error {
 	accessToken := models.AccessToken{
 		Token:          token,
-		UserID:         userID,
+		UserID:         user.ID,
+		User:           *user,
 		Expiry:         expiry,
 		RefreshTokenID: refreshToken.ID,
 		RefreshToken:   refreshToken,
@@ -57,10 +58,11 @@ func RemoveAllAccessTokensByRefreshTokenID(refreshTokenID uint) error {
 }
 
 // AddRefreshToken creates and stores a new refresh token in the database.
-func AddRefreshToken(token, userID string, expiry time.Time, userAgent string, ipAddress string) error {
+func AddRefreshToken(token string, user *models.User, expiry time.Time, userAgent string, ipAddress string) error {
 	refreshToken := models.RefreshToken{
 		Token:     token,
-		UserID:    userID,
+		UserID:    user.ID,
+		User:      *user,
 		Expiry:    expiry,
 		UserAgent: userAgent,
 		IPAddress: ipAddress,

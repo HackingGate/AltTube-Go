@@ -27,7 +27,7 @@ func Signup(c *gin.Context) {
 	var user models.User
 	user.Email = signup.Email
 	user.Password = signup.Password
-	user.UserID = utils.GenerateUUID()
+	user.ID = utils.GenerateUUID()
 
 	hashedPassword, _ := utils.HashPassword(user.Password) // Hash the password
 	user.Password = hashedPassword
