@@ -62,3 +62,8 @@ swag init --parseDependency --parseInternal --parseDepth 1
 http://localhost:8072/swagger/index.html
 
 https://efficiency-node-alttube.hackinggate.com/swagger/index.html
+
+### Database Diagram
+
+![DB_Diagram](https://github.com/HackingGate/AltTube-Go/assets/8541644/d5eee81d-75be-489c-8db9-91b0a054b642)
+
