@@ -1,23 +1,26 @@
-package piped
+package piped_handlers
 
 import (
+	"AltTube-Go/database"
+	"AltTube-Go/models"
 	"AltTube-Go/utils"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
 )
 
-// Search godoc
-// @Summary Search
-// @Description Search
+// Streams godoc
+// @Summary Get video streams
+// @Description Get video streams by video ID
 // @Tags piped
 // @Accept  json
 // @Produce  json
-// @Param q query string true "Query"
-// @Success 200 {string} JSON "Search results"
-// @Router /piped/search [get]
-func Search(ctx *gin.Context) {
+// @Param videoID path string true "Video ID"
+// @Success 200 {string} JSON "Video streams"
+// @Router /piped/streams/{videoID} [get]
+func Streams(ctx *gin.Context) {
 	// Retrieve the backend URL from an environment variable
 	backendURL := os.Getenv("PIPED_BACKEND_URL")
 	if backendURL == "" {
@@ -27,15 +30,15 @@ func Search(ctx *gin.Context) {
 	}
 
 	// Retrieve the query parameter from the request
-	q := ctx.Query("q")
-	if q == "" {
-		// Handle the case where the query parameter is missing
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter is required"})
+	videoID := ctx.Param("videoID")
+	if videoID == "" {
+		// Handle the case where the stream ID is missing
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Video ID is required"})
 		return
 	}
 
 	// Build the request URL with the query parameter
-	requestURL := backendURL + "/search?q=" + q + "&filter=all"
+	requestURL := backendURL + "/streams/" + videoID
 
 	// Make the HTTP GET request to the backend
 	resp, err := http.Get(requestURL)
@@ -65,6 +68,32 @@ func Search(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to modify URLs in response"})
 		return
+	}
+
+	// Add Video to database if it doesn't exist
+	if resp.StatusCode == 200 {
+		var video models.Video
+		// Decode JSON and store in video
+		err := json.Unmarshal(modifiedBody, &video)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal response from backend"})
+			return
+		}
+
+		video.ID = videoID
+
+		// Check if video already exists in the database
+		existingVideo := database.VideoExists(video.ID)
+
+		if !existingVideo {
+			// Save the new video to the database
+			err = database.AddVideo(video)
+			if err != nil {
+				// Handle potential database error
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save video to database"})
+				return
+			}
+		}
 	}
 
 	// Return the response body as is
