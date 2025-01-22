@@ -1,21 +1,37 @@
 name: Dependabot auto-approve
-on: pull_request
+on: 
+  pull_request:
+    types:
+      - synchronize
+      - opened
+  check_suite:
+    types:
+      - completed
 
 permissions:
   pull-requests: write
+  checks: read
 
 jobs:
   dependabot:
     runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v2
+      - name: Wait for all checks
+        id: checks
+        uses: actions/github-script@v6
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Approve a PR
+          script: |
+            const { context } = require('@actions/github');
+            const checks = await context.octokit.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.pull_request.head.sha,
+            });
+            return checks.data.check_runs.every(check => check.conclusion === 'success');
+      - name: Approve PR if all checks pass
+        if: steps.checks.outputs.result == 'true'
         run: gh pr review --approve "$PR_URL"
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
