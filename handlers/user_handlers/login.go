@@ -5,8 +5,9 @@ import (
 	"AltTube-Go/database"
 	"AltTube-Go/models"
 	"AltTube-Go/utils"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Login godoc

@@ -13,7 +13,7 @@ services:
             - piped
             - piped-proxy
     alttube-postgres:
-        image: postgres:16-alpine
+        image: postgres:alpine
         environment:
             - POSTGRES_DB=${DB_NAME}
             - POSTGRES_USER=${DB_USER}
@@ -34,7 +34,7 @@ services:
             - piped-postgres
         container_name: piped-backend
     piped-postgres:
-        image: postgres:16-alpine
+        image: postgres:alpine
         restart: unless-stopped
         ports:
             - "8063:5432"
@@ -45,17 +45,6 @@ services:
             - POSTGRES_USER=piped
             - POSTGRES_PASSWORD=changeme
         container_name: piped-postgres
-    pipedfrontend:
-        image: 1337kavin/piped-frontend:latest
-        restart: unless-stopped
-        ports:
-            - "8062:80"
-        depends_on:
-            - piped
-        container_name: piped-frontend
-        entrypoint: ash -c 'sed -i "s/https:\/\/pipedapi.kavin.rocks/http:\/\/localhost:8060/g" /usr/share/nginx/html/assets/* && /docker-entrypoint.sh && nginx -g "daemon off;"'
-        environment:
-            - BACKEND_HOSTNAME=localhost:8060
     piped-proxy:
         image: 1337kavin/piped-proxy:latest
         restart: unless-stopped

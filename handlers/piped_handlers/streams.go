@@ -5,10 +5,11 @@ import (
 	"AltTube-Go/models"
 	"AltTube-Go/utils"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Streams godoc

@@ -2,7 +2,6 @@ package pipedproxy
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"net/http/httputil"
@@ -10,6 +9,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func PipedProxy(ctx *gin.Context) {

@@ -2,9 +2,10 @@ package auth
 
 import (
 	"AltTube-Go/models"
-	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_KEY"))

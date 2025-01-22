@@ -11,11 +11,12 @@ import (
 	"AltTube-Go/handlers/pipedproxy"
 	"AltTube-Go/handlers/user_handlers"
 	"AltTube-Go/handlers/user_handlers/devices"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"log"
-	"os"
 )
 
 var r *gin.Engine

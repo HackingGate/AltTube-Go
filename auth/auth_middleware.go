@@ -3,10 +3,11 @@ package auth
 import (
 	"AltTube-Go/database"
 	"AltTube-Go/models"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func Middleware() gin.HandlerFunc {
