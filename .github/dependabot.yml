@@ -4,7 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    rebase-strategy: "auto"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
+    rebase-strategy: "auto"
