@@ -1,0 +1,28 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Generate credentials
+      run: python3 generate_credentials.py
+
+    - name: Build and start services with Docker Compose
+      run: |
+        docker compose up --build -d
+
+    - name: Test /ping endpoint
+      run: |
+        curl -X 'GET' \
+          'http://localhost:8072/ping' \
+          -H 'accept: application/json' | grep '"message":"pong"'
