@@ -23,6 +23,7 @@ jobs:
 
     - name: Test /ping endpoint
       run: |
+        sleep 10
         curl -X 'GET' \
           'http://localhost:8072/ping' \
           -H 'accept: application/json' | grep '"message":"pong"'
