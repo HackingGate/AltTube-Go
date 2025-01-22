@@ -26,4 +26,4 @@ jobs:
         sleep 10
         curl -X 'GET' \
           'http://localhost:8072/ping' \
-          -H 'accept: application/json' | grep '"message":"pong"'
+          -H 'accept: application/json' | grep '{"message":"pong"}'
