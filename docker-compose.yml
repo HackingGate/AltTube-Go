@@ -13,7 +13,7 @@ services:
             - piped
             - piped-proxy
     alttube-postgres:
-        image: postgres:16-alpine
+        image: postgres:alpine
         environment:
             - POSTGRES_DB=${DB_NAME}
             - POSTGRES_USER=${DB_USER}
@@ -34,7 +34,7 @@ services:
             - piped-postgres
         container_name: piped-backend
     piped-postgres:
-        image: postgres:16-alpine
+        image: postgres:alpine
         restart: unless-stopped
         ports:
             - "8063:5432"
