@@ -2,8 +2,9 @@ package user_handlers
 
 import (
 	"AltTube-Go/database"
-	"github.com/gin-gonic/gin"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // LogoutUser godoc

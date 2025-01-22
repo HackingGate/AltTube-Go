@@ -1,10 +1,11 @@
 package opensearch
 
 import (
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Suggestions godoc

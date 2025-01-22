@@ -3,9 +3,10 @@ package user_handlers
 import (
 	"AltTube-Go/auth"
 	"AltTube-Go/database"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // RefreshToken godoc

@@ -2,8 +2,9 @@ package user_handlers
 
 import (
 	"AltTube-Go/database"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // DeleteUser godoc

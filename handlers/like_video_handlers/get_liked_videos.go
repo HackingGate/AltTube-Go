@@ -3,8 +3,9 @@ package like_video_handlers
 import (
 	"AltTube-Go/database"
 	"AltTube-Go/models"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetLikedVideos godoc

@@ -2,8 +2,9 @@ package like_video_handlers
 
 import (
 	"AltTube-Go/database"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // AddLikeVideo godoc
