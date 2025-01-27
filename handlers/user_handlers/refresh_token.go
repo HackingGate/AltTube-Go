@@ -3,6 +3,7 @@ package user_handlers
 import (
 	"AltTube-Go/auth"
 	"AltTube-Go/database"
+	"AltTube-Go/models"
 	"net/http"
 	"strings"
 
@@ -24,8 +25,8 @@ func RefreshToken(ctx *gin.Context) {
 	// Assuming token is provided as 'Bearer <token>'
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-	uuid, exists := database.ValidateRefreshToken(tokenString)
-	if !exists {
+	uuid, err := database.ValidateRefreshToken(tokenString)
+	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return
 	}
@@ -63,7 +64,15 @@ func RefreshToken(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store the new refresh token
-	err = database.AddRefreshToken(refreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(
+		models.RefreshToken{
+			Token:     refreshTokenString,
+			UserID:    user.ID,
+			Expiry:    refreshTokenExpiry,
+			UserAgent: userAgent,
+			IPAddress: ipAddress,
+		},
+	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token " + err.Error()})
 		return
@@ -75,7 +84,14 @@ func RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	err = database.AddAccessToken(accessTokenString, user, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(
+		models.AccessToken{
+			Token:          accessTokenString,
+			UserID:         user.ID,
+			Expiry:         accessTokenExpiry,
+			RefreshTokenID: refreshToken.ID,
+		},
+	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token " + err.Error()})
 		return

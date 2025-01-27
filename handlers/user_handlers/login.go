@@ -58,7 +58,15 @@ func Login(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store refresh token
-	err = database.AddRefreshToken(refreshTokenString, foundUser, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(
+		models.RefreshToken{
+			Token:     refreshTokenString,
+			UserID:    foundUser.ID,
+			Expiry:    refreshTokenExpiry,
+			UserAgent: userAgent,
+			IPAddress: ipAddress,
+		},
+	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token"})
 		return
@@ -71,7 +79,14 @@ func Login(ctx *gin.Context) {
 	}
 
 	// Store access token
-	err = database.AddAccessToken(accessTokenString, foundUser, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(
+		models.AccessToken{
+			Token:          accessTokenString,
+			UserID:         foundUser.ID,
+			Expiry:         accessTokenExpiry,
+			RefreshTokenID: refreshToken.ID,
+		},
+	)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token"})
 		return
