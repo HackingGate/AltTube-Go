@@ -1,18 +1,17 @@
 package database
 
 import (
-	"AltTube-Go/models"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	_ "github.com/lib/pq"
 )
 
-var dbInstance *gorm.DB
+var dbInstance *sql.DB
 
 func Init() {
 	// Load .env file
@@ -30,14 +29,17 @@ func Init() {
 		os.Getenv("DB_SSLMODE"),
 	)
 
-	// Initialize GORM with Postgres
-	var db *gorm.DB
+	// Initialize *sql.DB with retries
+	var db *sql.DB
 	var err error
-
 	for i := 0; i < 5; i++ {
-		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		db, err = sql.Open("postgres", dsn)
 		if err == nil {
-			break
+			// Test the connection
+			err = db.Ping()
+			if err == nil {
+				break
+			}
 		}
 		log.Printf("Failed to connect to database: %v. Retrying in 5 seconds...", err)
 		time.Sleep(5 * time.Second)
@@ -47,27 +49,6 @@ func Init() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	// Migrate the schema
-	err = db.AutoMigrate(&models.AccessToken{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.RefreshToken{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.User{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.Video{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.LikeVideo{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-
 	dbInstance = db
+	log.Println("Database connection established successfully.")
 }

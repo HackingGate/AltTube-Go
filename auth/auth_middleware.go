@@ -22,8 +22,8 @@ func Middleware() gin.HandlerFunc {
 			return jwtKey, nil
 		})
 
-		_, exists := database.ValidateAccessToken(tokenString)
-		if !exists {
+		_, err = database.ValidateAccessToken(tokenString)
+		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid access token"})
 			ctx.Abort()
 			return
