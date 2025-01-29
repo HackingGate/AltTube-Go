@@ -2,8 +2,9 @@ package database
 
 import (
 	"AltTube-Go/models"
-	"github.com/Masterminds/squirrel"
 	"time"
+
+	"github.com/Masterminds/squirrel"
 )
 
 var dbBuilder = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
