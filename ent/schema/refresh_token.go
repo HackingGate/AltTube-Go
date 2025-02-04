@@ -2,6 +2,7 @@ package schema
 
 import (
 	"AltTube-Go/ent/mixins"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
