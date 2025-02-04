@@ -1,4 +1,4 @@
-package dto
+package models
 
 type LikeVideoResponse struct {
 	ID           string `json:"id"`

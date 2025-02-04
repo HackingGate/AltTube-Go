@@ -2,7 +2,7 @@ package user_handlers
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/dto"
+	"AltTube-Go/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,12 +14,12 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body dto.UpdateEmailRequest true "User"
+// @Param user body models.UpdateEmailRequest true "User"
 // @Success 200 {string} JSON "{"message": "Email updated successfully"}"
 // @Security AccessToken
 // @Router /user/email [patch]
 func EditEmail(ctx *gin.Context) {
-	var updateEmailRequest dto.UpdateEmailRequest
+	var updateEmailRequest models.UpdateEmailRequest
 	if err := ctx.ShouldBindJSON(&updateEmailRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

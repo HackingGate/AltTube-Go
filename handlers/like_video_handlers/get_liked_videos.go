@@ -2,8 +2,8 @@ package like_video_handlers
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/dto"
 	"AltTube-Go/ent"
+	"AltTube-Go/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ import (
 // @Tags like
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} dto.LikeVideoResponse
+// @Success 200 {array} models.LikeVideoResponse
 // @Security AccessToken
 // @Router /like/ [get]
 func GetLikedVideos(ctx *gin.Context) {
@@ -49,9 +49,9 @@ func GetLikedVideos(ctx *gin.Context) {
 	}
 
 	// Map videos to LikeVideoResponse
-	var likeVideosResponse []dto.LikeVideoResponse
+	var likeVideosResponse []models.LikeVideoResponse
 	for _, video := range videos {
-		likeVideosResponse = append(likeVideosResponse, dto.LikeVideoResponse{
+		likeVideosResponse = append(likeVideosResponse, models.LikeVideoResponse{
 			ID:           video.ID,
 			Title:        video.Title,
 			ThumbnailUrl: video.ThumbnailURL,
