@@ -16,7 +16,7 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body dto.Login true "User"
+// @Param user body dto.LoginRequest true "User"
 // @Success 200 {string} JSON "{"access_token": "access_token", "refresh_token": "refresh_token"}"
 // @Router /user/login [post]s
 func Login(ctx *gin.Context) {

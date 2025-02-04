@@ -14,7 +14,7 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body dto.EditEmail true "EditEmail"
+// @Param user body dto.UpdateEmailRequest true "User"
 // @Success 200 {string} JSON "{"message": "Email updated successfully"}"
 // @Security AccessToken
 // @Router /user/email [patch]

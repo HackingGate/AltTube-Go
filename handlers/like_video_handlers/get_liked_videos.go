@@ -15,7 +15,7 @@ import (
 // @Tags like
 // @Accept  json
 // @Produce  json
-// @Success 200 {array} models.LikeVideoResponse
+// @Success 200 {array} dto.LikeVideoResponse
 // @Security AccessToken
 // @Router /like/ [get]
 func GetLikedVideos(ctx *gin.Context) {

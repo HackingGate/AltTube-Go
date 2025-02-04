@@ -388,12 +388,12 @@ const docTemplate = `{
                 "summary": "Edit email",
                 "parameters": [
                     {
-                        "description": "EditEmail",
+                        "description": "User",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.EditEmail"
+                            "$ref": "#/definitions/dto.UpdateEmailRequest"
                         }
                     }
                 ],
@@ -427,7 +427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Login"
+                            "$ref": "#/definitions/dto.LoginRequest"
                         }
                     }
                 ],
@@ -517,7 +517,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Signup"
+                            "$ref": "#/definitions/dto.SignupRequest"
                         }
                     }
                 ],
@@ -564,14 +564,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.EditEmail": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.LikeVideoResponse": {
             "type": "object",
             "properties": {
@@ -586,7 +578,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.Login": {
+        "dto.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -597,13 +589,21 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.Signup": {
+        "dto.SignupRequest": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 }
             }

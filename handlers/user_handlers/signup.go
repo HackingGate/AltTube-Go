@@ -15,7 +15,7 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body dto.Signup true "User"
+// @Param user body dto.SignupRequest true "User"
 // @Success 200 {string} JSON "{"message": "Registration successful"}"
 // @Router /user/signup [post]
 func Signup(ctx *gin.Context) {

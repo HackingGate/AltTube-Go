@@ -1,5 +1,5 @@
 definitions:
-  models.Device:
+  dto.Device:
     properties:
       id:
         type: integer
@@ -10,21 +10,16 @@ definitions:
       user_agent:
         type: string
     type: object
-  models.DeviceList:
+  dto.DeviceList:
     properties:
       current_device_id:
         type: integer
       devices:
         items:
-          $ref: '#/definitions/models.Device'
+          $ref: '#/definitions/dto.Device'
         type: array
     type: object
-  models.EditEmail:
-    properties:
-      email:
-        type: string
-    type: object
-  models.LikeVideoResponse:
+  dto.LikeVideoResponse:
     properties:
       id:
         type: string
@@ -33,18 +28,23 @@ definitions:
       title:
         type: string
     type: object
-  models.Login:
+  dto.LoginRequest:
     properties:
       email:
         type: string
       password:
         type: string
     type: object
-  models.Signup:
+  dto.SignupRequest:
     properties:
       email:
         type: string
       password:
+        type: string
+    type: object
+  dto.UpdateEmailRequest:
+    properties:
+      email:
         type: string
     type: object
 info:
@@ -65,7 +65,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.LikeVideoResponse'
+              $ref: '#/definitions/dto.LikeVideoResponse'
             type: array
       security:
       - AccessToken: []
@@ -271,7 +271,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.DeviceList'
+            $ref: '#/definitions/dto.DeviceList'
       security:
       - AccessToken: []
       summary: Get devices
@@ -283,12 +283,12 @@ paths:
       - application/json
       description: Edit email
       parameters:
-      - description: EditEmail
+      - description: User
         in: body
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.EditEmail'
+          $ref: '#/definitions/dto.UpdateEmailRequest'
       produces:
       - application/json
       responses:
@@ -312,7 +312,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.Login'
+          $ref: '#/definitions/dto.LoginRequest'
       produces:
       - application/json
       responses:
@@ -368,7 +368,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.Signup'
+          $ref: '#/definitions/dto.SignupRequest'
       produces:
       - application/json
       responses:
