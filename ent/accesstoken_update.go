@@ -30,43 +30,9 @@ func (atu *AccessTokenUpdate) Where(ps ...predicate.AccessToken) *AccessTokenUpd
 	return atu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (atu *AccessTokenUpdate) SetCreatedAt(t time.Time) *AccessTokenUpdate {
-	atu.mutation.SetCreatedAt(t)
-	return atu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (atu *AccessTokenUpdate) SetNillableCreatedAt(t *time.Time) *AccessTokenUpdate {
-	if t != nil {
-		atu.SetCreatedAt(*t)
-	}
-	return atu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (atu *AccessTokenUpdate) ClearCreatedAt() *AccessTokenUpdate {
-	atu.mutation.ClearCreatedAt()
-	return atu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (atu *AccessTokenUpdate) SetUpdatedAt(t time.Time) *AccessTokenUpdate {
 	atu.mutation.SetUpdatedAt(t)
-	return atu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (atu *AccessTokenUpdate) SetNillableUpdatedAt(t *time.Time) *AccessTokenUpdate {
-	if t != nil {
-		atu.SetUpdatedAt(*t)
-	}
-	return atu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (atu *AccessTokenUpdate) ClearUpdatedAt() *AccessTokenUpdate {
-	atu.mutation.ClearUpdatedAt()
 	return atu
 }
 
@@ -150,29 +116,23 @@ func (atu *AccessTokenUpdate) ClearExpiry() *AccessTokenUpdate {
 	return atu
 }
 
-// SetRefreshTokenID sets the "refresh_token_id" field.
-func (atu *AccessTokenUpdate) SetRefreshTokenID(i int64) *AccessTokenUpdate {
-	atu.mutation.SetRefreshTokenID(i)
-	return atu
-}
-
-// SetNillableRefreshTokenID sets the "refresh_token_id" field if the given value is not nil.
-func (atu *AccessTokenUpdate) SetNillableRefreshTokenID(i *int64) *AccessTokenUpdate {
-	if i != nil {
-		atu.SetRefreshTokenID(*i)
-	}
-	return atu
-}
-
-// ClearRefreshTokenID clears the value of the "refresh_token_id" field.
-func (atu *AccessTokenUpdate) ClearRefreshTokenID() *AccessTokenUpdate {
-	atu.mutation.ClearRefreshTokenID()
-	return atu
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (atu *AccessTokenUpdate) SetUser(u *User) *AccessTokenUpdate {
 	return atu.SetUserID(u.ID)
+}
+
+// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID.
+func (atu *AccessTokenUpdate) SetRefreshTokenID(id uint) *AccessTokenUpdate {
+	atu.mutation.SetRefreshTokenID(id)
+	return atu
+}
+
+// SetNillableRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID if the given value is not nil.
+func (atu *AccessTokenUpdate) SetNillableRefreshTokenID(id *uint) *AccessTokenUpdate {
+	if id != nil {
+		atu = atu.SetRefreshTokenID(*id)
+	}
+	return atu
 }
 
 // SetRefreshToken sets the "refresh_token" edge to the RefreshToken entity.
@@ -199,6 +159,7 @@ func (atu *AccessTokenUpdate) ClearRefreshToken() *AccessTokenUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (atu *AccessTokenUpdate) Save(ctx context.Context) (int, error) {
+	atu.defaults()
 	return withHooks(ctx, atu.sqlSave, atu.mutation, atu.hooks)
 }
 
@@ -224,8 +185,16 @@ func (atu *AccessTokenUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (atu *AccessTokenUpdate) defaults() {
+	if _, ok := atu.mutation.UpdatedAt(); !ok {
+		v := accesstoken.UpdateDefaultUpdatedAt()
+		atu.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
 	if ps := atu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -233,17 +202,8 @@ func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := atu.mutation.CreatedAt(); ok {
-		_spec.SetField(accesstoken.FieldCreatedAt, field.TypeTime, value)
-	}
-	if atu.mutation.CreatedAtCleared() {
-		_spec.ClearField(accesstoken.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := atu.mutation.UpdatedAt(); ok {
 		_spec.SetField(accesstoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if atu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(accesstoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := atu.mutation.DeletedAt(); ok {
 		_spec.SetField(accesstoken.FieldDeletedAt, field.TypeTime, value)
@@ -300,7 +260,7 @@ func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{accesstoken.RefreshTokenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -313,7 +273,7 @@ func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{accesstoken.RefreshTokenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -341,43 +301,9 @@ type AccessTokenUpdateOne struct {
 	mutation *AccessTokenMutation
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (atuo *AccessTokenUpdateOne) SetCreatedAt(t time.Time) *AccessTokenUpdateOne {
-	atuo.mutation.SetCreatedAt(t)
-	return atuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (atuo *AccessTokenUpdateOne) SetNillableCreatedAt(t *time.Time) *AccessTokenUpdateOne {
-	if t != nil {
-		atuo.SetCreatedAt(*t)
-	}
-	return atuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (atuo *AccessTokenUpdateOne) ClearCreatedAt() *AccessTokenUpdateOne {
-	atuo.mutation.ClearCreatedAt()
-	return atuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (atuo *AccessTokenUpdateOne) SetUpdatedAt(t time.Time) *AccessTokenUpdateOne {
 	atuo.mutation.SetUpdatedAt(t)
-	return atuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (atuo *AccessTokenUpdateOne) SetNillableUpdatedAt(t *time.Time) *AccessTokenUpdateOne {
-	if t != nil {
-		atuo.SetUpdatedAt(*t)
-	}
-	return atuo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (atuo *AccessTokenUpdateOne) ClearUpdatedAt() *AccessTokenUpdateOne {
-	atuo.mutation.ClearUpdatedAt()
 	return atuo
 }
 
@@ -461,29 +387,23 @@ func (atuo *AccessTokenUpdateOne) ClearExpiry() *AccessTokenUpdateOne {
 	return atuo
 }
 
-// SetRefreshTokenID sets the "refresh_token_id" field.
-func (atuo *AccessTokenUpdateOne) SetRefreshTokenID(i int64) *AccessTokenUpdateOne {
-	atuo.mutation.SetRefreshTokenID(i)
-	return atuo
-}
-
-// SetNillableRefreshTokenID sets the "refresh_token_id" field if the given value is not nil.
-func (atuo *AccessTokenUpdateOne) SetNillableRefreshTokenID(i *int64) *AccessTokenUpdateOne {
-	if i != nil {
-		atuo.SetRefreshTokenID(*i)
-	}
-	return atuo
-}
-
-// ClearRefreshTokenID clears the value of the "refresh_token_id" field.
-func (atuo *AccessTokenUpdateOne) ClearRefreshTokenID() *AccessTokenUpdateOne {
-	atuo.mutation.ClearRefreshTokenID()
-	return atuo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (atuo *AccessTokenUpdateOne) SetUser(u *User) *AccessTokenUpdateOne {
 	return atuo.SetUserID(u.ID)
+}
+
+// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID.
+func (atuo *AccessTokenUpdateOne) SetRefreshTokenID(id uint) *AccessTokenUpdateOne {
+	atuo.mutation.SetRefreshTokenID(id)
+	return atuo
+}
+
+// SetNillableRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID if the given value is not nil.
+func (atuo *AccessTokenUpdateOne) SetNillableRefreshTokenID(id *uint) *AccessTokenUpdateOne {
+	if id != nil {
+		atuo = atuo.SetRefreshTokenID(*id)
+	}
+	return atuo
 }
 
 // SetRefreshToken sets the "refresh_token" edge to the RefreshToken entity.
@@ -523,6 +443,7 @@ func (atuo *AccessTokenUpdateOne) Select(field string, fields ...string) *Access
 
 // Save executes the query and returns the updated AccessToken entity.
 func (atuo *AccessTokenUpdateOne) Save(ctx context.Context) (*AccessToken, error) {
+	atuo.defaults()
 	return withHooks(ctx, atuo.sqlSave, atuo.mutation, atuo.hooks)
 }
 
@@ -548,8 +469,16 @@ func (atuo *AccessTokenUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (atuo *AccessTokenUpdateOne) defaults() {
+	if _, ok := atuo.mutation.UpdatedAt(); !ok {
+		v := accesstoken.UpdateDefaultUpdatedAt()
+		atuo.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessToken, err error) {
-	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
 	id, ok := atuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AccessToken.id" for update`)}
@@ -574,17 +503,8 @@ func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessTok
 			}
 		}
 	}
-	if value, ok := atuo.mutation.CreatedAt(); ok {
-		_spec.SetField(accesstoken.FieldCreatedAt, field.TypeTime, value)
-	}
-	if atuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(accesstoken.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := atuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(accesstoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if atuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(accesstoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := atuo.mutation.DeletedAt(); ok {
 		_spec.SetField(accesstoken.FieldDeletedAt, field.TypeTime, value)
@@ -641,7 +561,7 @@ func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessTok
 			Columns: []string{accesstoken.RefreshTokenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -654,7 +574,7 @@ func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessTok
 			Columns: []string{accesstoken.RefreshTokenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {

@@ -21,36 +21,6 @@ type VideoCreate struct {
 	hooks    []Hook
 }
 
-// SetTitle sets the "title" field.
-func (vc *VideoCreate) SetTitle(s string) *VideoCreate {
-	vc.mutation.SetTitle(s)
-	return vc
-}
-
-// SetDescription sets the "description" field.
-func (vc *VideoCreate) SetDescription(s string) *VideoCreate {
-	vc.mutation.SetDescription(s)
-	return vc
-}
-
-// SetUploadDate sets the "upload_date" field.
-func (vc *VideoCreate) SetUploadDate(t time.Time) *VideoCreate {
-	vc.mutation.SetUploadDate(t)
-	return vc
-}
-
-// SetUploader sets the "uploader" field.
-func (vc *VideoCreate) SetUploader(s string) *VideoCreate {
-	vc.mutation.SetUploader(s)
-	return vc
-}
-
-// SetUploaderURL sets the "uploader_url" field.
-func (vc *VideoCreate) SetUploaderURL(s string) *VideoCreate {
-	vc.mutation.SetUploaderURL(s)
-	return vc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (vc *VideoCreate) SetCreatedAt(t time.Time) *VideoCreate {
 	vc.mutation.SetCreatedAt(t)
@@ -93,6 +63,36 @@ func (vc *VideoCreate) SetNillableDeletedAt(t *time.Time) *VideoCreate {
 	return vc
 }
 
+// SetTitle sets the "title" field.
+func (vc *VideoCreate) SetTitle(s string) *VideoCreate {
+	vc.mutation.SetTitle(s)
+	return vc
+}
+
+// SetDescription sets the "description" field.
+func (vc *VideoCreate) SetDescription(s string) *VideoCreate {
+	vc.mutation.SetDescription(s)
+	return vc
+}
+
+// SetUploadDate sets the "upload_date" field.
+func (vc *VideoCreate) SetUploadDate(t time.Time) *VideoCreate {
+	vc.mutation.SetUploadDate(t)
+	return vc
+}
+
+// SetUploader sets the "uploader" field.
+func (vc *VideoCreate) SetUploader(s string) *VideoCreate {
+	vc.mutation.SetUploader(s)
+	return vc
+}
+
+// SetUploaderURL sets the "uploader_url" field.
+func (vc *VideoCreate) SetUploaderURL(s string) *VideoCreate {
+	vc.mutation.SetUploaderURL(s)
+	return vc
+}
+
 // SetThumbnailURL sets the "thumbnail_url" field.
 func (vc *VideoCreate) SetThumbnailURL(s string) *VideoCreate {
 	vc.mutation.SetThumbnailURL(s)
@@ -106,14 +106,14 @@ func (vc *VideoCreate) SetID(s string) *VideoCreate {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by IDs.
-func (vc *VideoCreate) AddLikeVideoIDs(ids ...int64) *VideoCreate {
+func (vc *VideoCreate) AddLikeVideoIDs(ids ...int) *VideoCreate {
 	vc.mutation.AddLikeVideoIDs(ids...)
 	return vc
 }
 
 // AddLikeVideos adds the "like_videos" edges to the LikeVideo entity.
 func (vc *VideoCreate) AddLikeVideos(l ...*LikeVideo) *VideoCreate {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -127,6 +127,7 @@ func (vc *VideoCreate) Mutation() *VideoMutation {
 
 // Save creates the Video in the database.
 func (vc *VideoCreate) Save(ctx context.Context) (*Video, error) {
+	vc.defaults()
 	return withHooks(ctx, vc.sqlSave, vc.mutation, vc.hooks)
 }
 
@@ -152,8 +153,26 @@ func (vc *VideoCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (vc *VideoCreate) defaults() {
+	if _, ok := vc.mutation.CreatedAt(); !ok {
+		v := video.DefaultCreatedAt()
+		vc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := vc.mutation.UpdatedAt(); !ok {
+		v := video.DefaultUpdatedAt()
+		vc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (vc *VideoCreate) check() error {
+	if _, ok := vc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Video.created_at"`)}
+	}
+	if _, ok := vc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Video.updated_at"`)}
+	}
 	if _, ok := vc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Video.title"`)}
 	}
@@ -197,6 +216,11 @@ func (vc *VideoCreate) check() error {
 			return &ValidationError{Name: "thumbnail_url", err: fmt.Errorf(`ent: validator failed for field "Video.thumbnail_url": %w`, err)}
 		}
 	}
+	if v, ok := vc.mutation.ID(); ok {
+		if err := video.IDValidator(v); err != nil {
+			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Video.id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -232,6 +256,18 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := vc.mutation.CreatedAt(); ok {
+		_spec.SetField(video.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := vc.mutation.UpdatedAt(); ok {
+		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := vc.mutation.DeletedAt(); ok {
+		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
+	}
 	if value, ok := vc.mutation.Title(); ok {
 		_spec.SetField(video.FieldTitle, field.TypeString, value)
 		_node.Title = value
@@ -252,18 +288,6 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 		_spec.SetField(video.FieldUploaderURL, field.TypeString, value)
 		_node.UploaderURL = value
 	}
-	if value, ok := vc.mutation.CreatedAt(); ok {
-		_spec.SetField(video.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := vc.mutation.UpdatedAt(); ok {
-		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := vc.mutation.DeletedAt(); ok {
-		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
-	}
 	if value, ok := vc.mutation.ThumbnailURL(); ok {
 		_spec.SetField(video.FieldThumbnailURL, field.TypeString, value)
 		_node.ThumbnailURL = value
@@ -276,7 +300,7 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -305,6 +329,7 @@ func (vcb *VideoCreateBulk) Save(ctx context.Context) ([]*Video, error) {
 	for i := range vcb.builders {
 		func(i int, root context.Context) {
 			builder := vcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*VideoMutation)
 				if !ok {

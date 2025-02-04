@@ -40,7 +40,7 @@ func (rtd *RefreshTokenDelete) ExecX(ctx context.Context) int {
 }
 
 func (rtd *RefreshTokenDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(refreshtoken.Table, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewDeleteSpec(refreshtoken.Table, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint))
 	if ps := rtd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

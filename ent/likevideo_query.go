@@ -130,8 +130,8 @@ func (lvq *LikeVideoQuery) FirstX(ctx context.Context) *LikeVideo {
 
 // FirstID returns the first LikeVideo ID from the query.
 // Returns a *NotFoundError when no LikeVideo ID was found.
-func (lvq *LikeVideoQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (lvq *LikeVideoQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = lvq.Limit(1).IDs(setContextOp(ctx, lvq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -143,7 +143,7 @@ func (lvq *LikeVideoQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (lvq *LikeVideoQuery) FirstIDX(ctx context.Context) int64 {
+func (lvq *LikeVideoQuery) FirstIDX(ctx context.Context) int {
 	id, err := lvq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -181,8 +181,8 @@ func (lvq *LikeVideoQuery) OnlyX(ctx context.Context) *LikeVideo {
 // OnlyID is like Only, but returns the only LikeVideo ID in the query.
 // Returns a *NotSingularError when more than one LikeVideo ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (lvq *LikeVideoQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (lvq *LikeVideoQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = lvq.Limit(2).IDs(setContextOp(ctx, lvq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -198,7 +198,7 @@ func (lvq *LikeVideoQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (lvq *LikeVideoQuery) OnlyIDX(ctx context.Context) int64 {
+func (lvq *LikeVideoQuery) OnlyIDX(ctx context.Context) int {
 	id, err := lvq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -226,7 +226,7 @@ func (lvq *LikeVideoQuery) AllX(ctx context.Context) []*LikeVideo {
 }
 
 // IDs executes the query and returns a list of LikeVideo IDs.
-func (lvq *LikeVideoQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (lvq *LikeVideoQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if lvq.ctx.Unique == nil && lvq.path != nil {
 		lvq.Unique(true)
 	}
@@ -238,7 +238,7 @@ func (lvq *LikeVideoQuery) IDs(ctx context.Context) (ids []int64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (lvq *LikeVideoQuery) IDsX(ctx context.Context) []int64 {
+func (lvq *LikeVideoQuery) IDsX(ctx context.Context) []int {
 	ids, err := lvq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -513,7 +513,7 @@ func (lvq *LikeVideoQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (lvq *LikeVideoQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	_spec.From = lvq.sql
 	if unique := lvq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

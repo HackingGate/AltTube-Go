@@ -24,7 +24,7 @@ func RefreshToken(ctx *gin.Context) {
 	// Assuming token is provided as 'Bearer <token>'
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-	uuid, exists := database.ValidateRefreshToken(tokenString)
+	uuid, exists := database.ValidateRefreshToken(ctx.Request.Context(), tokenString)
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return
@@ -44,13 +44,13 @@ func RefreshToken(ctx *gin.Context) {
 	}
 
 	// Replace the old refresh token with the new one
-	err = database.RemoveRefreshTokenByToken(tokenString)
+	err = database.RemoveRefreshTokenByToken(ctx.Request.Context(), tokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
 		return
 	}
 
-	user, err := database.GetUserByID(uuid)
+	user, err := database.GetUserByID(ctx.Request.Context(), uuid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
 		return
@@ -63,19 +63,19 @@ func RefreshToken(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store the new refresh token
-	err = database.AddRefreshToken(refreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(ctx.Request.Context(), refreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token " + err.Error()})
 		return
 	}
 
-	refreshToken, err := database.GetRefreshTokenByToken(refreshTokenString)
+	refreshToken, err := database.GetRefreshTokenByToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh token"})
 		return
 	}
 
-	err = database.AddAccessToken(accessTokenString, user, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(ctx.Request.Context(), accessTokenString, user, accessTokenExpiry, refreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token " + err.Error()})
 		return

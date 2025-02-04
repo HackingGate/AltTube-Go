@@ -27,6 +27,7 @@ type RefreshTokenQuery struct {
 	predicates       []predicate.RefreshToken
 	withUser         *UserQuery
 	withAccessTokens *AccessTokenQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -131,8 +132,8 @@ func (rtq *RefreshTokenQuery) FirstX(ctx context.Context) *RefreshToken {
 
 // FirstID returns the first RefreshToken ID from the query.
 // Returns a *NotFoundError when no RefreshToken ID was found.
-func (rtq *RefreshTokenQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (rtq *RefreshTokenQuery) FirstID(ctx context.Context) (id uint, err error) {
+	var ids []uint
 	if ids, err = rtq.Limit(1).IDs(setContextOp(ctx, rtq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -144,7 +145,7 @@ func (rtq *RefreshTokenQuery) FirstID(ctx context.Context) (id int64, err error)
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (rtq *RefreshTokenQuery) FirstIDX(ctx context.Context) int64 {
+func (rtq *RefreshTokenQuery) FirstIDX(ctx context.Context) uint {
 	id, err := rtq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -182,8 +183,8 @@ func (rtq *RefreshTokenQuery) OnlyX(ctx context.Context) *RefreshToken {
 // OnlyID is like Only, but returns the only RefreshToken ID in the query.
 // Returns a *NotSingularError when more than one RefreshToken ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (rtq *RefreshTokenQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (rtq *RefreshTokenQuery) OnlyID(ctx context.Context) (id uint, err error) {
+	var ids []uint
 	if ids, err = rtq.Limit(2).IDs(setContextOp(ctx, rtq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -199,7 +200,7 @@ func (rtq *RefreshTokenQuery) OnlyID(ctx context.Context) (id int64, err error) 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (rtq *RefreshTokenQuery) OnlyIDX(ctx context.Context) int64 {
+func (rtq *RefreshTokenQuery) OnlyIDX(ctx context.Context) uint {
 	id, err := rtq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -227,7 +228,7 @@ func (rtq *RefreshTokenQuery) AllX(ctx context.Context) []*RefreshToken {
 }
 
 // IDs executes the query and returns a list of RefreshToken IDs.
-func (rtq *RefreshTokenQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (rtq *RefreshTokenQuery) IDs(ctx context.Context) (ids []uint, err error) {
 	if rtq.ctx.Unique == nil && rtq.path != nil {
 		rtq.Unique(true)
 	}
@@ -239,7 +240,7 @@ func (rtq *RefreshTokenQuery) IDs(ctx context.Context) (ids []int64, err error) 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (rtq *RefreshTokenQuery) IDsX(ctx context.Context) []int64 {
+func (rtq *RefreshTokenQuery) IDsX(ctx context.Context) []uint {
 	ids, err := rtq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -406,12 +407,19 @@ func (rtq *RefreshTokenQuery) prepareQuery(ctx context.Context) error {
 func (rtq *RefreshTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*RefreshToken, error) {
 	var (
 		nodes       = []*RefreshToken{}
+		withFKs     = rtq.withFKs
 		_spec       = rtq.querySpec()
 		loadedTypes = [2]bool{
 			rtq.withUser != nil,
 			rtq.withAccessTokens != nil,
 		}
 	)
+	if rtq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, refreshtoken.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*RefreshToken).scanValues(nil, columns)
 	}
@@ -450,7 +458,10 @@ func (rtq *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, no
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*RefreshToken)
 	for i := range nodes {
-		fk := nodes[i].UserID
+		if nodes[i].user_refresh_tokens == nil {
+			continue
+		}
+		fk := *nodes[i].user_refresh_tokens
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -467,7 +478,7 @@ func (rtq *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, no
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_refresh_tokens" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -477,7 +488,7 @@ func (rtq *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, no
 }
 func (rtq *RefreshTokenQuery) loadAccessTokens(ctx context.Context, query *AccessTokenQuery, nodes []*RefreshToken, init func(*RefreshToken), assign func(*RefreshToken, *AccessToken)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*RefreshToken)
+	nodeids := make(map[uint]*RefreshToken)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -485,9 +496,7 @@ func (rtq *RefreshTokenQuery) loadAccessTokens(ctx context.Context, query *Acces
 			init(nodes[i])
 		}
 	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(accesstoken.FieldRefreshTokenID)
-	}
+	query.withFKs = true
 	query.Where(predicate.AccessToken(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(refreshtoken.AccessTokensColumn), fks...))
 	}))
@@ -496,10 +505,13 @@ func (rtq *RefreshTokenQuery) loadAccessTokens(ctx context.Context, query *Acces
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.RefreshTokenID
-		node, ok := nodeids[fk]
+		fk := n.refresh_token_access_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "refresh_token_access_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "refresh_token_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "refresh_token_access_tokens" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -516,7 +528,7 @@ func (rtq *RefreshTokenQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (rtq *RefreshTokenQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(refreshtoken.Table, refreshtoken.Columns, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(refreshtoken.Table, refreshtoken.Columns, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint))
 	_spec.From = rtq.sql
 	if unique := rtq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -530,9 +542,6 @@ func (rtq *RefreshTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != refreshtoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
-		}
-		if rtq.withUser != nil {
-			_spec.Node.AddColumnOnce(refreshtoken.FieldUserID)
 		}
 	}
 	if ps := rtq.predicates; len(ps) > 0 {

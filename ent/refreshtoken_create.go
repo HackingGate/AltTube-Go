@@ -7,6 +7,7 @@ import (
 	"AltTube-Go/ent/refreshtoken"
 	"AltTube-Go/ent/user"
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -119,23 +120,15 @@ func (rtc *RefreshTokenCreate) SetNillableIPAddress(s *string) *RefreshTokenCrea
 	return rtc
 }
 
-// SetUserID sets the "user_id" field.
-func (rtc *RefreshTokenCreate) SetUserID(s string) *RefreshTokenCreate {
-	rtc.mutation.SetUserID(s)
-	return rtc
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableUserID(s *string) *RefreshTokenCreate {
-	if s != nil {
-		rtc.SetUserID(*s)
-	}
-	return rtc
-}
-
 // SetID sets the "id" field.
-func (rtc *RefreshTokenCreate) SetID(i int64) *RefreshTokenCreate {
-	rtc.mutation.SetID(i)
+func (rtc *RefreshTokenCreate) SetID(u uint) *RefreshTokenCreate {
+	rtc.mutation.SetID(u)
+	return rtc
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rtc *RefreshTokenCreate) SetUserID(id string) *RefreshTokenCreate {
+	rtc.mutation.SetUserID(id)
 	return rtc
 }
 
@@ -145,14 +138,14 @@ func (rtc *RefreshTokenCreate) SetUser(u *User) *RefreshTokenCreate {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (rtc *RefreshTokenCreate) AddAccessTokenIDs(ids ...int64) *RefreshTokenCreate {
+func (rtc *RefreshTokenCreate) AddAccessTokenIDs(ids ...int) *RefreshTokenCreate {
 	rtc.mutation.AddAccessTokenIDs(ids...)
 	return rtc
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (rtc *RefreshTokenCreate) AddAccessTokens(a ...*AccessToken) *RefreshTokenCreate {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -166,6 +159,7 @@ func (rtc *RefreshTokenCreate) Mutation() *RefreshTokenMutation {
 
 // Save creates the RefreshToken in the database.
 func (rtc *RefreshTokenCreate) Save(ctx context.Context) (*RefreshToken, error) {
+	rtc.defaults()
 	return withHooks(ctx, rtc.sqlSave, rtc.mutation, rtc.hooks)
 }
 
@@ -191,8 +185,29 @@ func (rtc *RefreshTokenCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rtc *RefreshTokenCreate) defaults() {
+	if _, ok := rtc.mutation.CreatedAt(); !ok {
+		v := refreshtoken.DefaultCreatedAt()
+		rtc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := rtc.mutation.UpdatedAt(); !ok {
+		v := refreshtoken.DefaultUpdatedAt()
+		rtc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (rtc *RefreshTokenCreate) check() error {
+	if _, ok := rtc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "RefreshToken.created_at"`)}
+	}
+	if _, ok := rtc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "RefreshToken.updated_at"`)}
+	}
+	if len(rtc.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "RefreshToken.user"`)}
+	}
 	return nil
 }
 
@@ -209,7 +224,7 @@ func (rtc *RefreshTokenCreate) sqlSave(ctx context.Context) (*RefreshToken, erro
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = uint(id)
 	}
 	rtc.mutation.id = &_node.ID
 	rtc.mutation.done = true
@@ -219,7 +234,7 @@ func (rtc *RefreshTokenCreate) sqlSave(ctx context.Context) (*RefreshToken, erro
 func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec) {
 	var (
 		_node = &RefreshToken{config: rtc.config}
-		_spec = sqlgraph.NewCreateSpec(refreshtoken.Table, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(refreshtoken.Table, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint))
 	)
 	if id, ok := rtc.mutation.ID(); ok {
 		_node.ID = id
@@ -235,7 +250,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 	}
 	if value, ok := rtc.mutation.DeletedAt(); ok {
 		_spec.SetField(refreshtoken.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
+		_node.DeletedAt = &value
 	}
 	if value, ok := rtc.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)
@@ -267,7 +282,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.UserID = nodes[0]
+		_node.user_refresh_tokens = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := rtc.mutation.AccessTokensIDs(); len(nodes) > 0 {
@@ -278,7 +293,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -307,6 +322,7 @@ func (rtcb *RefreshTokenCreateBulk) Save(ctx context.Context) ([]*RefreshToken, 
 	for i := range rtcb.builders {
 		func(i int, root context.Context) {
 			builder := rtcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*RefreshTokenMutation)
 				if !ok {
@@ -335,7 +351,7 @@ func (rtcb *RefreshTokenCreateBulk) Save(ctx context.Context) ([]*RefreshToken, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = uint(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

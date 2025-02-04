@@ -18,25 +18,24 @@ import (
 type AccessToken struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// Expiry holds the value of the "expiry" field.
 	Expiry time.Time `json:"expiry,omitempty"`
-	// RefreshTokenID holds the value of the "refresh_token_id" field.
-	RefreshTokenID int64 `json:"refresh_token_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccessTokenQuery when eager-loading is set.
-	Edges        AccessTokenEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                       AccessTokenEdges `json:"edges"`
+	refresh_token_access_tokens *uint
+	selectValues                sql.SelectValues
 }
 
 // AccessTokenEdges holds the relations/edges for other nodes in the graph.
@@ -77,12 +76,14 @@ func (*AccessToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case accesstoken.FieldID, accesstoken.FieldRefreshTokenID:
+		case accesstoken.FieldID:
 			values[i] = new(sql.NullInt64)
 		case accesstoken.FieldToken, accesstoken.FieldUserID:
 			values[i] = new(sql.NullString)
 		case accesstoken.FieldCreatedAt, accesstoken.FieldUpdatedAt, accesstoken.FieldDeletedAt, accesstoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
+		case accesstoken.ForeignKeys[0]: // refresh_token_access_tokens
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -103,7 +104,7 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			at.ID = int64(value.Int64)
+			at.ID = int(value.Int64)
 		case accesstoken.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -120,7 +121,8 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				at.DeletedAt = value.Time
+				at.DeletedAt = new(time.Time)
+				*at.DeletedAt = value.Time
 			}
 		case accesstoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -140,11 +142,12 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				at.Expiry = value.Time
 			}
-		case accesstoken.FieldRefreshTokenID:
+		case accesstoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field refresh_token_id", values[i])
+				return fmt.Errorf("unexpected type %T for edge-field refresh_token_access_tokens", value)
 			} else if value.Valid {
-				at.RefreshTokenID = value.Int64
+				at.refresh_token_access_tokens = new(uint)
+				*at.refresh_token_access_tokens = uint(value.Int64)
 			}
 		default:
 			at.selectValues.Set(columns[i], values[i])
@@ -198,8 +201,10 @@ func (at *AccessToken) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(at.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(at.DeletedAt.Format(time.ANSIC))
+	if v := at.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(at.Token)
@@ -209,9 +214,6 @@ func (at *AccessToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("expiry=")
 	builder.WriteString(at.Expiry.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("refresh_token_id=")
-	builder.WriteString(fmt.Sprintf("%v", at.RefreshTokenID))
 	builder.WriteByte(')')
 	return builder.String()
 }

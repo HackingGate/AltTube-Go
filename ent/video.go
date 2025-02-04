@@ -17,6 +17,12 @@ type Video struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Description holds the value of the "description" field.
@@ -27,12 +33,6 @@ type Video struct {
 	Uploader string `json:"uploader,omitempty"`
 	// UploaderURL holds the value of the "uploader_url" field.
 	UploaderURL string `json:"uploader_url,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// ThumbnailURL holds the value of the "thumbnail_url" field.
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -66,7 +66,7 @@ func (*Video) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case video.FieldID, video.FieldTitle, video.FieldDescription, video.FieldUploader, video.FieldUploaderURL, video.FieldThumbnailURL:
 			values[i] = new(sql.NullString)
-		case video.FieldUploadDate, video.FieldCreatedAt, video.FieldUpdatedAt, video.FieldDeletedAt:
+		case video.FieldCreatedAt, video.FieldUpdatedAt, video.FieldDeletedAt, video.FieldUploadDate:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -88,6 +88,25 @@ func (v *Video) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				v.ID = value.String
+			}
+		case video.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				v.CreatedAt = value.Time
+			}
+		case video.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				v.UpdatedAt = value.Time
+			}
+		case video.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				v.DeletedAt = new(time.Time)
+				*v.DeletedAt = value.Time
 			}
 		case video.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -118,24 +137,6 @@ func (v *Video) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field uploader_url", values[i])
 			} else if value.Valid {
 				v.UploaderURL = value.String
-			}
-		case video.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				v.CreatedAt = value.Time
-			}
-		case video.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				v.UpdatedAt = value.Time
-			}
-		case video.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				v.DeletedAt = value.Time
 			}
 		case video.FieldThumbnailURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -184,6 +185,17 @@ func (v *Video) String() string {
 	var builder strings.Builder
 	builder.WriteString("Video(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", v.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(v.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(v.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := v.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(v.Title)
 	builder.WriteString(", ")
@@ -198,15 +210,6 @@ func (v *Video) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("uploader_url=")
 	builder.WriteString(v.UploaderURL)
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(v.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(v.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(v.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("thumbnail_url=")
 	builder.WriteString(v.ThumbnailURL)

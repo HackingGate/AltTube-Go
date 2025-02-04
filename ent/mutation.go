@@ -40,7 +40,7 @@ type AccessTokenMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *int64
+	id                   *int
 	created_at           *time.Time
 	updated_at           *time.Time
 	deleted_at           *time.Time
@@ -49,7 +49,7 @@ type AccessTokenMutation struct {
 	clearedFields        map[string]struct{}
 	user                 *string
 	cleareduser          bool
-	refresh_token        *int64
+	refresh_token        *uint
 	clearedrefresh_token bool
 	done                 bool
 	oldValue             func(context.Context) (*AccessToken, error)
@@ -76,7 +76,7 @@ func newAccessTokenMutation(c config, op Op, opts ...accesstokenOption) *AccessT
 }
 
 // withAccessTokenID sets the ID field of the mutation.
-func withAccessTokenID(id int64) accesstokenOption {
+func withAccessTokenID(id int) accesstokenOption {
 	return func(m *AccessTokenMutation) {
 		var (
 			err   error
@@ -126,15 +126,9 @@ func (m AccessTokenMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of AccessToken entities.
-func (m *AccessTokenMutation) SetID(id int64) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AccessTokenMutation) ID() (id int64, exists bool) {
+func (m *AccessTokenMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -145,12 +139,12 @@ func (m *AccessTokenMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AccessTokenMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *AccessTokenMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -191,22 +185,9 @@ func (m *AccessTokenMutation) OldCreatedAt(ctx context.Context) (v time.Time, er
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *AccessTokenMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[accesstoken.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *AccessTokenMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[accesstoken.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *AccessTokenMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, accesstoken.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -240,22 +221,9 @@ func (m *AccessTokenMutation) OldUpdatedAt(ctx context.Context) (v time.Time, er
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *AccessTokenMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[accesstoken.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *AccessTokenMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[accesstoken.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *AccessTokenMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, accesstoken.FieldUpdatedAt)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -275,7 +243,7 @@ func (m *AccessTokenMutation) DeletedAt() (r time.Time, exists bool) {
 // OldDeletedAt returns the old "deleted_at" field's value of the AccessToken entity.
 // If the AccessToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccessTokenMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *AccessTokenMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -454,55 +422,6 @@ func (m *AccessTokenMutation) ResetExpiry() {
 	delete(m.clearedFields, accesstoken.FieldExpiry)
 }
 
-// SetRefreshTokenID sets the "refresh_token_id" field.
-func (m *AccessTokenMutation) SetRefreshTokenID(i int64) {
-	m.refresh_token = &i
-}
-
-// RefreshTokenID returns the value of the "refresh_token_id" field in the mutation.
-func (m *AccessTokenMutation) RefreshTokenID() (r int64, exists bool) {
-	v := m.refresh_token
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRefreshTokenID returns the old "refresh_token_id" field's value of the AccessToken entity.
-// If the AccessToken object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccessTokenMutation) OldRefreshTokenID(ctx context.Context) (v int64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRefreshTokenID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRefreshTokenID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRefreshTokenID: %w", err)
-	}
-	return oldValue.RefreshTokenID, nil
-}
-
-// ClearRefreshTokenID clears the value of the "refresh_token_id" field.
-func (m *AccessTokenMutation) ClearRefreshTokenID() {
-	m.refresh_token = nil
-	m.clearedFields[accesstoken.FieldRefreshTokenID] = struct{}{}
-}
-
-// RefreshTokenIDCleared returns if the "refresh_token_id" field was cleared in this mutation.
-func (m *AccessTokenMutation) RefreshTokenIDCleared() bool {
-	_, ok := m.clearedFields[accesstoken.FieldRefreshTokenID]
-	return ok
-}
-
-// ResetRefreshTokenID resets all changes to the "refresh_token_id" field.
-func (m *AccessTokenMutation) ResetRefreshTokenID() {
-	m.refresh_token = nil
-	delete(m.clearedFields, accesstoken.FieldRefreshTokenID)
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *AccessTokenMutation) ClearUser() {
 	m.cleareduser = true
@@ -530,21 +449,33 @@ func (m *AccessTokenMutation) ResetUser() {
 	m.cleareduser = false
 }
 
+// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by id.
+func (m *AccessTokenMutation) SetRefreshTokenID(id uint) {
+	m.refresh_token = &id
+}
+
 // ClearRefreshToken clears the "refresh_token" edge to the RefreshToken entity.
 func (m *AccessTokenMutation) ClearRefreshToken() {
 	m.clearedrefresh_token = true
-	m.clearedFields[accesstoken.FieldRefreshTokenID] = struct{}{}
 }
 
 // RefreshTokenCleared reports if the "refresh_token" edge to the RefreshToken entity was cleared.
 func (m *AccessTokenMutation) RefreshTokenCleared() bool {
-	return m.RefreshTokenIDCleared() || m.clearedrefresh_token
+	return m.clearedrefresh_token
+}
+
+// RefreshTokenID returns the "refresh_token" edge ID in the mutation.
+func (m *AccessTokenMutation) RefreshTokenID() (id uint, exists bool) {
+	if m.refresh_token != nil {
+		return *m.refresh_token, true
+	}
+	return
 }
 
 // RefreshTokenIDs returns the "refresh_token" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // RefreshTokenID instead. It exists only for internal usage by the builders.
-func (m *AccessTokenMutation) RefreshTokenIDs() (ids []int64) {
+func (m *AccessTokenMutation) RefreshTokenIDs() (ids []uint) {
 	if id := m.refresh_token; id != nil {
 		ids = append(ids, *id)
 	}
@@ -591,7 +522,7 @@ func (m *AccessTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccessTokenMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, accesstoken.FieldCreatedAt)
 	}
@@ -609,9 +540,6 @@ func (m *AccessTokenMutation) Fields() []string {
 	}
 	if m.expiry != nil {
 		fields = append(fields, accesstoken.FieldExpiry)
-	}
-	if m.refresh_token != nil {
-		fields = append(fields, accesstoken.FieldRefreshTokenID)
 	}
 	return fields
 }
@@ -633,8 +561,6 @@ func (m *AccessTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case accesstoken.FieldExpiry:
 		return m.Expiry()
-	case accesstoken.FieldRefreshTokenID:
-		return m.RefreshTokenID()
 	}
 	return nil, false
 }
@@ -656,8 +582,6 @@ func (m *AccessTokenMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldUserID(ctx)
 	case accesstoken.FieldExpiry:
 		return m.OldExpiry(ctx)
-	case accesstoken.FieldRefreshTokenID:
-		return m.OldRefreshTokenID(ctx)
 	}
 	return nil, fmt.Errorf("unknown AccessToken field %s", name)
 }
@@ -709,13 +633,6 @@ func (m *AccessTokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetExpiry(v)
 		return nil
-	case accesstoken.FieldRefreshTokenID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRefreshTokenID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown AccessToken field %s", name)
 }
@@ -723,16 +640,13 @@ func (m *AccessTokenMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *AccessTokenMutation) AddedFields() []string {
-	var fields []string
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *AccessTokenMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	}
 	return nil, false
 }
 
@@ -749,12 +663,6 @@ func (m *AccessTokenMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *AccessTokenMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(accesstoken.FieldCreatedAt) {
-		fields = append(fields, accesstoken.FieldCreatedAt)
-	}
-	if m.FieldCleared(accesstoken.FieldUpdatedAt) {
-		fields = append(fields, accesstoken.FieldUpdatedAt)
-	}
 	if m.FieldCleared(accesstoken.FieldDeletedAt) {
 		fields = append(fields, accesstoken.FieldDeletedAt)
 	}
@@ -766,9 +674,6 @@ func (m *AccessTokenMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(accesstoken.FieldExpiry) {
 		fields = append(fields, accesstoken.FieldExpiry)
-	}
-	if m.FieldCleared(accesstoken.FieldRefreshTokenID) {
-		fields = append(fields, accesstoken.FieldRefreshTokenID)
 	}
 	return fields
 }
@@ -784,12 +689,6 @@ func (m *AccessTokenMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *AccessTokenMutation) ClearField(name string) error {
 	switch name {
-	case accesstoken.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case accesstoken.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case accesstoken.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
@@ -801,9 +700,6 @@ func (m *AccessTokenMutation) ClearField(name string) error {
 		return nil
 	case accesstoken.FieldExpiry:
 		m.ClearExpiry()
-		return nil
-	case accesstoken.FieldRefreshTokenID:
-		m.ClearRefreshTokenID()
 		return nil
 	}
 	return fmt.Errorf("unknown AccessToken nullable field %s", name)
@@ -830,9 +726,6 @@ func (m *AccessTokenMutation) ResetField(name string) error {
 		return nil
 	case accesstoken.FieldExpiry:
 		m.ResetExpiry()
-		return nil
-	case accesstoken.FieldRefreshTokenID:
-		m.ResetRefreshTokenID()
 		return nil
 	}
 	return fmt.Errorf("unknown AccessToken field %s", name)
@@ -935,7 +828,7 @@ type LikeVideoMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int64
+	id            *int
 	created_at    *time.Time
 	updated_at    *time.Time
 	deleted_at    *time.Time
@@ -969,7 +862,7 @@ func newLikeVideoMutation(c config, op Op, opts ...likevideoOption) *LikeVideoMu
 }
 
 // withLikeVideoID sets the ID field of the mutation.
-func withLikeVideoID(id int64) likevideoOption {
+func withLikeVideoID(id int) likevideoOption {
 	return func(m *LikeVideoMutation) {
 		var (
 			err   error
@@ -1019,15 +912,9 @@ func (m LikeVideoMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of LikeVideo entities.
-func (m *LikeVideoMutation) SetID(id int64) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *LikeVideoMutation) ID() (id int64, exists bool) {
+func (m *LikeVideoMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1038,12 +925,12 @@ func (m *LikeVideoMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *LikeVideoMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *LikeVideoMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1084,22 +971,9 @@ func (m *LikeVideoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err 
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *LikeVideoMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[likevideo.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *LikeVideoMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[likevideo.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *LikeVideoMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, likevideo.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1133,22 +1007,9 @@ func (m *LikeVideoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err 
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *LikeVideoMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[likevideo.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *LikeVideoMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[likevideo.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *LikeVideoMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, likevideo.FieldUpdatedAt)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -1168,7 +1029,7 @@ func (m *LikeVideoMutation) DeletedAt() (r time.Time, exists bool) {
 // OldDeletedAt returns the old "deleted_at" field's value of the LikeVideo entity.
 // If the LikeVideo object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LikeVideoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *LikeVideoMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -1513,12 +1374,6 @@ func (m *LikeVideoMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *LikeVideoMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(likevideo.FieldCreatedAt) {
-		fields = append(fields, likevideo.FieldCreatedAt)
-	}
-	if m.FieldCleared(likevideo.FieldUpdatedAt) {
-		fields = append(fields, likevideo.FieldUpdatedAt)
-	}
 	if m.FieldCleared(likevideo.FieldDeletedAt) {
 		fields = append(fields, likevideo.FieldDeletedAt)
 	}
@@ -1542,12 +1397,6 @@ func (m *LikeVideoMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *LikeVideoMutation) ClearField(name string) error {
 	switch name {
-	case likevideo.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case likevideo.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case likevideo.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
@@ -1681,7 +1530,7 @@ type RefreshTokenMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *int64
+	id                   *uint
 	created_at           *time.Time
 	updated_at           *time.Time
 	deleted_at           *time.Time
@@ -1692,8 +1541,8 @@ type RefreshTokenMutation struct {
 	clearedFields        map[string]struct{}
 	user                 *string
 	cleareduser          bool
-	access_tokens        map[int64]struct{}
-	removedaccess_tokens map[int64]struct{}
+	access_tokens        map[int]struct{}
+	removedaccess_tokens map[int]struct{}
 	clearedaccess_tokens bool
 	done                 bool
 	oldValue             func(context.Context) (*RefreshToken, error)
@@ -1720,7 +1569,7 @@ func newRefreshTokenMutation(c config, op Op, opts ...refreshtokenOption) *Refre
 }
 
 // withRefreshTokenID sets the ID field of the mutation.
-func withRefreshTokenID(id int64) refreshtokenOption {
+func withRefreshTokenID(id uint) refreshtokenOption {
 	return func(m *RefreshTokenMutation) {
 		var (
 			err   error
@@ -1772,13 +1621,13 @@ func (m RefreshTokenMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of RefreshToken entities.
-func (m *RefreshTokenMutation) SetID(id int64) {
+func (m *RefreshTokenMutation) SetID(id uint) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *RefreshTokenMutation) ID() (id int64, exists bool) {
+func (m *RefreshTokenMutation) ID() (id uint, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1789,12 +1638,12 @@ func (m *RefreshTokenMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *RefreshTokenMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *RefreshTokenMutation) IDs(ctx context.Context) ([]uint, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int64{id}, nil
+			return []uint{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1835,22 +1684,9 @@ func (m *RefreshTokenMutation) OldCreatedAt(ctx context.Context) (v time.Time, e
 	return oldValue.CreatedAt, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *RefreshTokenMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[refreshtoken.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *RefreshTokenMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[refreshtoken.FieldCreatedAt]
-	return ok
-}
-
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *RefreshTokenMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, refreshtoken.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1884,22 +1720,9 @@ func (m *RefreshTokenMutation) OldUpdatedAt(ctx context.Context) (v time.Time, e
 	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *RefreshTokenMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[refreshtoken.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *RefreshTokenMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[refreshtoken.FieldUpdatedAt]
-	return ok
-}
-
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *RefreshTokenMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, refreshtoken.FieldUpdatedAt)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -1919,7 +1742,7 @@ func (m *RefreshTokenMutation) DeletedAt() (r time.Time, exists bool) {
 // OldDeletedAt returns the old "deleted_at" field's value of the RefreshToken entity.
 // If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefreshTokenMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *RefreshTokenMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -2147,64 +1970,27 @@ func (m *RefreshTokenMutation) ResetIPAddress() {
 	delete(m.clearedFields, refreshtoken.FieldIPAddress)
 }
 
-// SetUserID sets the "user_id" field.
-func (m *RefreshTokenMutation) SetUserID(s string) {
-	m.user = &s
-}
-
-// UserID returns the value of the "user_id" field in the mutation.
-func (m *RefreshTokenMutation) UserID() (r string, exists bool) {
-	v := m.user
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUserID returns the old "user_id" field's value of the RefreshToken entity.
-// If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefreshTokenMutation) OldUserID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUserID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
-	}
-	return oldValue.UserID, nil
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (m *RefreshTokenMutation) ClearUserID() {
-	m.user = nil
-	m.clearedFields[refreshtoken.FieldUserID] = struct{}{}
-}
-
-// UserIDCleared returns if the "user_id" field was cleared in this mutation.
-func (m *RefreshTokenMutation) UserIDCleared() bool {
-	_, ok := m.clearedFields[refreshtoken.FieldUserID]
-	return ok
-}
-
-// ResetUserID resets all changes to the "user_id" field.
-func (m *RefreshTokenMutation) ResetUserID() {
-	m.user = nil
-	delete(m.clearedFields, refreshtoken.FieldUserID)
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *RefreshTokenMutation) SetUserID(id string) {
+	m.user = &id
 }
 
 // ClearUser clears the "user" edge to the User entity.
 func (m *RefreshTokenMutation) ClearUser() {
 	m.cleareduser = true
-	m.clearedFields[refreshtoken.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *RefreshTokenMutation) UserCleared() bool {
-	return m.UserIDCleared() || m.cleareduser
+	return m.cleareduser
+}
+
+// UserID returns the "user" edge ID in the mutation.
+func (m *RefreshTokenMutation) UserID() (id string, exists bool) {
+	if m.user != nil {
+		return *m.user, true
+	}
+	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -2224,9 +2010,9 @@ func (m *RefreshTokenMutation) ResetUser() {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by ids.
-func (m *RefreshTokenMutation) AddAccessTokenIDs(ids ...int64) {
+func (m *RefreshTokenMutation) AddAccessTokenIDs(ids ...int) {
 	if m.access_tokens == nil {
-		m.access_tokens = make(map[int64]struct{})
+		m.access_tokens = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.access_tokens[ids[i]] = struct{}{}
@@ -2244,9 +2030,9 @@ func (m *RefreshTokenMutation) AccessTokensCleared() bool {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to the AccessToken entity by IDs.
-func (m *RefreshTokenMutation) RemoveAccessTokenIDs(ids ...int64) {
+func (m *RefreshTokenMutation) RemoveAccessTokenIDs(ids ...int) {
 	if m.removedaccess_tokens == nil {
-		m.removedaccess_tokens = make(map[int64]struct{})
+		m.removedaccess_tokens = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.access_tokens, ids[i])
@@ -2255,7 +2041,7 @@ func (m *RefreshTokenMutation) RemoveAccessTokenIDs(ids ...int64) {
 }
 
 // RemovedAccessTokens returns the removed IDs of the "access_tokens" edge to the AccessToken entity.
-func (m *RefreshTokenMutation) RemovedAccessTokensIDs() (ids []int64) {
+func (m *RefreshTokenMutation) RemovedAccessTokensIDs() (ids []int) {
 	for id := range m.removedaccess_tokens {
 		ids = append(ids, id)
 	}
@@ -2263,7 +2049,7 @@ func (m *RefreshTokenMutation) RemovedAccessTokensIDs() (ids []int64) {
 }
 
 // AccessTokensIDs returns the "access_tokens" edge IDs in the mutation.
-func (m *RefreshTokenMutation) AccessTokensIDs() (ids []int64) {
+func (m *RefreshTokenMutation) AccessTokensIDs() (ids []int) {
 	for id := range m.access_tokens {
 		ids = append(ids, id)
 	}
@@ -2311,7 +2097,7 @@ func (m *RefreshTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RefreshTokenMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, refreshtoken.FieldCreatedAt)
 	}
@@ -2332,9 +2118,6 @@ func (m *RefreshTokenMutation) Fields() []string {
 	}
 	if m.ip_address != nil {
 		fields = append(fields, refreshtoken.FieldIPAddress)
-	}
-	if m.user != nil {
-		fields = append(fields, refreshtoken.FieldUserID)
 	}
 	return fields
 }
@@ -2358,8 +2141,6 @@ func (m *RefreshTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.UserAgent()
 	case refreshtoken.FieldIPAddress:
 		return m.IPAddress()
-	case refreshtoken.FieldUserID:
-		return m.UserID()
 	}
 	return nil, false
 }
@@ -2383,8 +2164,6 @@ func (m *RefreshTokenMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUserAgent(ctx)
 	case refreshtoken.FieldIPAddress:
 		return m.OldIPAddress(ctx)
-	case refreshtoken.FieldUserID:
-		return m.OldUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -2443,13 +2222,6 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIPAddress(v)
 		return nil
-	case refreshtoken.FieldUserID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUserID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -2480,12 +2252,6 @@ func (m *RefreshTokenMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *RefreshTokenMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(refreshtoken.FieldCreatedAt) {
-		fields = append(fields, refreshtoken.FieldCreatedAt)
-	}
-	if m.FieldCleared(refreshtoken.FieldUpdatedAt) {
-		fields = append(fields, refreshtoken.FieldUpdatedAt)
-	}
 	if m.FieldCleared(refreshtoken.FieldDeletedAt) {
 		fields = append(fields, refreshtoken.FieldDeletedAt)
 	}
@@ -2501,9 +2267,6 @@ func (m *RefreshTokenMutation) ClearedFields() []string {
 	if m.FieldCleared(refreshtoken.FieldIPAddress) {
 		fields = append(fields, refreshtoken.FieldIPAddress)
 	}
-	if m.FieldCleared(refreshtoken.FieldUserID) {
-		fields = append(fields, refreshtoken.FieldUserID)
-	}
 	return fields
 }
 
@@ -2518,12 +2281,6 @@ func (m *RefreshTokenMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *RefreshTokenMutation) ClearField(name string) error {
 	switch name {
-	case refreshtoken.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case refreshtoken.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case refreshtoken.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
@@ -2538,9 +2295,6 @@ func (m *RefreshTokenMutation) ClearField(name string) error {
 		return nil
 	case refreshtoken.FieldIPAddress:
 		m.ClearIPAddress()
-		return nil
-	case refreshtoken.FieldUserID:
-		m.ClearUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken nullable field %s", name)
@@ -2570,9 +2324,6 @@ func (m *RefreshTokenMutation) ResetField(name string) error {
 		return nil
 	case refreshtoken.FieldIPAddress:
 		m.ResetIPAddress()
-		return nil
-	case refreshtoken.FieldUserID:
-		m.ResetUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
@@ -2686,20 +2437,20 @@ type UserMutation struct {
 	op                    Op
 	typ                   string
 	id                    *string
-	email                 *string
-	password              *string
 	created_at            *time.Time
 	updated_at            *time.Time
 	deleted_at            *time.Time
+	email                 *string
+	password              *string
 	clearedFields         map[string]struct{}
-	access_tokens         map[int64]struct{}
-	removedaccess_tokens  map[int64]struct{}
+	access_tokens         map[int]struct{}
+	removedaccess_tokens  map[int]struct{}
 	clearedaccess_tokens  bool
-	like_videos           map[int64]struct{}
-	removedlike_videos    map[int64]struct{}
+	like_videos           map[int]struct{}
+	removedlike_videos    map[int]struct{}
 	clearedlike_videos    bool
-	refresh_tokens        map[int64]struct{}
-	removedrefresh_tokens map[int64]struct{}
+	refresh_tokens        map[uint]struct{}
+	removedrefresh_tokens map[uint]struct{}
 	clearedrefresh_tokens bool
 	done                  bool
 	oldValue              func(context.Context) (*User, error)
@@ -2810,6 +2561,127 @@ func (m *UserMutation) IDs(ctx context.Context) ([]string, error) {
 	}
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (m *UserMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *UserMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *UserMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *UserMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *UserMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *UserMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[user.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *UserMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *UserMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, user.FieldDeletedAt)
+}
+
 // SetEmail sets the "email" field.
 func (m *UserMutation) SetEmail(s string) {
 	m.email = &s
@@ -2895,157 +2767,10 @@ func (m *UserMutation) ResetPassword() {
 	m.password = nil
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *UserMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *UserMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *UserMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[user.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *UserMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldCreatedAt]
-	return ok
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *UserMutation) ResetCreatedAt() {
-	m.created_at = nil
-	delete(m.clearedFields, user.FieldCreatedAt)
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *UserMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *UserMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[user.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *UserMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldUpdatedAt]
-	return ok
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *UserMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	delete(m.clearedFields, user.FieldUpdatedAt)
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *UserMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *UserMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *UserMutation) ClearDeletedAt() {
-	m.deleted_at = nil
-	m.clearedFields[user.FieldDeletedAt] = struct{}{}
-}
-
-// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *UserMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldDeletedAt]
-	return ok
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *UserMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	delete(m.clearedFields, user.FieldDeletedAt)
-}
-
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by ids.
-func (m *UserMutation) AddAccessTokenIDs(ids ...int64) {
+func (m *UserMutation) AddAccessTokenIDs(ids ...int) {
 	if m.access_tokens == nil {
-		m.access_tokens = make(map[int64]struct{})
+		m.access_tokens = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.access_tokens[ids[i]] = struct{}{}
@@ -3063,9 +2788,9 @@ func (m *UserMutation) AccessTokensCleared() bool {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to the AccessToken entity by IDs.
-func (m *UserMutation) RemoveAccessTokenIDs(ids ...int64) {
+func (m *UserMutation) RemoveAccessTokenIDs(ids ...int) {
 	if m.removedaccess_tokens == nil {
-		m.removedaccess_tokens = make(map[int64]struct{})
+		m.removedaccess_tokens = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.access_tokens, ids[i])
@@ -3074,7 +2799,7 @@ func (m *UserMutation) RemoveAccessTokenIDs(ids ...int64) {
 }
 
 // RemovedAccessTokens returns the removed IDs of the "access_tokens" edge to the AccessToken entity.
-func (m *UserMutation) RemovedAccessTokensIDs() (ids []int64) {
+func (m *UserMutation) RemovedAccessTokensIDs() (ids []int) {
 	for id := range m.removedaccess_tokens {
 		ids = append(ids, id)
 	}
@@ -3082,7 +2807,7 @@ func (m *UserMutation) RemovedAccessTokensIDs() (ids []int64) {
 }
 
 // AccessTokensIDs returns the "access_tokens" edge IDs in the mutation.
-func (m *UserMutation) AccessTokensIDs() (ids []int64) {
+func (m *UserMutation) AccessTokensIDs() (ids []int) {
 	for id := range m.access_tokens {
 		ids = append(ids, id)
 	}
@@ -3097,9 +2822,9 @@ func (m *UserMutation) ResetAccessTokens() {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by ids.
-func (m *UserMutation) AddLikeVideoIDs(ids ...int64) {
+func (m *UserMutation) AddLikeVideoIDs(ids ...int) {
 	if m.like_videos == nil {
-		m.like_videos = make(map[int64]struct{})
+		m.like_videos = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.like_videos[ids[i]] = struct{}{}
@@ -3117,9 +2842,9 @@ func (m *UserMutation) LikeVideosCleared() bool {
 }
 
 // RemoveLikeVideoIDs removes the "like_videos" edge to the LikeVideo entity by IDs.
-func (m *UserMutation) RemoveLikeVideoIDs(ids ...int64) {
+func (m *UserMutation) RemoveLikeVideoIDs(ids ...int) {
 	if m.removedlike_videos == nil {
-		m.removedlike_videos = make(map[int64]struct{})
+		m.removedlike_videos = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.like_videos, ids[i])
@@ -3128,7 +2853,7 @@ func (m *UserMutation) RemoveLikeVideoIDs(ids ...int64) {
 }
 
 // RemovedLikeVideos returns the removed IDs of the "like_videos" edge to the LikeVideo entity.
-func (m *UserMutation) RemovedLikeVideosIDs() (ids []int64) {
+func (m *UserMutation) RemovedLikeVideosIDs() (ids []int) {
 	for id := range m.removedlike_videos {
 		ids = append(ids, id)
 	}
@@ -3136,7 +2861,7 @@ func (m *UserMutation) RemovedLikeVideosIDs() (ids []int64) {
 }
 
 // LikeVideosIDs returns the "like_videos" edge IDs in the mutation.
-func (m *UserMutation) LikeVideosIDs() (ids []int64) {
+func (m *UserMutation) LikeVideosIDs() (ids []int) {
 	for id := range m.like_videos {
 		ids = append(ids, id)
 	}
@@ -3151,9 +2876,9 @@ func (m *UserMutation) ResetLikeVideos() {
 }
 
 // AddRefreshTokenIDs adds the "refresh_tokens" edge to the RefreshToken entity by ids.
-func (m *UserMutation) AddRefreshTokenIDs(ids ...int64) {
+func (m *UserMutation) AddRefreshTokenIDs(ids ...uint) {
 	if m.refresh_tokens == nil {
-		m.refresh_tokens = make(map[int64]struct{})
+		m.refresh_tokens = make(map[uint]struct{})
 	}
 	for i := range ids {
 		m.refresh_tokens[ids[i]] = struct{}{}
@@ -3171,9 +2896,9 @@ func (m *UserMutation) RefreshTokensCleared() bool {
 }
 
 // RemoveRefreshTokenIDs removes the "refresh_tokens" edge to the RefreshToken entity by IDs.
-func (m *UserMutation) RemoveRefreshTokenIDs(ids ...int64) {
+func (m *UserMutation) RemoveRefreshTokenIDs(ids ...uint) {
 	if m.removedrefresh_tokens == nil {
-		m.removedrefresh_tokens = make(map[int64]struct{})
+		m.removedrefresh_tokens = make(map[uint]struct{})
 	}
 	for i := range ids {
 		delete(m.refresh_tokens, ids[i])
@@ -3182,7 +2907,7 @@ func (m *UserMutation) RemoveRefreshTokenIDs(ids ...int64) {
 }
 
 // RemovedRefreshTokens returns the removed IDs of the "refresh_tokens" edge to the RefreshToken entity.
-func (m *UserMutation) RemovedRefreshTokensIDs() (ids []int64) {
+func (m *UserMutation) RemovedRefreshTokensIDs() (ids []uint) {
 	for id := range m.removedrefresh_tokens {
 		ids = append(ids, id)
 	}
@@ -3190,7 +2915,7 @@ func (m *UserMutation) RemovedRefreshTokensIDs() (ids []int64) {
 }
 
 // RefreshTokensIDs returns the "refresh_tokens" edge IDs in the mutation.
-func (m *UserMutation) RefreshTokensIDs() (ids []int64) {
+func (m *UserMutation) RefreshTokensIDs() (ids []uint) {
 	for id := range m.refresh_tokens {
 		ids = append(ids, id)
 	}
@@ -3239,12 +2964,6 @@ func (m *UserMutation) Type() string {
 // AddedFields().
 func (m *UserMutation) Fields() []string {
 	fields := make([]string, 0, 5)
-	if m.email != nil {
-		fields = append(fields, user.FieldEmail)
-	}
-	if m.password != nil {
-		fields = append(fields, user.FieldPassword)
-	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -3254,6 +2973,12 @@ func (m *UserMutation) Fields() []string {
 	if m.deleted_at != nil {
 		fields = append(fields, user.FieldDeletedAt)
 	}
+	if m.email != nil {
+		fields = append(fields, user.FieldEmail)
+	}
+	if m.password != nil {
+		fields = append(fields, user.FieldPassword)
+	}
 	return fields
 }
 
@@ -3262,16 +2987,16 @@ func (m *UserMutation) Fields() []string {
 // schema.
 func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case user.FieldEmail:
-		return m.Email()
-	case user.FieldPassword:
-		return m.Password()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
 		return m.UpdatedAt()
 	case user.FieldDeletedAt:
 		return m.DeletedAt()
+	case user.FieldEmail:
+		return m.Email()
+	case user.FieldPassword:
+		return m.Password()
 	}
 	return nil, false
 }
@@ -3281,16 +3006,16 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case user.FieldEmail:
-		return m.OldEmail(ctx)
-	case user.FieldPassword:
-		return m.OldPassword(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
 	case user.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case user.FieldEmail:
+		return m.OldEmail(ctx)
+	case user.FieldPassword:
+		return m.OldPassword(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -3300,20 +3025,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case user.FieldEmail:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEmail(v)
-		return nil
-	case user.FieldPassword:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPassword(v)
-		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -3334,6 +3045,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case user.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
+	case user.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -3365,17 +3090,11 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(user.FieldEmail) {
-		fields = append(fields, user.FieldEmail)
-	}
-	if m.FieldCleared(user.FieldCreatedAt) {
-		fields = append(fields, user.FieldCreatedAt)
-	}
-	if m.FieldCleared(user.FieldUpdatedAt) {
-		fields = append(fields, user.FieldUpdatedAt)
-	}
 	if m.FieldCleared(user.FieldDeletedAt) {
 		fields = append(fields, user.FieldDeletedAt)
+	}
+	if m.FieldCleared(user.FieldEmail) {
+		fields = append(fields, user.FieldEmail)
 	}
 	return fields
 }
@@ -3391,17 +3110,11 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
-	case user.FieldEmail:
-		m.ClearEmail()
-		return nil
-	case user.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case user.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case user.FieldDeletedAt:
 		m.ClearDeletedAt()
+		return nil
+	case user.FieldEmail:
+		m.ClearEmail()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -3411,12 +3124,6 @@ func (m *UserMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UserMutation) ResetField(name string) error {
 	switch name {
-	case user.FieldEmail:
-		m.ResetEmail()
-		return nil
-	case user.FieldPassword:
-		m.ResetPassword()
-		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -3425,6 +3132,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case user.FieldEmail:
+		m.ResetEmail()
+		return nil
+	case user.FieldPassword:
+		m.ResetPassword()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -3572,18 +3285,18 @@ type VideoMutation struct {
 	op                 Op
 	typ                string
 	id                 *string
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
 	title              *string
 	description        *string
 	upload_date        *time.Time
 	uploader           *string
 	uploader_url       *string
-	created_at         *time.Time
-	updated_at         *time.Time
-	deleted_at         *time.Time
 	thumbnail_url      *string
 	clearedFields      map[string]struct{}
-	like_videos        map[int64]struct{}
-	removedlike_videos map[int64]struct{}
+	like_videos        map[int]struct{}
+	removedlike_videos map[int]struct{}
 	clearedlike_videos bool
 	done               bool
 	oldValue           func(context.Context) (*Video, error)
@@ -3692,6 +3405,127 @@ func (m *VideoMutation) IDs(ctx context.Context) ([]string, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *VideoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *VideoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Video entity.
+// If the Video object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VideoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *VideoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *VideoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *VideoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Video entity.
+// If the Video object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VideoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *VideoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *VideoMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *VideoMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Video entity.
+// If the Video object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *VideoMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *VideoMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[video.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *VideoMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[video.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *VideoMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, video.FieldDeletedAt)
 }
 
 // SetTitle sets the "title" field.
@@ -3874,153 +3708,6 @@ func (m *VideoMutation) ResetUploaderURL() {
 	m.uploader_url = nil
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *VideoMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *VideoMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the Video entity.
-// If the Video object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *VideoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *VideoMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[video.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *VideoMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[video.FieldCreatedAt]
-	return ok
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *VideoMutation) ResetCreatedAt() {
-	m.created_at = nil
-	delete(m.clearedFields, video.FieldCreatedAt)
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *VideoMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *VideoMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the Video entity.
-// If the Video object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *VideoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *VideoMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[video.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *VideoMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[video.FieldUpdatedAt]
-	return ok
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *VideoMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	delete(m.clearedFields, video.FieldUpdatedAt)
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *VideoMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *VideoMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the Video entity.
-// If the Video object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *VideoMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *VideoMutation) ClearDeletedAt() {
-	m.deleted_at = nil
-	m.clearedFields[video.FieldDeletedAt] = struct{}{}
-}
-
-// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *VideoMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[video.FieldDeletedAt]
-	return ok
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *VideoMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	delete(m.clearedFields, video.FieldDeletedAt)
-}
-
 // SetThumbnailURL sets the "thumbnail_url" field.
 func (m *VideoMutation) SetThumbnailURL(s string) {
 	m.thumbnail_url = &s
@@ -4058,9 +3745,9 @@ func (m *VideoMutation) ResetThumbnailURL() {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by ids.
-func (m *VideoMutation) AddLikeVideoIDs(ids ...int64) {
+func (m *VideoMutation) AddLikeVideoIDs(ids ...int) {
 	if m.like_videos == nil {
-		m.like_videos = make(map[int64]struct{})
+		m.like_videos = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.like_videos[ids[i]] = struct{}{}
@@ -4078,9 +3765,9 @@ func (m *VideoMutation) LikeVideosCleared() bool {
 }
 
 // RemoveLikeVideoIDs removes the "like_videos" edge to the LikeVideo entity by IDs.
-func (m *VideoMutation) RemoveLikeVideoIDs(ids ...int64) {
+func (m *VideoMutation) RemoveLikeVideoIDs(ids ...int) {
 	if m.removedlike_videos == nil {
-		m.removedlike_videos = make(map[int64]struct{})
+		m.removedlike_videos = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.like_videos, ids[i])
@@ -4089,7 +3776,7 @@ func (m *VideoMutation) RemoveLikeVideoIDs(ids ...int64) {
 }
 
 // RemovedLikeVideos returns the removed IDs of the "like_videos" edge to the LikeVideo entity.
-func (m *VideoMutation) RemovedLikeVideosIDs() (ids []int64) {
+func (m *VideoMutation) RemovedLikeVideosIDs() (ids []int) {
 	for id := range m.removedlike_videos {
 		ids = append(ids, id)
 	}
@@ -4097,7 +3784,7 @@ func (m *VideoMutation) RemovedLikeVideosIDs() (ids []int64) {
 }
 
 // LikeVideosIDs returns the "like_videos" edge IDs in the mutation.
-func (m *VideoMutation) LikeVideosIDs() (ids []int64) {
+func (m *VideoMutation) LikeVideosIDs() (ids []int) {
 	for id := range m.like_videos {
 		ids = append(ids, id)
 	}
@@ -4146,6 +3833,15 @@ func (m *VideoMutation) Type() string {
 // AddedFields().
 func (m *VideoMutation) Fields() []string {
 	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, video.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, video.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, video.FieldDeletedAt)
+	}
 	if m.title != nil {
 		fields = append(fields, video.FieldTitle)
 	}
@@ -4161,15 +3857,6 @@ func (m *VideoMutation) Fields() []string {
 	if m.uploader_url != nil {
 		fields = append(fields, video.FieldUploaderURL)
 	}
-	if m.created_at != nil {
-		fields = append(fields, video.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, video.FieldUpdatedAt)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, video.FieldDeletedAt)
-	}
 	if m.thumbnail_url != nil {
 		fields = append(fields, video.FieldThumbnailURL)
 	}
@@ -4181,6 +3868,12 @@ func (m *VideoMutation) Fields() []string {
 // schema.
 func (m *VideoMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case video.FieldCreatedAt:
+		return m.CreatedAt()
+	case video.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case video.FieldDeletedAt:
+		return m.DeletedAt()
 	case video.FieldTitle:
 		return m.Title()
 	case video.FieldDescription:
@@ -4191,12 +3884,6 @@ func (m *VideoMutation) Field(name string) (ent.Value, bool) {
 		return m.Uploader()
 	case video.FieldUploaderURL:
 		return m.UploaderURL()
-	case video.FieldCreatedAt:
-		return m.CreatedAt()
-	case video.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case video.FieldDeletedAt:
-		return m.DeletedAt()
 	case video.FieldThumbnailURL:
 		return m.ThumbnailURL()
 	}
@@ -4208,6 +3895,12 @@ func (m *VideoMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *VideoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case video.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case video.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case video.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
 	case video.FieldTitle:
 		return m.OldTitle(ctx)
 	case video.FieldDescription:
@@ -4218,12 +3911,6 @@ func (m *VideoMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldUploader(ctx)
 	case video.FieldUploaderURL:
 		return m.OldUploaderURL(ctx)
-	case video.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case video.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case video.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
 	case video.FieldThumbnailURL:
 		return m.OldThumbnailURL(ctx)
 	}
@@ -4235,6 +3922,27 @@ func (m *VideoMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *VideoMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case video.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case video.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case video.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
 	case video.FieldTitle:
 		v, ok := value.(string)
 		if !ok {
@@ -4269,27 +3977,6 @@ func (m *VideoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUploaderURL(v)
-		return nil
-	case video.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case video.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case video.FieldDeletedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
 		return nil
 	case video.FieldThumbnailURL:
 		v, ok := value.(string)
@@ -4328,12 +4015,6 @@ func (m *VideoMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *VideoMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(video.FieldCreatedAt) {
-		fields = append(fields, video.FieldCreatedAt)
-	}
-	if m.FieldCleared(video.FieldUpdatedAt) {
-		fields = append(fields, video.FieldUpdatedAt)
-	}
 	if m.FieldCleared(video.FieldDeletedAt) {
 		fields = append(fields, video.FieldDeletedAt)
 	}
@@ -4351,12 +4032,6 @@ func (m *VideoMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *VideoMutation) ClearField(name string) error {
 	switch name {
-	case video.FieldCreatedAt:
-		m.ClearCreatedAt()
-		return nil
-	case video.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
 	case video.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
@@ -4368,6 +4043,15 @@ func (m *VideoMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *VideoMutation) ResetField(name string) error {
 	switch name {
+	case video.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case video.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case video.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
 	case video.FieldTitle:
 		m.ResetTitle()
 		return nil
@@ -4382,15 +4066,6 @@ func (m *VideoMutation) ResetField(name string) error {
 		return nil
 	case video.FieldUploaderURL:
 		m.ResetUploaderURL()
-		return nil
-	case video.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case video.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case video.FieldDeletedAt:
-		m.ResetDeletedAt()
 		return nil
 	case video.FieldThumbnailURL:
 		m.ResetThumbnailURL()

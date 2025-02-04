@@ -3,6 +3,8 @@
 package refreshtoken
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -26,8 +28,6 @@ const (
 	FieldUserAgent = "user_agent"
 	// FieldIPAddress holds the string denoting the ip_address field in the database.
 	FieldIPAddress = "ip_address"
-	// FieldUserID holds the string denoting the user_id field in the database.
-	FieldUserID = "user_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeAccessTokens holds the string denoting the access_tokens edge name in mutations.
@@ -40,14 +40,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_id"
+	UserColumn = "user_refresh_tokens"
 	// AccessTokensTable is the table that holds the access_tokens relation/edge.
 	AccessTokensTable = "access_tokens"
 	// AccessTokensInverseTable is the table name for the AccessToken entity.
 	// It exists in this package in order to avoid circular dependency with the "accesstoken" package.
 	AccessTokensInverseTable = "access_tokens"
 	// AccessTokensColumn is the table column denoting the access_tokens relation/edge.
-	AccessTokensColumn = "refresh_token_id"
+	AccessTokensColumn = "refresh_token_access_tokens"
 )
 
 // Columns holds all SQL columns for refreshtoken fields.
@@ -60,7 +60,12 @@ var Columns = []string{
 	FieldExpiry,
 	FieldUserAgent,
 	FieldIPAddress,
-	FieldUserID,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "refresh_tokens"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"user_refresh_tokens",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -70,8 +75,22 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
+			return true
+		}
+	}
 	return false
 }
+
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+)
 
 // OrderOption defines the ordering options for the RefreshToken queries.
 type OrderOption func(*sql.Selector)
@@ -114,11 +133,6 @@ func ByUserAgent(opts ...sql.OrderTermOption) OrderOption {
 // ByIPAddress orders the results by the ip_address field.
 func ByIPAddress(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIPAddress, opts...).ToFunc()
-}
-
-// ByUserID orders the results by the user_id field.
-func ByUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

@@ -18,13 +18,13 @@ import (
 type LikeVideo struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// VideoID holds the value of the "video_id" field.
@@ -99,7 +99,7 @@ func (lv *LikeVideo) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			lv.ID = int64(value.Int64)
+			lv.ID = int(value.Int64)
 		case likevideo.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -116,7 +116,8 @@ func (lv *LikeVideo) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				lv.DeletedAt = value.Time
+				lv.DeletedAt = new(time.Time)
+				*lv.DeletedAt = value.Time
 			}
 		case likevideo.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -182,8 +183,10 @@ func (lv *LikeVideo) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(lv.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(lv.DeletedAt.Format(time.ANSIC))
+	if v := lv.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(lv.UserID)

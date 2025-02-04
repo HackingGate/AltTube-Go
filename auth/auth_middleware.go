@@ -2,7 +2,6 @@ package auth
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/models"
 	"net/http"
 	"strings"
 
@@ -16,13 +15,13 @@ func Middleware() gin.HandlerFunc {
 		// Assuming token is provided as 'Bearer <token>'
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-		claims := &models.Claims{}
+		claims := &tokenClaims{}
 
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 
-		_, exists := database.ValidateAccessToken(tokenString)
+		_, exists := database.ValidateAccessToken(ctx.Request.Context(), tokenString)
 		if !exists {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid access token"})
 			ctx.Abort()

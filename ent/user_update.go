@@ -31,6 +31,32 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uu *UserUpdate) SetDeletedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetDeletedAt(t)
+	return uu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetDeletedAt(*t)
+	}
+	return uu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uu *UserUpdate) ClearDeletedAt() *UserUpdate {
+	uu.mutation.ClearDeletedAt()
+	return uu
+}
+
 // SetEmail sets the "email" field.
 func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
 	uu.mutation.SetEmail(s)
@@ -65,75 +91,15 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 	return uu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetCreatedAt(t)
-	return uu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetCreatedAt(*t)
-	}
-	return uu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (uu *UserUpdate) ClearCreatedAt() *UserUpdate {
-	uu.mutation.ClearCreatedAt()
-	return uu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetUpdatedAt(t)
-	return uu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUpdatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetUpdatedAt(*t)
-	}
-	return uu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (uu *UserUpdate) ClearUpdatedAt() *UserUpdate {
-	uu.mutation.ClearUpdatedAt()
-	return uu
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (uu *UserUpdate) SetDeletedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetDeletedAt(t)
-	return uu
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDeletedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetDeletedAt(*t)
-	}
-	return uu
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (uu *UserUpdate) ClearDeletedAt() *UserUpdate {
-	uu.mutation.ClearDeletedAt()
-	return uu
-}
-
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (uu *UserUpdate) AddAccessTokenIDs(ids ...int64) *UserUpdate {
+func (uu *UserUpdate) AddAccessTokenIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddAccessTokenIDs(ids...)
 	return uu
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (uu *UserUpdate) AddAccessTokens(a ...*AccessToken) *UserUpdate {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -141,14 +107,14 @@ func (uu *UserUpdate) AddAccessTokens(a ...*AccessToken) *UserUpdate {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by IDs.
-func (uu *UserUpdate) AddLikeVideoIDs(ids ...int64) *UserUpdate {
+func (uu *UserUpdate) AddLikeVideoIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddLikeVideoIDs(ids...)
 	return uu
 }
 
 // AddLikeVideos adds the "like_videos" edges to the LikeVideo entity.
 func (uu *UserUpdate) AddLikeVideos(l ...*LikeVideo) *UserUpdate {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -156,14 +122,14 @@ func (uu *UserUpdate) AddLikeVideos(l ...*LikeVideo) *UserUpdate {
 }
 
 // AddRefreshTokenIDs adds the "refresh_tokens" edge to the RefreshToken entity by IDs.
-func (uu *UserUpdate) AddRefreshTokenIDs(ids ...int64) *UserUpdate {
+func (uu *UserUpdate) AddRefreshTokenIDs(ids ...uint) *UserUpdate {
 	uu.mutation.AddRefreshTokenIDs(ids...)
 	return uu
 }
 
 // AddRefreshTokens adds the "refresh_tokens" edges to the RefreshToken entity.
 func (uu *UserUpdate) AddRefreshTokens(r ...*RefreshToken) *UserUpdate {
-	ids := make([]int64, len(r))
+	ids := make([]uint, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -182,14 +148,14 @@ func (uu *UserUpdate) ClearAccessTokens() *UserUpdate {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (uu *UserUpdate) RemoveAccessTokenIDs(ids ...int64) *UserUpdate {
+func (uu *UserUpdate) RemoveAccessTokenIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveAccessTokenIDs(ids...)
 	return uu
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (uu *UserUpdate) RemoveAccessTokens(a ...*AccessToken) *UserUpdate {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -203,14 +169,14 @@ func (uu *UserUpdate) ClearLikeVideos() *UserUpdate {
 }
 
 // RemoveLikeVideoIDs removes the "like_videos" edge to LikeVideo entities by IDs.
-func (uu *UserUpdate) RemoveLikeVideoIDs(ids ...int64) *UserUpdate {
+func (uu *UserUpdate) RemoveLikeVideoIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveLikeVideoIDs(ids...)
 	return uu
 }
 
 // RemoveLikeVideos removes "like_videos" edges to LikeVideo entities.
 func (uu *UserUpdate) RemoveLikeVideos(l ...*LikeVideo) *UserUpdate {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -224,14 +190,14 @@ func (uu *UserUpdate) ClearRefreshTokens() *UserUpdate {
 }
 
 // RemoveRefreshTokenIDs removes the "refresh_tokens" edge to RefreshToken entities by IDs.
-func (uu *UserUpdate) RemoveRefreshTokenIDs(ids ...int64) *UserUpdate {
+func (uu *UserUpdate) RemoveRefreshTokenIDs(ids ...uint) *UserUpdate {
 	uu.mutation.RemoveRefreshTokenIDs(ids...)
 	return uu
 }
 
 // RemoveRefreshTokens removes "refresh_tokens" edges to RefreshToken entities.
 func (uu *UserUpdate) RemoveRefreshTokens(r ...*RefreshToken) *UserUpdate {
-	ids := make([]int64, len(r))
+	ids := make([]uint, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -240,6 +206,7 @@ func (uu *UserUpdate) RemoveRefreshTokens(r ...*RefreshToken) *UserUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
+	uu.defaults()
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -265,6 +232,14 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uu *UserUpdate) defaults() {
+	if _, ok := uu.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
 	if v, ok := uu.mutation.Password(); ok {
@@ -287,6 +262,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uu.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
@@ -296,24 +280,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-	}
-	if uu.mutation.CreatedAtCleared() {
-		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := uu.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if uu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := uu.mutation.DeletedAt(); ok {
-		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
-	}
-	if uu.mutation.DeletedAtCleared() {
-		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
-	}
 	if uu.mutation.AccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -322,7 +288,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -335,7 +301,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -351,7 +317,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -367,7 +333,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -380,7 +346,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -396,7 +362,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -412,7 +378,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.RefreshTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -425,7 +391,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.RefreshTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -441,7 +407,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.RefreshTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -467,6 +433,32 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uuo *UserUpdateOne) SetDeletedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetDeletedAt(t)
+	return uuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetDeletedAt(*t)
+	}
+	return uuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uuo *UserUpdateOne) ClearDeletedAt() *UserUpdateOne {
+	uuo.mutation.ClearDeletedAt()
+	return uuo
 }
 
 // SetEmail sets the "email" field.
@@ -503,75 +495,15 @@ func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 	return uuo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetCreatedAt(t)
-	return uuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetCreatedAt(*t)
-	}
-	return uuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (uuo *UserUpdateOne) ClearCreatedAt() *UserUpdateOne {
-	uuo.mutation.ClearCreatedAt()
-	return uuo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetUpdatedAt(t)
-	return uuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetUpdatedAt(*t)
-	}
-	return uuo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (uuo *UserUpdateOne) ClearUpdatedAt() *UserUpdateOne {
-	uuo.mutation.ClearUpdatedAt()
-	return uuo
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (uuo *UserUpdateOne) SetDeletedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetDeletedAt(t)
-	return uuo
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableDeletedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetDeletedAt(*t)
-	}
-	return uuo
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (uuo *UserUpdateOne) ClearDeletedAt() *UserUpdateOne {
-	uuo.mutation.ClearDeletedAt()
-	return uuo
-}
-
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (uuo *UserUpdateOne) AddAccessTokenIDs(ids ...int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddAccessTokenIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddAccessTokenIDs(ids...)
 	return uuo
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (uuo *UserUpdateOne) AddAccessTokens(a ...*AccessToken) *UserUpdateOne {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -579,14 +511,14 @@ func (uuo *UserUpdateOne) AddAccessTokens(a ...*AccessToken) *UserUpdateOne {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by IDs.
-func (uuo *UserUpdateOne) AddLikeVideoIDs(ids ...int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddLikeVideoIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddLikeVideoIDs(ids...)
 	return uuo
 }
 
 // AddLikeVideos adds the "like_videos" edges to the LikeVideo entity.
 func (uuo *UserUpdateOne) AddLikeVideos(l ...*LikeVideo) *UserUpdateOne {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -594,14 +526,14 @@ func (uuo *UserUpdateOne) AddLikeVideos(l ...*LikeVideo) *UserUpdateOne {
 }
 
 // AddRefreshTokenIDs adds the "refresh_tokens" edge to the RefreshToken entity by IDs.
-func (uuo *UserUpdateOne) AddRefreshTokenIDs(ids ...int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddRefreshTokenIDs(ids ...uint) *UserUpdateOne {
 	uuo.mutation.AddRefreshTokenIDs(ids...)
 	return uuo
 }
 
 // AddRefreshTokens adds the "refresh_tokens" edges to the RefreshToken entity.
 func (uuo *UserUpdateOne) AddRefreshTokens(r ...*RefreshToken) *UserUpdateOne {
-	ids := make([]int64, len(r))
+	ids := make([]uint, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -620,14 +552,14 @@ func (uuo *UserUpdateOne) ClearAccessTokens() *UserUpdateOne {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (uuo *UserUpdateOne) RemoveAccessTokenIDs(ids ...int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveAccessTokenIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveAccessTokenIDs(ids...)
 	return uuo
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (uuo *UserUpdateOne) RemoveAccessTokens(a ...*AccessToken) *UserUpdateOne {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -641,14 +573,14 @@ func (uuo *UserUpdateOne) ClearLikeVideos() *UserUpdateOne {
 }
 
 // RemoveLikeVideoIDs removes the "like_videos" edge to LikeVideo entities by IDs.
-func (uuo *UserUpdateOne) RemoveLikeVideoIDs(ids ...int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveLikeVideoIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveLikeVideoIDs(ids...)
 	return uuo
 }
 
 // RemoveLikeVideos removes "like_videos" edges to LikeVideo entities.
 func (uuo *UserUpdateOne) RemoveLikeVideos(l ...*LikeVideo) *UserUpdateOne {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -662,14 +594,14 @@ func (uuo *UserUpdateOne) ClearRefreshTokens() *UserUpdateOne {
 }
 
 // RemoveRefreshTokenIDs removes the "refresh_tokens" edge to RefreshToken entities by IDs.
-func (uuo *UserUpdateOne) RemoveRefreshTokenIDs(ids ...int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveRefreshTokenIDs(ids ...uint) *UserUpdateOne {
 	uuo.mutation.RemoveRefreshTokenIDs(ids...)
 	return uuo
 }
 
 // RemoveRefreshTokens removes "refresh_tokens" edges to RefreshToken entities.
 func (uuo *UserUpdateOne) RemoveRefreshTokens(r ...*RefreshToken) *UserUpdateOne {
-	ids := make([]int64, len(r))
+	ids := make([]uint, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
@@ -691,6 +623,7 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	uuo.defaults()
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -713,6 +646,14 @@ func (uuo *UserUpdateOne) Exec(ctx context.Context) error {
 func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uuo *UserUpdateOne) defaults() {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -755,6 +696,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
@@ -764,24 +714,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-	}
-	if uuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := uuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if uuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := uuo.mutation.DeletedAt(); ok {
-		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
-	}
-	if uuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
-	}
 	if uuo.mutation.AccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -790,7 +722,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -803,7 +735,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -819,7 +751,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -835,7 +767,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -848,7 +780,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -864,7 +796,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -880,7 +812,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.RefreshTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -893,7 +825,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.RefreshTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -909,7 +841,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.RefreshTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {

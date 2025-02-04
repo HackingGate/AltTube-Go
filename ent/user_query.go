@@ -371,12 +371,12 @@ func (uq *UserQuery) WithRefreshTokens(opts ...func(*RefreshTokenQuery)) *UserQu
 // Example:
 //
 //	var v []struct {
-//		Email string `json:"email,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		GroupBy(user.FieldEmail).
+//		GroupBy(user.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
@@ -394,11 +394,11 @@ func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Email string `json:"email,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		Select(user.FieldEmail).
+//		Select(user.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (uq *UserQuery) Select(fields ...string) *UserSelect {
 	uq.ctx.Fields = append(uq.ctx.Fields, fields...)
@@ -501,6 +501,7 @@ func (uq *UserQuery) loadAccessTokens(ctx context.Context, query *AccessTokenQue
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(accesstoken.FieldUserID)
 	}
@@ -561,9 +562,7 @@ func (uq *UserQuery) loadRefreshTokens(ctx context.Context, query *RefreshTokenQ
 			init(nodes[i])
 		}
 	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(refreshtoken.FieldUserID)
-	}
+	query.withFKs = true
 	query.Where(predicate.RefreshToken(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.RefreshTokensColumn), fks...))
 	}))
@@ -572,10 +571,13 @@ func (uq *UserQuery) loadRefreshTokens(ctx context.Context, query *RefreshTokenQ
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
+		fk := n.user_refresh_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_refresh_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_refresh_tokens" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

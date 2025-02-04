@@ -39,7 +39,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.LikeVideoResponse"
+                                "$ref": "#/definitions/dto.LikeVideoResponse"
                             }
                         }
                     }
@@ -322,7 +322,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.DeviceList"
+                            "$ref": "#/definitions/dto.DeviceList"
                         }
                     }
                 }
@@ -393,7 +393,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EditEmail"
+                            "$ref": "#/definitions/dto.EditEmail"
                         }
                     }
                 ],
@@ -427,7 +427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Login"
+                            "$ref": "#/definitions/dto.Login"
                         }
                     }
                 ],
@@ -517,7 +517,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Signup"
+                            "$ref": "#/definitions/dto.Signup"
                         }
                     }
                 ],
@@ -533,7 +533,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Device": {
+        "dto.Device": {
             "type": "object",
             "properties": {
                 "id": {
@@ -550,7 +550,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.DeviceList": {
+        "dto.DeviceList": {
             "type": "object",
             "properties": {
                 "current_device_id": {
@@ -559,12 +559,12 @@ const docTemplate = `{
                 "devices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Device"
+                        "$ref": "#/definitions/dto.Device"
                     }
                 }
             }
         },
-        "models.EditEmail": {
+        "dto.EditEmail": {
             "type": "object",
             "properties": {
                 "email": {
@@ -572,7 +572,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.LikeVideoResponse": {
+        "dto.LikeVideoResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -586,7 +586,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Login": {
+        "dto.Login": {
             "type": "object",
             "properties": {
                 "email": {
@@ -597,7 +597,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Signup": {
+        "dto.Signup": {
             "type": "object",
             "properties": {
                 "email": {

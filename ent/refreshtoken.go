@@ -17,13 +17,13 @@ import (
 type RefreshToken struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID uint `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// Expiry holds the value of the "expiry" field.
@@ -32,12 +32,11 @@ type RefreshToken struct {
 	UserAgent string `json:"user_agent,omitempty"`
 	// IPAddress holds the value of the "ip_address" field.
 	IPAddress string `json:"ip_address,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID string `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
-	Edges        RefreshTokenEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges               RefreshTokenEdges `json:"edges"`
+	user_refresh_tokens *string
+	selectValues        sql.SelectValues
 }
 
 // RefreshTokenEdges holds the relations/edges for other nodes in the graph.
@@ -78,10 +77,12 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case refreshtoken.FieldID:
 			values[i] = new(sql.NullInt64)
-		case refreshtoken.FieldToken, refreshtoken.FieldUserAgent, refreshtoken.FieldIPAddress, refreshtoken.FieldUserID:
+		case refreshtoken.FieldToken, refreshtoken.FieldUserAgent, refreshtoken.FieldIPAddress:
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldCreatedAt, refreshtoken.FieldUpdatedAt, refreshtoken.FieldDeletedAt, refreshtoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
+		case refreshtoken.ForeignKeys[0]: // user_refresh_tokens
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -102,7 +103,7 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			rt.ID = int64(value.Int64)
+			rt.ID = uint(value.Int64)
 		case refreshtoken.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -119,7 +120,8 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				rt.DeletedAt = value.Time
+				rt.DeletedAt = new(time.Time)
+				*rt.DeletedAt = value.Time
 			}
 		case refreshtoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -145,11 +147,12 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				rt.IPAddress = value.String
 			}
-		case refreshtoken.FieldUserID:
+		case refreshtoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+				return fmt.Errorf("unexpected type %T for field user_refresh_tokens", values[i])
 			} else if value.Valid {
-				rt.UserID = value.String
+				rt.user_refresh_tokens = new(string)
+				*rt.user_refresh_tokens = value.String
 			}
 		default:
 			rt.selectValues.Set(columns[i], values[i])
@@ -203,8 +206,10 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(rt.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(rt.DeletedAt.Format(time.ANSIC))
+	if v := rt.DeletedAt; v != nil {
+		builder.WriteString("deleted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(rt.Token)
@@ -217,9 +222,6 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("ip_address=")
 	builder.WriteString(rt.IPAddress)
-	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(rt.UserID)
 	builder.WriteByte(')')
 	return builder.String()
 }

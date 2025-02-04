@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.RefreshToken {
+func ID(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.RefreshToken {
+func IDEQ(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.RefreshToken {
+func IDNEQ(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.RefreshToken {
+func IDIn(ids ...uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.RefreshToken {
+func IDNotIn(ids ...uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.RefreshToken {
+func IDGT(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.RefreshToken {
+func IDGTE(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.RefreshToken {
+func IDLT(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.RefreshToken {
+func IDLTE(id uint) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldLTE(FieldID, id))
 }
 
@@ -88,11 +88,6 @@ func UserAgent(v string) predicate.RefreshToken {
 // IPAddress applies equality check predicate on the "ip_address" field. It's identical to IPAddressEQ.
 func IPAddress(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldIPAddress, v))
-}
-
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEQ(FieldUserID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -135,16 +130,6 @@ func CreatedAtLTE(v time.Time) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldUpdatedAt, v))
@@ -183,16 +168,6 @@ func UpdatedAtLT(v time.Time) predicate.RefreshToken {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldLTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
@@ -518,81 +493,6 @@ func IPAddressEqualFold(v string) predicate.RefreshToken {
 // IPAddressContainsFold applies the ContainsFold predicate on the "ip_address" field.
 func IPAddressContainsFold(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldContainsFold(FieldIPAddress, v))
-}
-
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEQ(FieldUserID, v))
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDIsNil applies the IsNil predicate on the "user_id" field.
-func UserIDIsNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIsNull(FieldUserID))
-}
-
-// UserIDNotNil applies the NotNil predicate on the "user_id" field.
-func UserIDNotNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotNull(FieldUserID))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldContainsFold(FieldUserID, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

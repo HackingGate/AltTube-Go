@@ -3,23 +3,104 @@
 package ent
 
 import (
+	"AltTube-Go/ent/accesstoken"
+	"AltTube-Go/ent/likevideo"
+	"AltTube-Go/ent/refreshtoken"
 	"AltTube-Go/ent/schema"
 	"AltTube-Go/ent/user"
 	"AltTube-Go/ent/video"
+	"time"
 )
 
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accesstokenMixin := schema.AccessToken{}.Mixin()
+	accesstokenMixinFields0 := accesstokenMixin[0].Fields()
+	_ = accesstokenMixinFields0
+	accesstokenFields := schema.AccessToken{}.Fields()
+	_ = accesstokenFields
+	// accesstokenDescCreatedAt is the schema descriptor for created_at field.
+	accesstokenDescCreatedAt := accesstokenMixinFields0[0].Descriptor()
+	// accesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	accesstoken.DefaultCreatedAt = accesstokenDescCreatedAt.Default.(func() time.Time)
+	// accesstokenDescUpdatedAt is the schema descriptor for updated_at field.
+	accesstokenDescUpdatedAt := accesstokenMixinFields0[1].Descriptor()
+	// accesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	accesstoken.DefaultUpdatedAt = accesstokenDescUpdatedAt.Default.(func() time.Time)
+	// accesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	accesstoken.UpdateDefaultUpdatedAt = accesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	likevideoMixin := schema.LikeVideo{}.Mixin()
+	likevideoMixinFields0 := likevideoMixin[0].Fields()
+	_ = likevideoMixinFields0
+	likevideoFields := schema.LikeVideo{}.Fields()
+	_ = likevideoFields
+	// likevideoDescCreatedAt is the schema descriptor for created_at field.
+	likevideoDescCreatedAt := likevideoMixinFields0[0].Descriptor()
+	// likevideo.DefaultCreatedAt holds the default value on creation for the created_at field.
+	likevideo.DefaultCreatedAt = likevideoDescCreatedAt.Default.(func() time.Time)
+	// likevideoDescUpdatedAt is the schema descriptor for updated_at field.
+	likevideoDescUpdatedAt := likevideoMixinFields0[1].Descriptor()
+	// likevideo.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	likevideo.DefaultUpdatedAt = likevideoDescUpdatedAt.Default.(func() time.Time)
+	// likevideo.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	likevideo.UpdateDefaultUpdatedAt = likevideoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	refreshtokenMixin := schema.RefreshToken{}.Mixin()
+	refreshtokenMixinFields0 := refreshtokenMixin[0].Fields()
+	_ = refreshtokenMixinFields0
+	refreshtokenFields := schema.RefreshToken{}.Fields()
+	_ = refreshtokenFields
+	// refreshtokenDescCreatedAt is the schema descriptor for created_at field.
+	refreshtokenDescCreatedAt := refreshtokenMixinFields0[0].Descriptor()
+	// refreshtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	refreshtoken.DefaultCreatedAt = refreshtokenDescCreatedAt.Default.(func() time.Time)
+	// refreshtokenDescUpdatedAt is the schema descriptor for updated_at field.
+	refreshtokenDescUpdatedAt := refreshtokenMixinFields0[1].Descriptor()
+	// refreshtoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	refreshtoken.DefaultUpdatedAt = refreshtokenDescUpdatedAt.Default.(func() time.Time)
+	// refreshtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	refreshtoken.UpdateDefaultUpdatedAt = refreshtokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	userMixin := schema.User{}.Mixin()
+	userMixinFields0 := userMixin[0].Fields()
+	_ = userMixinFields0
+	userMixinFields1 := userMixin[1].Fields()
+	_ = userMixinFields1
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userMixinFields0[0].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUpdatedAt is the schema descriptor for updated_at field.
+	userDescUpdatedAt := userMixinFields0[1].Descriptor()
+	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
+	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// userDescPassword is the schema descriptor for password field.
-	userDescPassword := userFields[2].Descriptor()
+	userDescPassword := userFields[1].Descriptor()
 	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	user.PasswordValidator = userDescPassword.Validators[0].(func(string) error)
+	// userDescID is the schema descriptor for id field.
+	userDescID := userMixinFields1[0].Descriptor()
+	// user.DefaultID holds the default value on creation for the id field.
+	user.DefaultID = userDescID.Default.(func() string)
+	videoMixin := schema.Video{}.Mixin()
+	videoMixinFields0 := videoMixin[0].Fields()
+	_ = videoMixinFields0
 	videoFields := schema.Video{}.Fields()
 	_ = videoFields
+	// videoDescCreatedAt is the schema descriptor for created_at field.
+	videoDescCreatedAt := videoMixinFields0[0].Descriptor()
+	// video.DefaultCreatedAt holds the default value on creation for the created_at field.
+	video.DefaultCreatedAt = videoDescCreatedAt.Default.(func() time.Time)
+	// videoDescUpdatedAt is the schema descriptor for updated_at field.
+	videoDescUpdatedAt := videoMixinFields0[1].Descriptor()
+	// video.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	video.DefaultUpdatedAt = videoDescUpdatedAt.Default.(func() time.Time)
+	// video.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	video.UpdateDefaultUpdatedAt = videoDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// videoDescTitle is the schema descriptor for title field.
 	videoDescTitle := videoFields[1].Descriptor()
 	// video.TitleValidator is a validator for the "title" field. It is called by the builders before save.
@@ -37,7 +118,11 @@ func init() {
 	// video.UploaderURLValidator is a validator for the "uploader_url" field. It is called by the builders before save.
 	video.UploaderURLValidator = videoDescUploaderURL.Validators[0].(func(string) error)
 	// videoDescThumbnailURL is the schema descriptor for thumbnail_url field.
-	videoDescThumbnailURL := videoFields[9].Descriptor()
+	videoDescThumbnailURL := videoFields[6].Descriptor()
 	// video.ThumbnailURLValidator is a validator for the "thumbnail_url" field. It is called by the builders before save.
 	video.ThumbnailURLValidator = videoDescThumbnailURL.Validators[0].(func(string) error)
+	// videoDescID is the schema descriptor for id field.
+	videoDescID := videoFields[0].Descriptor()
+	// video.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	video.IDValidator = videoDescID.Validators[0].(func(string) error)
 }
