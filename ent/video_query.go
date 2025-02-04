@@ -299,12 +299,12 @@ func (vq *VideoQuery) WithLikeVideos(opts ...func(*LikeVideoQuery)) *VideoQuery 
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Video.Query().
-//		GroupBy(video.FieldTitle).
+//		GroupBy(video.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (vq *VideoQuery) GroupBy(field string, fields ...string) *VideoGroupBy {
@@ -322,11 +322,11 @@ func (vq *VideoQuery) GroupBy(field string, fields ...string) *VideoGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Video.Query().
-//		Select(video.FieldTitle).
+//		Select(video.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (vq *VideoQuery) Select(fields ...string) *VideoSelect {
 	vq.ctx.Fields = append(vq.ctx.Fields, fields...)

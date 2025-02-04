@@ -32,19 +32,19 @@ func RemoveLikeVideo(ctx *gin.Context) {
 		return
 	}
 
-	user, err := database.GetUserByID(authUserID)
+	user, err := database.GetUserByID(ctx.Request.Context(), authUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
 		return
 	}
 
-	video, err := database.GetVideoByV(videoID)
+	video, err := database.GetVideoByV(ctx.Request.Context(), videoID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting video"})
 		return
 	}
 
-	isLiked, err := database.ReadIsLikedVideo(user, video)
+	isLiked, err := database.ReadIsLikedVideo(ctx.Request.Context(), user.ID, video.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error reading if video is liked"})
 		return
@@ -55,7 +55,7 @@ func RemoveLikeVideo(ctx *gin.Context) {
 		return
 	}
 
-	err = database.RemoveLikeVideo(user, video)
+	err = database.RemoveLikeVideo(ctx.Request.Context(), user.ID, video.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing like video"})
 		return

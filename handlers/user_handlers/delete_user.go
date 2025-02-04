@@ -32,7 +32,7 @@ func DeleteUser(ctx *gin.Context) {
 	}
 
 	// Delete refresh tokens associated with the user
-	refreshTokens, err := database.GetAllRefreshTokensByUserID(authUUID)
+	refreshTokens, err := database.GetAllRefreshTokensByUserID(ctx.Request.Context(), authUUID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh tokens"})
 		return
@@ -40,7 +40,7 @@ func DeleteUser(ctx *gin.Context) {
 	var refreshTokensIDs []uint
 	for _, refreshToken := range refreshTokens {
 		// Delete access tokens associated with the refresh token
-		err = database.RemoveAllAccessTokensByRefreshTokenID(refreshToken.ID)
+		err = database.RemoveAllAccessTokensByRefreshTokenID(ctx.Request.Context(), refreshToken.ID)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access tokens associated with refresh refreshToken"})
 			return
@@ -48,21 +48,21 @@ func DeleteUser(ctx *gin.Context) {
 
 		refreshTokensIDs = append(refreshTokensIDs, refreshToken.ID)
 	}
-	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
+	err = database.RemoveRefreshTokensByID(ctx.Request.Context(), refreshTokensIDs)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh tokens"})
 		return
 	}
 
 	// Delete like videos associated with the user
-	err = database.RemoveAllLikesByUserID(authUUID)
+	err = database.RemoveAllLikesByUserID(ctx.Request.Context(), authUUID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing like videos"})
 		return
 	}
 
 	// Delete user from database
-	err = database.DeleteUserByID(authUUID)
+	err = database.DeleteUserByID(ctx.Request.Context(), authUUID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting user"})
 		return

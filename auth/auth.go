@@ -1,14 +1,10 @@
 package auth
 
 import (
-	"AltTube-Go/models"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 // GenerateAccessToken Generate access token with a short expiration
 func GenerateAccessToken(uuid string) (string, time.Time, error) {
@@ -27,7 +23,7 @@ func GenerateRefreshToken(uuid string) (string, time.Time, error) {
 // Unified token generation function
 func generateToken(uuid string, tokenType string, expiration time.Duration) (string, time.Time, error) {
 	expirationTime := time.Now().Add(expiration)
-	claims := &models.Claims{
+	claims := &tokenClaims{
 		UserID:    uuid,
 		TokenType: tokenType,
 		RegisteredClaims: jwt.RegisteredClaims{

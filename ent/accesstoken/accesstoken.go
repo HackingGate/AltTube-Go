@@ -3,6 +3,8 @@
 package accesstoken
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -24,8 +26,6 @@ const (
 	FieldUserID = "user_id"
 	// FieldExpiry holds the string denoting the expiry field in the database.
 	FieldExpiry = "expiry"
-	// FieldRefreshTokenID holds the string denoting the refresh_token_id field in the database.
-	FieldRefreshTokenID = "refresh_token_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeRefreshToken holds the string denoting the refresh_token edge name in mutations.
@@ -45,7 +45,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "refreshtoken" package.
 	RefreshTokenInverseTable = "refresh_tokens"
 	// RefreshTokenColumn is the table column denoting the refresh_token relation/edge.
-	RefreshTokenColumn = "refresh_token_id"
+	RefreshTokenColumn = "refresh_token_access_tokens"
 )
 
 // Columns holds all SQL columns for accesstoken fields.
@@ -57,7 +57,12 @@ var Columns = []string{
 	FieldToken,
 	FieldUserID,
 	FieldExpiry,
-	FieldRefreshTokenID,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "access_tokens"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"refresh_token_access_tokens",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -67,8 +72,22 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
+			return true
+		}
+	}
 	return false
 }
+
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+)
 
 // OrderOption defines the ordering options for the AccessToken queries.
 type OrderOption func(*sql.Selector)
@@ -106,11 +125,6 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByExpiry orders the results by the expiry field.
 func ByExpiry(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiry, opts...).ToFunc()
-}
-
-// ByRefreshTokenID orders the results by the refresh_token_id field.
-func ByRefreshTokenID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRefreshTokenID, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.AccessToken {
+func ID(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.AccessToken {
+func IDEQ(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.AccessToken {
+func IDNEQ(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.AccessToken {
+func IDIn(ids ...int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.AccessToken {
+func IDNotIn(ids ...int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.AccessToken {
+func IDGT(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.AccessToken {
+func IDGTE(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.AccessToken {
+func IDLT(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.AccessToken {
+func IDLTE(id int) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldLTE(FieldID, id))
 }
 
@@ -83,11 +83,6 @@ func UserID(v string) predicate.AccessToken {
 // Expiry applies equality check predicate on the "expiry" field. It's identical to ExpiryEQ.
 func Expiry(v time.Time) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldEQ(FieldExpiry, v))
-}
-
-// RefreshTokenID applies equality check predicate on the "refresh_token_id" field. It's identical to RefreshTokenIDEQ.
-func RefreshTokenID(v int64) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldEQ(FieldRefreshTokenID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -130,16 +125,6 @@ func CreatedAtLTE(v time.Time) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldEQ(FieldUpdatedAt, v))
@@ -178,16 +163,6 @@ func UpdatedAtLT(v time.Time) predicate.AccessToken {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldLTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
@@ -438,36 +413,6 @@ func ExpiryIsNil() predicate.AccessToken {
 // ExpiryNotNil applies the NotNil predicate on the "expiry" field.
 func ExpiryNotNil() predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldNotNull(FieldExpiry))
-}
-
-// RefreshTokenIDEQ applies the EQ predicate on the "refresh_token_id" field.
-func RefreshTokenIDEQ(v int64) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldEQ(FieldRefreshTokenID, v))
-}
-
-// RefreshTokenIDNEQ applies the NEQ predicate on the "refresh_token_id" field.
-func RefreshTokenIDNEQ(v int64) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldNEQ(FieldRefreshTokenID, v))
-}
-
-// RefreshTokenIDIn applies the In predicate on the "refresh_token_id" field.
-func RefreshTokenIDIn(vs ...int64) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldIn(FieldRefreshTokenID, vs...))
-}
-
-// RefreshTokenIDNotIn applies the NotIn predicate on the "refresh_token_id" field.
-func RefreshTokenIDNotIn(vs ...int64) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldNotIn(FieldRefreshTokenID, vs...))
-}
-
-// RefreshTokenIDIsNil applies the IsNil predicate on the "refresh_token_id" field.
-func RefreshTokenIDIsNil() predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldIsNull(FieldRefreshTokenID))
-}
-
-// RefreshTokenIDNotNil applies the NotNil predicate on the "refresh_token_id" field.
-func RefreshTokenIDNotNil() predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldNotNull(FieldRefreshTokenID))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

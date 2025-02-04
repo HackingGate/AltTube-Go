@@ -1,35 +1,38 @@
 package database
 
-import "AltTube-Go/models"
+import (
+	"AltTube-Go/ent"
+	"AltTube-Go/ent/video"
+	"context"
+)
 
-func AddVideo(video models.Video) error {
-	dbInstance.Create(&video)
-	return nil
+// AddVideo adds a new video to the database.
+func AddVideo(ctx context.Context, videoToAdd ent.Video) (*ent.Video, error) {
+	videoAdded, err := Client.Video.
+		Create().
+		SetTitle(videoToAdd.Title).
+		SetDescription(videoToAdd.Description).
+		SetUploadDate(videoToAdd.UploadDate).
+		Save(ctx)
+
+	return videoAdded, err
 }
 
-func GetVideoByV(id string) (*models.Video, error) {
-	result := models.Video{}
-	dbResult := dbInstance.Where("id = ?", id).First(&result)
-	if dbResult.Error != nil {
-		return nil, dbResult.Error
-	}
-	return &result, nil
+// VideoExists checks if a video with the given ID exists in the database.
+func VideoExists(ctx context.Context, id string) bool {
+	_, err := Client.Video.
+		Query().
+		Where(video.ID(id)).
+		Only(ctx)
+
+	return err == nil
 }
 
-func GetUserByID(id string) (*models.User, error) {
-	result := models.User{}
-	dbResult := dbInstance.Where("id = ?", id).First(&result)
-	if dbResult.Error != nil {
-		return nil, dbResult.Error
-	}
-	return &result, nil
-}
-
-func VideoExists(id string) bool {
-	result := models.Video{}
-	dbResult := dbInstance.Where("id = ?", id).First(&result)
-	if dbResult.Error != nil {
-		return false
-	}
-	return true
+// GetVideoByV gets a video by its ID.
+func GetVideoByV(ctx context.Context, id string) (*ent.Video, error) {
+	videoQueried, err := Client.Video.
+		Query().
+		Where(video.IDEQ(id)).
+		Only(ctx)
+	return videoQueried, err
 }

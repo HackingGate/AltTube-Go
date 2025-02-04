@@ -30,43 +30,9 @@ func (lvu *LikeVideoUpdate) Where(ps ...predicate.LikeVideo) *LikeVideoUpdate {
 	return lvu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (lvu *LikeVideoUpdate) SetCreatedAt(t time.Time) *LikeVideoUpdate {
-	lvu.mutation.SetCreatedAt(t)
-	return lvu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lvu *LikeVideoUpdate) SetNillableCreatedAt(t *time.Time) *LikeVideoUpdate {
-	if t != nil {
-		lvu.SetCreatedAt(*t)
-	}
-	return lvu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (lvu *LikeVideoUpdate) ClearCreatedAt() *LikeVideoUpdate {
-	lvu.mutation.ClearCreatedAt()
-	return lvu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (lvu *LikeVideoUpdate) SetUpdatedAt(t time.Time) *LikeVideoUpdate {
 	lvu.mutation.SetUpdatedAt(t)
-	return lvu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (lvu *LikeVideoUpdate) SetNillableUpdatedAt(t *time.Time) *LikeVideoUpdate {
-	if t != nil {
-		lvu.SetUpdatedAt(*t)
-	}
-	return lvu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (lvu *LikeVideoUpdate) ClearUpdatedAt() *LikeVideoUpdate {
-	lvu.mutation.ClearUpdatedAt()
 	return lvu
 }
 
@@ -159,6 +125,7 @@ func (lvu *LikeVideoUpdate) ClearVideo() *LikeVideoUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (lvu *LikeVideoUpdate) Save(ctx context.Context) (int, error) {
+	lvu.defaults()
 	return withHooks(ctx, lvu.sqlSave, lvu.mutation, lvu.hooks)
 }
 
@@ -184,8 +151,16 @@ func (lvu *LikeVideoUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (lvu *LikeVideoUpdate) defaults() {
+	if _, ok := lvu.mutation.UpdatedAt(); !ok {
+		v := likevideo.UpdateDefaultUpdatedAt()
+		lvu.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (lvu *LikeVideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	if ps := lvu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -193,17 +168,8 @@ func (lvu *LikeVideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := lvu.mutation.CreatedAt(); ok {
-		_spec.SetField(likevideo.FieldCreatedAt, field.TypeTime, value)
-	}
-	if lvu.mutation.CreatedAtCleared() {
-		_spec.ClearField(likevideo.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := lvu.mutation.UpdatedAt(); ok {
 		_spec.SetField(likevideo.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if lvu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(likevideo.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := lvu.mutation.DeletedAt(); ok {
 		_spec.SetField(likevideo.FieldDeletedAt, field.TypeTime, value)
@@ -289,43 +255,9 @@ type LikeVideoUpdateOne struct {
 	mutation *LikeVideoMutation
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (lvuo *LikeVideoUpdateOne) SetCreatedAt(t time.Time) *LikeVideoUpdateOne {
-	lvuo.mutation.SetCreatedAt(t)
-	return lvuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lvuo *LikeVideoUpdateOne) SetNillableCreatedAt(t *time.Time) *LikeVideoUpdateOne {
-	if t != nil {
-		lvuo.SetCreatedAt(*t)
-	}
-	return lvuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (lvuo *LikeVideoUpdateOne) ClearCreatedAt() *LikeVideoUpdateOne {
-	lvuo.mutation.ClearCreatedAt()
-	return lvuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (lvuo *LikeVideoUpdateOne) SetUpdatedAt(t time.Time) *LikeVideoUpdateOne {
 	lvuo.mutation.SetUpdatedAt(t)
-	return lvuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (lvuo *LikeVideoUpdateOne) SetNillableUpdatedAt(t *time.Time) *LikeVideoUpdateOne {
-	if t != nil {
-		lvuo.SetUpdatedAt(*t)
-	}
-	return lvuo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (lvuo *LikeVideoUpdateOne) ClearUpdatedAt() *LikeVideoUpdateOne {
-	lvuo.mutation.ClearUpdatedAt()
 	return lvuo
 }
 
@@ -431,6 +363,7 @@ func (lvuo *LikeVideoUpdateOne) Select(field string, fields ...string) *LikeVide
 
 // Save executes the query and returns the updated LikeVideo entity.
 func (lvuo *LikeVideoUpdateOne) Save(ctx context.Context) (*LikeVideo, error) {
+	lvuo.defaults()
 	return withHooks(ctx, lvuo.sqlSave, lvuo.mutation, lvuo.hooks)
 }
 
@@ -456,8 +389,16 @@ func (lvuo *LikeVideoUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (lvuo *LikeVideoUpdateOne) defaults() {
+	if _, ok := lvuo.mutation.UpdatedAt(); !ok {
+		v := likevideo.UpdateDefaultUpdatedAt()
+		lvuo.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (lvuo *LikeVideoUpdateOne) sqlSave(ctx context.Context) (_node *LikeVideo, err error) {
-	_spec := sqlgraph.NewUpdateSpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	id, ok := lvuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "LikeVideo.id" for update`)}
@@ -482,17 +423,8 @@ func (lvuo *LikeVideoUpdateOne) sqlSave(ctx context.Context) (_node *LikeVideo, 
 			}
 		}
 	}
-	if value, ok := lvuo.mutation.CreatedAt(); ok {
-		_spec.SetField(likevideo.FieldCreatedAt, field.TypeTime, value)
-	}
-	if lvuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(likevideo.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := lvuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(likevideo.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if lvuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(likevideo.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := lvuo.mutation.DeletedAt(); ok {
 		_spec.SetField(likevideo.FieldDeletedAt, field.TypeTime, value)

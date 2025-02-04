@@ -7,6 +7,7 @@ import (
 	"AltTube-Go/ent/refreshtoken"
 	"AltTube-Go/ent/user"
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -105,29 +106,23 @@ func (atc *AccessTokenCreate) SetNillableExpiry(t *time.Time) *AccessTokenCreate
 	return atc
 }
 
-// SetRefreshTokenID sets the "refresh_token_id" field.
-func (atc *AccessTokenCreate) SetRefreshTokenID(i int64) *AccessTokenCreate {
-	atc.mutation.SetRefreshTokenID(i)
-	return atc
-}
-
-// SetNillableRefreshTokenID sets the "refresh_token_id" field if the given value is not nil.
-func (atc *AccessTokenCreate) SetNillableRefreshTokenID(i *int64) *AccessTokenCreate {
-	if i != nil {
-		atc.SetRefreshTokenID(*i)
-	}
-	return atc
-}
-
-// SetID sets the "id" field.
-func (atc *AccessTokenCreate) SetID(i int64) *AccessTokenCreate {
-	atc.mutation.SetID(i)
-	return atc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (atc *AccessTokenCreate) SetUser(u *User) *AccessTokenCreate {
 	return atc.SetUserID(u.ID)
+}
+
+// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID.
+func (atc *AccessTokenCreate) SetRefreshTokenID(id uint) *AccessTokenCreate {
+	atc.mutation.SetRefreshTokenID(id)
+	return atc
+}
+
+// SetNillableRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID if the given value is not nil.
+func (atc *AccessTokenCreate) SetNillableRefreshTokenID(id *uint) *AccessTokenCreate {
+	if id != nil {
+		atc = atc.SetRefreshTokenID(*id)
+	}
+	return atc
 }
 
 // SetRefreshToken sets the "refresh_token" edge to the RefreshToken entity.
@@ -142,6 +137,7 @@ func (atc *AccessTokenCreate) Mutation() *AccessTokenMutation {
 
 // Save creates the AccessToken in the database.
 func (atc *AccessTokenCreate) Save(ctx context.Context) (*AccessToken, error) {
+	atc.defaults()
 	return withHooks(ctx, atc.sqlSave, atc.mutation, atc.hooks)
 }
 
@@ -167,8 +163,26 @@ func (atc *AccessTokenCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (atc *AccessTokenCreate) defaults() {
+	if _, ok := atc.mutation.CreatedAt(); !ok {
+		v := accesstoken.DefaultCreatedAt()
+		atc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := atc.mutation.UpdatedAt(); !ok {
+		v := accesstoken.DefaultUpdatedAt()
+		atc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (atc *AccessTokenCreate) check() error {
+	if _, ok := atc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "AccessToken.created_at"`)}
+	}
+	if _, ok := atc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "AccessToken.updated_at"`)}
+	}
 	return nil
 }
 
@@ -183,10 +197,8 @@ func (atc *AccessTokenCreate) sqlSave(ctx context.Context) (*AccessToken, error)
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	atc.mutation.id = &_node.ID
 	atc.mutation.done = true
 	return _node, nil
@@ -195,12 +207,8 @@ func (atc *AccessTokenCreate) sqlSave(ctx context.Context) (*AccessToken, error)
 func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) {
 	var (
 		_node = &AccessToken{config: atc.config}
-		_spec = sqlgraph.NewCreateSpec(accesstoken.Table, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(accesstoken.Table, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
 	)
-	if id, ok := atc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := atc.mutation.CreatedAt(); ok {
 		_spec.SetField(accesstoken.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -211,7 +219,7 @@ func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) 
 	}
 	if value, ok := atc.mutation.DeletedAt(); ok {
 		_spec.SetField(accesstoken.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
+		_node.DeletedAt = &value
 	}
 	if value, ok := atc.mutation.Token(); ok {
 		_spec.SetField(accesstoken.FieldToken, field.TypeString, value)
@@ -246,13 +254,13 @@ func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) 
 			Columns: []string{accesstoken.RefreshTokenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.RefreshTokenID = nodes[0]
+		_node.refresh_token_access_tokens = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -276,6 +284,7 @@ func (atcb *AccessTokenCreateBulk) Save(ctx context.Context) ([]*AccessToken, er
 	for i := range atcb.builders {
 		func(i int, root context.Context) {
 			builder := atcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AccessTokenMutation)
 				if !ok {
@@ -302,9 +311,9 @@ func (atcb *AccessTokenCreateBulk) Save(ctx context.Context) ([]*AccessToken, er
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

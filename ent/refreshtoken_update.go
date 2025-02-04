@@ -30,43 +30,9 @@ func (rtu *RefreshTokenUpdate) Where(ps ...predicate.RefreshToken) *RefreshToken
 	return rtu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (rtu *RefreshTokenUpdate) SetCreatedAt(t time.Time) *RefreshTokenUpdate {
-	rtu.mutation.SetCreatedAt(t)
-	return rtu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableCreatedAt(t *time.Time) *RefreshTokenUpdate {
-	if t != nil {
-		rtu.SetCreatedAt(*t)
-	}
-	return rtu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (rtu *RefreshTokenUpdate) ClearCreatedAt() *RefreshTokenUpdate {
-	rtu.mutation.ClearCreatedAt()
-	return rtu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (rtu *RefreshTokenUpdate) SetUpdatedAt(t time.Time) *RefreshTokenUpdate {
 	rtu.mutation.SetUpdatedAt(t)
-	return rtu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableUpdatedAt(t *time.Time) *RefreshTokenUpdate {
-	if t != nil {
-		rtu.SetUpdatedAt(*t)
-	}
-	return rtu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (rtu *RefreshTokenUpdate) ClearUpdatedAt() *RefreshTokenUpdate {
-	rtu.mutation.ClearUpdatedAt()
 	return rtu
 }
 
@@ -170,23 +136,9 @@ func (rtu *RefreshTokenUpdate) ClearIPAddress() *RefreshTokenUpdate {
 	return rtu
 }
 
-// SetUserID sets the "user_id" field.
-func (rtu *RefreshTokenUpdate) SetUserID(s string) *RefreshTokenUpdate {
-	rtu.mutation.SetUserID(s)
-	return rtu
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableUserID(s *string) *RefreshTokenUpdate {
-	if s != nil {
-		rtu.SetUserID(*s)
-	}
-	return rtu
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (rtu *RefreshTokenUpdate) ClearUserID() *RefreshTokenUpdate {
-	rtu.mutation.ClearUserID()
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rtu *RefreshTokenUpdate) SetUserID(id string) *RefreshTokenUpdate {
+	rtu.mutation.SetUserID(id)
 	return rtu
 }
 
@@ -196,14 +148,14 @@ func (rtu *RefreshTokenUpdate) SetUser(u *User) *RefreshTokenUpdate {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (rtu *RefreshTokenUpdate) AddAccessTokenIDs(ids ...int64) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) AddAccessTokenIDs(ids ...int) *RefreshTokenUpdate {
 	rtu.mutation.AddAccessTokenIDs(ids...)
 	return rtu
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (rtu *RefreshTokenUpdate) AddAccessTokens(a ...*AccessToken) *RefreshTokenUpdate {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -228,14 +180,14 @@ func (rtu *RefreshTokenUpdate) ClearAccessTokens() *RefreshTokenUpdate {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (rtu *RefreshTokenUpdate) RemoveAccessTokenIDs(ids ...int64) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) RemoveAccessTokenIDs(ids ...int) *RefreshTokenUpdate {
 	rtu.mutation.RemoveAccessTokenIDs(ids...)
 	return rtu
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (rtu *RefreshTokenUpdate) RemoveAccessTokens(a ...*AccessToken) *RefreshTokenUpdate {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -244,6 +196,7 @@ func (rtu *RefreshTokenUpdate) RemoveAccessTokens(a ...*AccessToken) *RefreshTok
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (rtu *RefreshTokenUpdate) Save(ctx context.Context) (int, error) {
+	rtu.defaults()
 	return withHooks(ctx, rtu.sqlSave, rtu.mutation, rtu.hooks)
 }
 
@@ -269,8 +222,27 @@ func (rtu *RefreshTokenUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rtu *RefreshTokenUpdate) defaults() {
+	if _, ok := rtu.mutation.UpdatedAt(); !ok {
+		v := refreshtoken.UpdateDefaultUpdatedAt()
+		rtu.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (rtu *RefreshTokenUpdate) check() error {
+	if rtu.mutation.UserCleared() && len(rtu.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "RefreshToken.user"`)
+	}
+	return nil
+}
+
 func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(refreshtoken.Table, refreshtoken.Columns, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64))
+	if err := rtu.check(); err != nil {
+		return n, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(refreshtoken.Table, refreshtoken.Columns, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint))
 	if ps := rtu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -278,17 +250,8 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := rtu.mutation.CreatedAt(); ok {
-		_spec.SetField(refreshtoken.FieldCreatedAt, field.TypeTime, value)
-	}
-	if rtu.mutation.CreatedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := rtu.mutation.UpdatedAt(); ok {
 		_spec.SetField(refreshtoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if rtu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := rtu.mutation.DeletedAt(); ok {
 		_spec.SetField(refreshtoken.FieldDeletedAt, field.TypeTime, value)
@@ -357,7 +320,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -370,7 +333,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -386,7 +349,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -414,43 +377,9 @@ type RefreshTokenUpdateOne struct {
 	mutation *RefreshTokenMutation
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (rtuo *RefreshTokenUpdateOne) SetCreatedAt(t time.Time) *RefreshTokenUpdateOne {
-	rtuo.mutation.SetCreatedAt(t)
-	return rtuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableCreatedAt(t *time.Time) *RefreshTokenUpdateOne {
-	if t != nil {
-		rtuo.SetCreatedAt(*t)
-	}
-	return rtuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (rtuo *RefreshTokenUpdateOne) ClearCreatedAt() *RefreshTokenUpdateOne {
-	rtuo.mutation.ClearCreatedAt()
-	return rtuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (rtuo *RefreshTokenUpdateOne) SetUpdatedAt(t time.Time) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetUpdatedAt(t)
-	return rtuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableUpdatedAt(t *time.Time) *RefreshTokenUpdateOne {
-	if t != nil {
-		rtuo.SetUpdatedAt(*t)
-	}
-	return rtuo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (rtuo *RefreshTokenUpdateOne) ClearUpdatedAt() *RefreshTokenUpdateOne {
-	rtuo.mutation.ClearUpdatedAt()
 	return rtuo
 }
 
@@ -554,23 +483,9 @@ func (rtuo *RefreshTokenUpdateOne) ClearIPAddress() *RefreshTokenUpdateOne {
 	return rtuo
 }
 
-// SetUserID sets the "user_id" field.
-func (rtuo *RefreshTokenUpdateOne) SetUserID(s string) *RefreshTokenUpdateOne {
-	rtuo.mutation.SetUserID(s)
-	return rtuo
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableUserID(s *string) *RefreshTokenUpdateOne {
-	if s != nil {
-		rtuo.SetUserID(*s)
-	}
-	return rtuo
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (rtuo *RefreshTokenUpdateOne) ClearUserID() *RefreshTokenUpdateOne {
-	rtuo.mutation.ClearUserID()
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rtuo *RefreshTokenUpdateOne) SetUserID(id string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetUserID(id)
 	return rtuo
 }
 
@@ -580,14 +495,14 @@ func (rtuo *RefreshTokenUpdateOne) SetUser(u *User) *RefreshTokenUpdateOne {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (rtuo *RefreshTokenUpdateOne) AddAccessTokenIDs(ids ...int64) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) AddAccessTokenIDs(ids ...int) *RefreshTokenUpdateOne {
 	rtuo.mutation.AddAccessTokenIDs(ids...)
 	return rtuo
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (rtuo *RefreshTokenUpdateOne) AddAccessTokens(a ...*AccessToken) *RefreshTokenUpdateOne {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -612,14 +527,14 @@ func (rtuo *RefreshTokenUpdateOne) ClearAccessTokens() *RefreshTokenUpdateOne {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (rtuo *RefreshTokenUpdateOne) RemoveAccessTokenIDs(ids ...int64) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) RemoveAccessTokenIDs(ids ...int) *RefreshTokenUpdateOne {
 	rtuo.mutation.RemoveAccessTokenIDs(ids...)
 	return rtuo
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (rtuo *RefreshTokenUpdateOne) RemoveAccessTokens(a ...*AccessToken) *RefreshTokenUpdateOne {
-	ids := make([]int64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -641,6 +556,7 @@ func (rtuo *RefreshTokenUpdateOne) Select(field string, fields ...string) *Refre
 
 // Save executes the query and returns the updated RefreshToken entity.
 func (rtuo *RefreshTokenUpdateOne) Save(ctx context.Context) (*RefreshToken, error) {
+	rtuo.defaults()
 	return withHooks(ctx, rtuo.sqlSave, rtuo.mutation, rtuo.hooks)
 }
 
@@ -666,8 +582,27 @@ func (rtuo *RefreshTokenUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (rtuo *RefreshTokenUpdateOne) defaults() {
+	if _, ok := rtuo.mutation.UpdatedAt(); !ok {
+		v := refreshtoken.UpdateDefaultUpdatedAt()
+		rtuo.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (rtuo *RefreshTokenUpdateOne) check() error {
+	if rtuo.mutation.UserCleared() && len(rtuo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "RefreshToken.user"`)
+	}
+	return nil
+}
+
 func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshToken, err error) {
-	_spec := sqlgraph.NewUpdateSpec(refreshtoken.Table, refreshtoken.Columns, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeInt64))
+	if err := rtuo.check(); err != nil {
+		return _node, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(refreshtoken.Table, refreshtoken.Columns, sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeUint))
 	id, ok := rtuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "RefreshToken.id" for update`)}
@@ -692,17 +627,8 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			}
 		}
 	}
-	if value, ok := rtuo.mutation.CreatedAt(); ok {
-		_spec.SetField(refreshtoken.FieldCreatedAt, field.TypeTime, value)
-	}
-	if rtuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldCreatedAt, field.TypeTime)
-	}
 	if value, ok := rtuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(refreshtoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if rtuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := rtuo.mutation.DeletedAt(); ok {
 		_spec.SetField(refreshtoken.FieldDeletedAt, field.TypeTime, value)
@@ -771,7 +697,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -784,7 +710,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -800,7 +726,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

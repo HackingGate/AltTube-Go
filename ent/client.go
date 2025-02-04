@@ -299,7 +299,7 @@ func (c *AccessTokenClient) UpdateOne(at *AccessToken) *AccessTokenUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AccessTokenClient) UpdateOneID(id int64) *AccessTokenUpdateOne {
+func (c *AccessTokenClient) UpdateOneID(id int) *AccessTokenUpdateOne {
 	mutation := newAccessTokenMutation(c.config, OpUpdateOne, withAccessTokenID(id))
 	return &AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -316,7 +316,7 @@ func (c *AccessTokenClient) DeleteOne(at *AccessToken) *AccessTokenDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AccessTokenClient) DeleteOneID(id int64) *AccessTokenDeleteOne {
+func (c *AccessTokenClient) DeleteOneID(id int) *AccessTokenDeleteOne {
 	builder := c.Delete().Where(accesstoken.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -333,12 +333,12 @@ func (c *AccessTokenClient) Query() *AccessTokenQuery {
 }
 
 // Get returns a AccessToken entity by its id.
-func (c *AccessTokenClient) Get(ctx context.Context, id int64) (*AccessToken, error) {
+func (c *AccessTokenClient) Get(ctx context.Context, id int) (*AccessToken, error) {
 	return c.Query().Where(accesstoken.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AccessTokenClient) GetX(ctx context.Context, id int64) *AccessToken {
+func (c *AccessTokenClient) GetX(ctx context.Context, id int) *AccessToken {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -464,7 +464,7 @@ func (c *LikeVideoClient) UpdateOne(lv *LikeVideo) *LikeVideoUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *LikeVideoClient) UpdateOneID(id int64) *LikeVideoUpdateOne {
+func (c *LikeVideoClient) UpdateOneID(id int) *LikeVideoUpdateOne {
 	mutation := newLikeVideoMutation(c.config, OpUpdateOne, withLikeVideoID(id))
 	return &LikeVideoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -481,7 +481,7 @@ func (c *LikeVideoClient) DeleteOne(lv *LikeVideo) *LikeVideoDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *LikeVideoClient) DeleteOneID(id int64) *LikeVideoDeleteOne {
+func (c *LikeVideoClient) DeleteOneID(id int) *LikeVideoDeleteOne {
 	builder := c.Delete().Where(likevideo.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -498,12 +498,12 @@ func (c *LikeVideoClient) Query() *LikeVideoQuery {
 }
 
 // Get returns a LikeVideo entity by its id.
-func (c *LikeVideoClient) Get(ctx context.Context, id int64) (*LikeVideo, error) {
+func (c *LikeVideoClient) Get(ctx context.Context, id int) (*LikeVideo, error) {
 	return c.Query().Where(likevideo.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *LikeVideoClient) GetX(ctx context.Context, id int64) *LikeVideo {
+func (c *LikeVideoClient) GetX(ctx context.Context, id int) *LikeVideo {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -629,7 +629,7 @@ func (c *RefreshTokenClient) UpdateOne(rt *RefreshToken) *RefreshTokenUpdateOne 
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *RefreshTokenClient) UpdateOneID(id int64) *RefreshTokenUpdateOne {
+func (c *RefreshTokenClient) UpdateOneID(id uint) *RefreshTokenUpdateOne {
 	mutation := newRefreshTokenMutation(c.config, OpUpdateOne, withRefreshTokenID(id))
 	return &RefreshTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -646,7 +646,7 @@ func (c *RefreshTokenClient) DeleteOne(rt *RefreshToken) *RefreshTokenDeleteOne 
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *RefreshTokenClient) DeleteOneID(id int64) *RefreshTokenDeleteOne {
+func (c *RefreshTokenClient) DeleteOneID(id uint) *RefreshTokenDeleteOne {
 	builder := c.Delete().Where(refreshtoken.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -663,12 +663,12 @@ func (c *RefreshTokenClient) Query() *RefreshTokenQuery {
 }
 
 // Get returns a RefreshToken entity by its id.
-func (c *RefreshTokenClient) Get(ctx context.Context, id int64) (*RefreshToken, error) {
+func (c *RefreshTokenClient) Get(ctx context.Context, id uint) (*RefreshToken, error) {
 	return c.Query().Where(refreshtoken.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *RefreshTokenClient) GetX(ctx context.Context, id int64) *RefreshToken {
+func (c *RefreshTokenClient) GetX(ctx context.Context, id uint) *RefreshToken {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

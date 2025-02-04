@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"AltTube-Go/ent/mixins"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -11,12 +12,14 @@ type LikeVideo struct {
 	ent.Schema
 }
 
+func (LikeVideo) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixins.BaseMixin{},
+	}
+}
+
 func (LikeVideo) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id").Unique(),
-		field.Time("created_at").Optional(),
-		field.Time("updated_at").Optional(),
-		field.Time("deleted_at").Optional(),
 		field.String("user_id").Optional(),
 		field.String("video_id").Optional(),
 	}

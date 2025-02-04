@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"AltTube-Go/ent/mixins"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -11,14 +12,17 @@ type User struct {
 	ent.Schema
 }
 
+func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixins.BaseMixin{},
+		mixins.UuidIdMixin{},
+	}
+}
+
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Unique(),
 		field.String("email").Unique().Optional(),
 		field.String("password").NotEmpty(),
-		field.Time("created_at").Optional(),
-		field.Time("updated_at").Optional(),
-		field.Time("deleted_at").Optional(),
 	}
 }
 

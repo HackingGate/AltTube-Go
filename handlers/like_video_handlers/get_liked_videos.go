@@ -2,7 +2,8 @@ package like_video_handlers
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/models"
+	"AltTube-Go/dto"
+	"AltTube-Go/ent"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,16 +31,16 @@ func GetLikedVideos(ctx *gin.Context) {
 		return
 	}
 
-	allLikes, err := database.GetAllLikesByUserID(authUserID)
+	allLikes, err := database.GetAllLikesByUserID(ctx.Request.Context(), authUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting liked videos"})
 		return
 	}
 
 	// Map allLikes to videos
-	var videos []*models.Video
+	var videos []*ent.Video
 	for _, like := range allLikes {
-		video, err := database.GetVideoByV(like.VideoID)
+		video, err := database.GetVideoByV(ctx.Request.Context(), like.VideoID)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting video"})
 			return
@@ -48,12 +49,12 @@ func GetLikedVideos(ctx *gin.Context) {
 	}
 
 	// Map videos to LikeVideoResponse
-	var likeVideosResponse []models.LikeVideoResponse
+	var likeVideosResponse []dto.LikeVideoResponse
 	for _, video := range videos {
-		likeVideosResponse = append(likeVideosResponse, models.LikeVideoResponse{
+		likeVideosResponse = append(likeVideosResponse, dto.LikeVideoResponse{
 			ID:           video.ID,
 			Title:        video.Title,
-			ThumbnailUrl: video.ThumbnailUrl,
+			ThumbnailUrl: video.ThumbnailURL,
 		})
 	}
 

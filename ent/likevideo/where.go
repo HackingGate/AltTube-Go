@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.LikeVideo {
+func ID(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.LikeVideo {
+func IDEQ(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.LikeVideo {
+func IDNEQ(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.LikeVideo {
+func IDIn(ids ...int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.LikeVideo {
+func IDNotIn(ids ...int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.LikeVideo {
+func IDGT(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.LikeVideo {
+func IDGTE(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.LikeVideo {
+func IDLT(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.LikeVideo {
+func IDLTE(id int) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldLTE(FieldID, id))
 }
 
@@ -120,16 +120,6 @@ func CreatedAtLTE(v time.Time) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldNotNull(FieldCreatedAt))
-}
-
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldEQ(FieldUpdatedAt, v))
@@ -168,16 +158,6 @@ func UpdatedAtLT(v time.Time) predicate.LikeVideo {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldLTE(FieldUpdatedAt, v))
-}
-
-// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
-func UpdatedAtIsNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldIsNull(FieldUpdatedAt))
-}
-
-// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
-func UpdatedAtNotNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.

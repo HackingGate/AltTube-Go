@@ -2,7 +2,7 @@ package devices
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/models"
+	"AltTube-Go/ent"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,13 +39,13 @@ func DeleteDevices(ctx *gin.Context) {
 	}
 
 	// Delete refresh tokens associated with the user
-	refreshTokens, err := database.GetAllRefreshTokensByUserID(authUserID)
+	refreshTokens, err := database.GetAllRefreshTokensByUserID(ctx.Request.Context(), authUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting devices for user"})
 		return
 	}
 	// Filter refreshTokens with deleteDevices
-	filteredRefreshTokens := make([]models.RefreshToken, 0)
+	filteredRefreshTokens := make([]*ent.RefreshToken, 0)
 	for _, refreshToken := range refreshTokens {
 		for _, device := range deleteDevices {
 			if refreshToken.ID == device {
@@ -62,7 +62,7 @@ func DeleteDevices(ctx *gin.Context) {
 	var refreshTokensIDs []uint
 	for _, refreshToken := range refreshTokens {
 		// Delete access tokens associated with the refresh token
-		err = database.RemoveAllAccessTokensByRefreshTokenID(refreshToken.ID)
+		err = database.RemoveAllAccessTokensByRefreshTokenID(ctx.Request.Context(), refreshToken.ID)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access tokens associated with refresh refreshToken"})
 			return
@@ -70,14 +70,14 @@ func DeleteDevices(ctx *gin.Context) {
 
 		refreshTokensIDs = append(refreshTokensIDs, refreshToken.ID)
 	}
-	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
+	err = database.RemoveRefreshTokensByID(ctx.Request.Context(), refreshTokensIDs)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing refresh tokens"})
 		return
 	}
 
 	// Delete the refresh tokens
-	err = database.RemoveRefreshTokensByID(refreshTokensIDs)
+	err = database.RemoveRefreshTokensByID(ctx.Request.Context(), refreshTokensIDs)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting devices"})
 		return

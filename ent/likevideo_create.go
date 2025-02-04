@@ -7,6 +7,7 @@ import (
 	"AltTube-Go/ent/user"
 	"AltTube-Go/ent/video"
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -91,12 +92,6 @@ func (lvc *LikeVideoCreate) SetNillableVideoID(s *string) *LikeVideoCreate {
 	return lvc
 }
 
-// SetID sets the "id" field.
-func (lvc *LikeVideoCreate) SetID(i int64) *LikeVideoCreate {
-	lvc.mutation.SetID(i)
-	return lvc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (lvc *LikeVideoCreate) SetUser(u *User) *LikeVideoCreate {
 	return lvc.SetUserID(u.ID)
@@ -114,6 +109,7 @@ func (lvc *LikeVideoCreate) Mutation() *LikeVideoMutation {
 
 // Save creates the LikeVideo in the database.
 func (lvc *LikeVideoCreate) Save(ctx context.Context) (*LikeVideo, error) {
+	lvc.defaults()
 	return withHooks(ctx, lvc.sqlSave, lvc.mutation, lvc.hooks)
 }
 
@@ -139,8 +135,26 @@ func (lvc *LikeVideoCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (lvc *LikeVideoCreate) defaults() {
+	if _, ok := lvc.mutation.CreatedAt(); !ok {
+		v := likevideo.DefaultCreatedAt()
+		lvc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := lvc.mutation.UpdatedAt(); !ok {
+		v := likevideo.DefaultUpdatedAt()
+		lvc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (lvc *LikeVideoCreate) check() error {
+	if _, ok := lvc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "LikeVideo.created_at"`)}
+	}
+	if _, ok := lvc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "LikeVideo.updated_at"`)}
+	}
 	return nil
 }
 
@@ -155,10 +169,8 @@ func (lvc *LikeVideoCreate) sqlSave(ctx context.Context) (*LikeVideo, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	lvc.mutation.id = &_node.ID
 	lvc.mutation.done = true
 	return _node, nil
@@ -167,12 +179,8 @@ func (lvc *LikeVideoCreate) sqlSave(ctx context.Context) (*LikeVideo, error) {
 func (lvc *LikeVideoCreate) createSpec() (*LikeVideo, *sqlgraph.CreateSpec) {
 	var (
 		_node = &LikeVideo{config: lvc.config}
-		_spec = sqlgraph.NewCreateSpec(likevideo.Table, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(likevideo.Table, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	)
-	if id, ok := lvc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := lvc.mutation.CreatedAt(); ok {
 		_spec.SetField(likevideo.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -183,7 +191,7 @@ func (lvc *LikeVideoCreate) createSpec() (*LikeVideo, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := lvc.mutation.DeletedAt(); ok {
 		_spec.SetField(likevideo.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
+		_node.DeletedAt = &value
 	}
 	if nodes := lvc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -240,6 +248,7 @@ func (lvcb *LikeVideoCreateBulk) Save(ctx context.Context) ([]*LikeVideo, error)
 	for i := range lvcb.builders {
 		func(i int, root context.Context) {
 			builder := lvcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*LikeVideoMutation)
 				if !ok {
@@ -266,9 +275,9 @@ func (lvcb *LikeVideoCreateBulk) Save(ctx context.Context) ([]*LikeVideo, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

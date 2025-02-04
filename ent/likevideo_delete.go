@@ -40,7 +40,7 @@ func (lvd *LikeVideoDelete) ExecX(ctx context.Context) int {
 }
 
 func (lvd *LikeVideoDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(likevideo.Table, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewDeleteSpec(likevideo.Table, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	if ps := lvd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

@@ -29,6 +29,32 @@ func (vu *VideoUpdate) Where(ps ...predicate.Video) *VideoUpdate {
 	return vu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (vu *VideoUpdate) SetUpdatedAt(t time.Time) *VideoUpdate {
+	vu.mutation.SetUpdatedAt(t)
+	return vu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (vu *VideoUpdate) SetDeletedAt(t time.Time) *VideoUpdate {
+	vu.mutation.SetDeletedAt(t)
+	return vu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (vu *VideoUpdate) SetNillableDeletedAt(t *time.Time) *VideoUpdate {
+	if t != nil {
+		vu.SetDeletedAt(*t)
+	}
+	return vu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (vu *VideoUpdate) ClearDeletedAt() *VideoUpdate {
+	vu.mutation.ClearDeletedAt()
+	return vu
+}
+
 // SetTitle sets the "title" field.
 func (vu *VideoUpdate) SetTitle(s string) *VideoUpdate {
 	vu.mutation.SetTitle(s)
@@ -99,66 +125,6 @@ func (vu *VideoUpdate) SetNillableUploaderURL(s *string) *VideoUpdate {
 	return vu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (vu *VideoUpdate) SetCreatedAt(t time.Time) *VideoUpdate {
-	vu.mutation.SetCreatedAt(t)
-	return vu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (vu *VideoUpdate) SetNillableCreatedAt(t *time.Time) *VideoUpdate {
-	if t != nil {
-		vu.SetCreatedAt(*t)
-	}
-	return vu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (vu *VideoUpdate) ClearCreatedAt() *VideoUpdate {
-	vu.mutation.ClearCreatedAt()
-	return vu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (vu *VideoUpdate) SetUpdatedAt(t time.Time) *VideoUpdate {
-	vu.mutation.SetUpdatedAt(t)
-	return vu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (vu *VideoUpdate) SetNillableUpdatedAt(t *time.Time) *VideoUpdate {
-	if t != nil {
-		vu.SetUpdatedAt(*t)
-	}
-	return vu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (vu *VideoUpdate) ClearUpdatedAt() *VideoUpdate {
-	vu.mutation.ClearUpdatedAt()
-	return vu
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (vu *VideoUpdate) SetDeletedAt(t time.Time) *VideoUpdate {
-	vu.mutation.SetDeletedAt(t)
-	return vu
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (vu *VideoUpdate) SetNillableDeletedAt(t *time.Time) *VideoUpdate {
-	if t != nil {
-		vu.SetDeletedAt(*t)
-	}
-	return vu
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (vu *VideoUpdate) ClearDeletedAt() *VideoUpdate {
-	vu.mutation.ClearDeletedAt()
-	return vu
-}
-
 // SetThumbnailURL sets the "thumbnail_url" field.
 func (vu *VideoUpdate) SetThumbnailURL(s string) *VideoUpdate {
 	vu.mutation.SetThumbnailURL(s)
@@ -174,14 +140,14 @@ func (vu *VideoUpdate) SetNillableThumbnailURL(s *string) *VideoUpdate {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by IDs.
-func (vu *VideoUpdate) AddLikeVideoIDs(ids ...int64) *VideoUpdate {
+func (vu *VideoUpdate) AddLikeVideoIDs(ids ...int) *VideoUpdate {
 	vu.mutation.AddLikeVideoIDs(ids...)
 	return vu
 }
 
 // AddLikeVideos adds the "like_videos" edges to the LikeVideo entity.
 func (vu *VideoUpdate) AddLikeVideos(l ...*LikeVideo) *VideoUpdate {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -200,14 +166,14 @@ func (vu *VideoUpdate) ClearLikeVideos() *VideoUpdate {
 }
 
 // RemoveLikeVideoIDs removes the "like_videos" edge to LikeVideo entities by IDs.
-func (vu *VideoUpdate) RemoveLikeVideoIDs(ids ...int64) *VideoUpdate {
+func (vu *VideoUpdate) RemoveLikeVideoIDs(ids ...int) *VideoUpdate {
 	vu.mutation.RemoveLikeVideoIDs(ids...)
 	return vu
 }
 
 // RemoveLikeVideos removes "like_videos" edges to LikeVideo entities.
 func (vu *VideoUpdate) RemoveLikeVideos(l ...*LikeVideo) *VideoUpdate {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -216,6 +182,7 @@ func (vu *VideoUpdate) RemoveLikeVideos(l ...*LikeVideo) *VideoUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (vu *VideoUpdate) Save(ctx context.Context) (int, error) {
+	vu.defaults()
 	return withHooks(ctx, vu.sqlSave, vu.mutation, vu.hooks)
 }
 
@@ -238,6 +205,14 @@ func (vu *VideoUpdate) Exec(ctx context.Context) error {
 func (vu *VideoUpdate) ExecX(ctx context.Context) {
 	if err := vu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (vu *VideoUpdate) defaults() {
+	if _, ok := vu.mutation.UpdatedAt(); !ok {
+		v := video.UpdateDefaultUpdatedAt()
+		vu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -283,6 +258,15 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := vu.mutation.UpdatedAt(); ok {
+		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := vu.mutation.DeletedAt(); ok {
+		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
+	}
+	if vu.mutation.DeletedAtCleared() {
+		_spec.ClearField(video.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := vu.mutation.Title(); ok {
 		_spec.SetField(video.FieldTitle, field.TypeString, value)
 	}
@@ -298,24 +282,6 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := vu.mutation.UploaderURL(); ok {
 		_spec.SetField(video.FieldUploaderURL, field.TypeString, value)
 	}
-	if value, ok := vu.mutation.CreatedAt(); ok {
-		_spec.SetField(video.FieldCreatedAt, field.TypeTime, value)
-	}
-	if vu.mutation.CreatedAtCleared() {
-		_spec.ClearField(video.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := vu.mutation.UpdatedAt(); ok {
-		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if vu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(video.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := vu.mutation.DeletedAt(); ok {
-		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
-	}
-	if vu.mutation.DeletedAtCleared() {
-		_spec.ClearField(video.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := vu.mutation.ThumbnailURL(); ok {
 		_spec.SetField(video.FieldThumbnailURL, field.TypeString, value)
 	}
@@ -327,7 +293,7 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -340,7 +306,7 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -356,7 +322,7 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -382,6 +348,32 @@ type VideoUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *VideoMutation
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (vuo *VideoUpdateOne) SetUpdatedAt(t time.Time) *VideoUpdateOne {
+	vuo.mutation.SetUpdatedAt(t)
+	return vuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (vuo *VideoUpdateOne) SetDeletedAt(t time.Time) *VideoUpdateOne {
+	vuo.mutation.SetDeletedAt(t)
+	return vuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (vuo *VideoUpdateOne) SetNillableDeletedAt(t *time.Time) *VideoUpdateOne {
+	if t != nil {
+		vuo.SetDeletedAt(*t)
+	}
+	return vuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (vuo *VideoUpdateOne) ClearDeletedAt() *VideoUpdateOne {
+	vuo.mutation.ClearDeletedAt()
+	return vuo
 }
 
 // SetTitle sets the "title" field.
@@ -454,66 +446,6 @@ func (vuo *VideoUpdateOne) SetNillableUploaderURL(s *string) *VideoUpdateOne {
 	return vuo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (vuo *VideoUpdateOne) SetCreatedAt(t time.Time) *VideoUpdateOne {
-	vuo.mutation.SetCreatedAt(t)
-	return vuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (vuo *VideoUpdateOne) SetNillableCreatedAt(t *time.Time) *VideoUpdateOne {
-	if t != nil {
-		vuo.SetCreatedAt(*t)
-	}
-	return vuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (vuo *VideoUpdateOne) ClearCreatedAt() *VideoUpdateOne {
-	vuo.mutation.ClearCreatedAt()
-	return vuo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (vuo *VideoUpdateOne) SetUpdatedAt(t time.Time) *VideoUpdateOne {
-	vuo.mutation.SetUpdatedAt(t)
-	return vuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (vuo *VideoUpdateOne) SetNillableUpdatedAt(t *time.Time) *VideoUpdateOne {
-	if t != nil {
-		vuo.SetUpdatedAt(*t)
-	}
-	return vuo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (vuo *VideoUpdateOne) ClearUpdatedAt() *VideoUpdateOne {
-	vuo.mutation.ClearUpdatedAt()
-	return vuo
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (vuo *VideoUpdateOne) SetDeletedAt(t time.Time) *VideoUpdateOne {
-	vuo.mutation.SetDeletedAt(t)
-	return vuo
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (vuo *VideoUpdateOne) SetNillableDeletedAt(t *time.Time) *VideoUpdateOne {
-	if t != nil {
-		vuo.SetDeletedAt(*t)
-	}
-	return vuo
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (vuo *VideoUpdateOne) ClearDeletedAt() *VideoUpdateOne {
-	vuo.mutation.ClearDeletedAt()
-	return vuo
-}
-
 // SetThumbnailURL sets the "thumbnail_url" field.
 func (vuo *VideoUpdateOne) SetThumbnailURL(s string) *VideoUpdateOne {
 	vuo.mutation.SetThumbnailURL(s)
@@ -529,14 +461,14 @@ func (vuo *VideoUpdateOne) SetNillableThumbnailURL(s *string) *VideoUpdateOne {
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by IDs.
-func (vuo *VideoUpdateOne) AddLikeVideoIDs(ids ...int64) *VideoUpdateOne {
+func (vuo *VideoUpdateOne) AddLikeVideoIDs(ids ...int) *VideoUpdateOne {
 	vuo.mutation.AddLikeVideoIDs(ids...)
 	return vuo
 }
 
 // AddLikeVideos adds the "like_videos" edges to the LikeVideo entity.
 func (vuo *VideoUpdateOne) AddLikeVideos(l ...*LikeVideo) *VideoUpdateOne {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -555,14 +487,14 @@ func (vuo *VideoUpdateOne) ClearLikeVideos() *VideoUpdateOne {
 }
 
 // RemoveLikeVideoIDs removes the "like_videos" edge to LikeVideo entities by IDs.
-func (vuo *VideoUpdateOne) RemoveLikeVideoIDs(ids ...int64) *VideoUpdateOne {
+func (vuo *VideoUpdateOne) RemoveLikeVideoIDs(ids ...int) *VideoUpdateOne {
 	vuo.mutation.RemoveLikeVideoIDs(ids...)
 	return vuo
 }
 
 // RemoveLikeVideos removes "like_videos" edges to LikeVideo entities.
 func (vuo *VideoUpdateOne) RemoveLikeVideos(l ...*LikeVideo) *VideoUpdateOne {
-	ids := make([]int64, len(l))
+	ids := make([]int, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
 	}
@@ -584,6 +516,7 @@ func (vuo *VideoUpdateOne) Select(field string, fields ...string) *VideoUpdateOn
 
 // Save executes the query and returns the updated Video entity.
 func (vuo *VideoUpdateOne) Save(ctx context.Context) (*Video, error) {
+	vuo.defaults()
 	return withHooks(ctx, vuo.sqlSave, vuo.mutation, vuo.hooks)
 }
 
@@ -606,6 +539,14 @@ func (vuo *VideoUpdateOne) Exec(ctx context.Context) error {
 func (vuo *VideoUpdateOne) ExecX(ctx context.Context) {
 	if err := vuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (vuo *VideoUpdateOne) defaults() {
+	if _, ok := vuo.mutation.UpdatedAt(); !ok {
+		v := video.UpdateDefaultUpdatedAt()
+		vuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -668,6 +609,15 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 			}
 		}
 	}
+	if value, ok := vuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := vuo.mutation.DeletedAt(); ok {
+		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
+	}
+	if vuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(video.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := vuo.mutation.Title(); ok {
 		_spec.SetField(video.FieldTitle, field.TypeString, value)
 	}
@@ -683,24 +633,6 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 	if value, ok := vuo.mutation.UploaderURL(); ok {
 		_spec.SetField(video.FieldUploaderURL, field.TypeString, value)
 	}
-	if value, ok := vuo.mutation.CreatedAt(); ok {
-		_spec.SetField(video.FieldCreatedAt, field.TypeTime, value)
-	}
-	if vuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(video.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := vuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if vuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(video.FieldUpdatedAt, field.TypeTime)
-	}
-	if value, ok := vuo.mutation.DeletedAt(); ok {
-		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
-	}
-	if vuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(video.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := vuo.mutation.ThumbnailURL(); ok {
 		_spec.SetField(video.FieldThumbnailURL, field.TypeString, value)
 	}
@@ -712,7 +644,7 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -725,7 +657,7 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -741,7 +673,7 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 			Columns: []string{video.LikeVideosColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
