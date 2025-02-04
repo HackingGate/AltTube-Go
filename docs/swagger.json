@@ -31,7 +31,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.LikeVideoResponse"
+                                "$ref": "#/definitions/models.LikeVideoResponse"
                             }
                         }
                     }
@@ -314,7 +314,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.DeviceList"
+                            "$ref": "#/definitions/models.DeviceList"
                         }
                     }
                 }
@@ -385,7 +385,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateEmailRequest"
+                            "$ref": "#/definitions/models.UpdateEmailRequest"
                         }
                     }
                 ],
@@ -419,7 +419,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequest"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
@@ -509,7 +509,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SignupRequest"
+                            "$ref": "#/definitions/models.SignupRequest"
                         }
                     }
                 ],
@@ -525,7 +525,7 @@
         }
     },
     "definitions": {
-        "dto.Device": {
+        "models.Device": {
             "type": "object",
             "properties": {
                 "id": {
@@ -542,7 +542,7 @@
                 }
             }
         },
-        "dto.DeviceList": {
+        "models.DeviceList": {
             "type": "object",
             "properties": {
                 "current_device_id": {
@@ -551,12 +551,12 @@
                 "devices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.Device"
+                        "$ref": "#/definitions/models.Device"
                     }
                 }
             }
         },
-        "dto.LikeVideoResponse": {
+        "models.LikeVideoResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -570,7 +570,7 @@
                 }
             }
         },
-        "dto.LoginRequest": {
+        "models.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -581,7 +581,7 @@
                 }
             }
         },
-        "dto.SignupRequest": {
+        "models.SignupRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -592,7 +592,7 @@
                 }
             }
         },
-        "dto.UpdateEmailRequest": {
+        "models.UpdateEmailRequest": {
             "type": "object",
             "properties": {
                 "email": {

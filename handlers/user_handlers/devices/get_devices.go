@@ -2,7 +2,7 @@ package devices
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/dto"
+	"AltTube-Go/models"
 	"net/http"
 	"strings"
 
@@ -15,7 +15,7 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} dto.DeviceList
+// @Success 200 {object} models.DeviceList
 // @Security AccessToken
 // @Router /user/devices [get]
 func GetDevices(ctx *gin.Context) {
@@ -46,9 +46,9 @@ func GetDevices(ctx *gin.Context) {
 		return
 	}
 	// Filter only the necessary fields
-	var devices []dto.Device
+	var devices []models.Device
 	for i := range refreshTokens {
-		devices = append(devices, dto.Device{
+		devices = append(devices, models.Device{
 			ID:         refreshTokens[i].ID,
 			LastActive: refreshTokens[i].CreatedAt,
 			UserAgent:  refreshTokens[i].UserAgent,
@@ -62,7 +62,7 @@ func GetDevices(ctx *gin.Context) {
 		return
 	}
 
-	var deviceList dto.DeviceList
+	var deviceList models.DeviceList
 	deviceList.CurrentDeviceID = currentRefreshToken.ID
 	deviceList.Devices = devices
 

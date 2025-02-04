@@ -3,7 +3,7 @@ package user_handlers
 import (
 	"AltTube-Go/auth"
 	"AltTube-Go/database"
-	"AltTube-Go/dto"
+	"AltTube-Go/models"
 	"AltTube-Go/utils"
 	"net/http"
 
@@ -16,11 +16,11 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body dto.LoginRequest true "User"
+// @Param user body models.LoginRequest true "User"
 // @Success 200 {string} JSON "{"access_token": "access_token", "refresh_token": "refresh_token"}"
 // @Router /user/login [post]s
 func Login(ctx *gin.Context) {
-	var loginRequest dto.LoginRequest
+	var loginRequest models.LoginRequest
 	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

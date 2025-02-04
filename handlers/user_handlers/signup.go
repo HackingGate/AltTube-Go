@@ -2,7 +2,7 @@ package user_handlers
 
 import (
 	"AltTube-Go/database"
-	"AltTube-Go/dto"
+	"AltTube-Go/models"
 	"AltTube-Go/utils"
 	"net/http"
 
@@ -15,11 +15,11 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body dto.SignupRequest true "User"
+// @Param user body models.SignupRequest true "User"
 // @Success 200 {string} JSON "{"message": "Registration successful"}"
 // @Router /user/signup [post]
 func Signup(ctx *gin.Context) {
-	var signupRequest dto.SignupRequest
+	var signupRequest models.SignupRequest
 	if err := ctx.ShouldBindJSON(&signupRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

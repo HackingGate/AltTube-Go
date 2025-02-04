@@ -1,9 +1,9 @@
 package database
 
 import (
-	"AltTube-Go/dto"
 	"AltTube-Go/ent"
 	"AltTube-Go/ent/user"
+	"AltTube-Go/models"
 	"context"
 )
 
@@ -25,7 +25,7 @@ func GetUserByID(ctx context.Context, id string) (*ent.User, error) {
 }
 
 // AddUser adds a new user to the database.
-func AddUser(ctx context.Context, userToAdd dto.SignupRequest) (*ent.User, error) {
+func AddUser(ctx context.Context, userToAdd models.SignupRequest) (*ent.User, error) {
 	userAdded, err := Client.User.
 		Create().
 		SetEmail(userToAdd.Email).
@@ -44,7 +44,7 @@ func GetUserByEmail(ctx context.Context, email string) (*ent.User, error) {
 }
 
 // UpdateUserByID updates a user by ID.
-func UpdateUserByID(ctx context.Context, id string, updateEmailRequest dto.UpdateEmailRequest) error {
+func UpdateUserByID(ctx context.Context, id string, updateEmailRequest models.UpdateEmailRequest) error {
 	_, err := Client.User.
 		UpdateOneID(id).
 		SetEmail(updateEmailRequest.Email).
