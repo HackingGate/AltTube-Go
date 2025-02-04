@@ -4,11 +4,12 @@ import (
 	"AltTube-Go/ent"
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"log"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 var Client *ent.Client
