@@ -4,16 +4,25 @@ import (
 	"AltTube-Go/ent"
 	"context"
 	"fmt"
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"log"
 	"os"
 	"time"
-
-	_ "github.com/lib/pq"
 )
 
 var Client *ent.Client
 
+// loadEnv loads the .env file
+func loadEnv() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Failed to load .env file: %v", err)
+	}
+}
+
 func Init() {
+	loadEnv()
+
 	// Construct DSN from .env variables
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		os.Getenv("DB_USER"),
