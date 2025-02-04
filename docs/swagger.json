@@ -31,7 +31,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.LikeVideoResponse"
+                                "$ref": "#/definitions/dto.LikeVideoResponse"
                             }
                         }
                     }
@@ -314,7 +314,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.DeviceList"
+                            "$ref": "#/definitions/dto.DeviceList"
                         }
                     }
                 }
@@ -380,12 +380,12 @@
                 "summary": "Edit email",
                 "parameters": [
                     {
-                        "description": "EditEmail",
+                        "description": "User",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EditEmail"
+                            "$ref": "#/definitions/dto.UpdateEmailRequest"
                         }
                     }
                 ],
@@ -419,7 +419,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Login"
+                            "$ref": "#/definitions/dto.LoginRequest"
                         }
                     }
                 ],
@@ -509,7 +509,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Signup"
+                            "$ref": "#/definitions/dto.SignupRequest"
                         }
                     }
                 ],
@@ -525,7 +525,7 @@
         }
     },
     "definitions": {
-        "models.Device": {
+        "dto.Device": {
             "type": "object",
             "properties": {
                 "id": {
@@ -542,7 +542,7 @@
                 }
             }
         },
-        "models.DeviceList": {
+        "dto.DeviceList": {
             "type": "object",
             "properties": {
                 "current_device_id": {
@@ -551,20 +551,12 @@
                 "devices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Device"
+                        "$ref": "#/definitions/dto.Device"
                     }
                 }
             }
         },
-        "models.EditEmail": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.LikeVideoResponse": {
+        "dto.LikeVideoResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -578,7 +570,7 @@
                 }
             }
         },
-        "models.Login": {
+        "dto.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -589,13 +581,21 @@
                 }
             }
         },
-        "models.Signup": {
+        "dto.SignupRequest": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 }
             }

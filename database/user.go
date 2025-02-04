@@ -43,16 +43,6 @@ func GetUserByEmail(ctx context.Context, email string) (*ent.User, error) {
 	return userQueried, err
 }
 
-//func GetUserByEmail(email string) (*models.User, error) {
-//	// Query user by email
-//	result := models.User{}
-//	dbResult := dbInstance.Where("email = ?", email).First(&result)
-//	if dbResult.Error != nil {
-//		return nil, dbResult.Error
-//	}
-//	return &result, nil
-//}
-
 // UpdateUserByID updates a user by ID.
 func UpdateUserByID(ctx context.Context, id string, updateEmailRequest dto.UpdateEmailRequest) error {
 	_, err := Client.User.
@@ -61,33 +51,3 @@ func UpdateUserByID(ctx context.Context, id string, updateEmailRequest dto.Updat
 		Save(ctx)
 	return err
 }
-
-//func UpdateUserByID(id string, editEmail models.EditEmail) error {
-//	// Check if the user exists
-//	var existingUser models.User
-//	dbResult := dbInstance.Where("id = ?", id).First(&existingUser)
-//	if dbResult.Error != nil {
-//		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
-//			// User does not exist
-//			return errors.New("user not found")
-//		}
-//		// Other error
-//		return dbResult.Error
-//	}
-//
-//	// Perform the update
-//	dbResult = dbInstance.Model(&existingUser).Updates(editEmail)
-//	if dbResult.Error != nil {
-//		return dbResult.Error
-//	}
-//	return nil
-//}
-//
-//func DeleteUserByID(id string) error {
-//	// Perform a hard delete (completely remove) the user by id
-//	dbResult := dbInstance.Unscoped().Where("id = ?", id).Delete(&models.User{})
-//	if dbResult.Error != nil {
-//		return dbResult.Error
-//	}
-//	return nil
-//}
