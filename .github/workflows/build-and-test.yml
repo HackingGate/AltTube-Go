@@ -29,5 +29,6 @@ jobs:
             -H 'accept: application/json' | grep '{"message":"pong"}'
 
       - name: Print alttube-go logs
+        if: always()
         run: |
           docker logs alttube-go
