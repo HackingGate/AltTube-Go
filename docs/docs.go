@@ -388,12 +388,12 @@ const docTemplate = `{
                 "summary": "Edit email",
                 "parameters": [
                     {
-                        "description": "EditEmail",
+                        "description": "User",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EditEmail"
+                            "$ref": "#/definitions/models.UpdateEmailRequest"
                         }
                     }
                 ],
@@ -427,7 +427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Login"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
@@ -517,7 +517,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Signup"
+                            "$ref": "#/definitions/models.SignupRequest"
                         }
                     }
                 ],
@@ -564,14 +564,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.EditEmail": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                }
-            }
-        },
         "models.LikeVideoResponse": {
             "type": "object",
             "properties": {
@@ -586,7 +578,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Login": {
+        "models.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -597,13 +589,21 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Signup": {
+        "models.SignupRequest": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 }
             }
