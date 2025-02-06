@@ -3,18 +3,23 @@ package database
 import (
 	"AltTube-Go/ent"
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
-	"entgo.io/ent/migrate"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+
+	entsql "entgo.io/ent/dialect/sql" // Import the Ent SQL dialect package.
 )
 
 // Client is the global Ent client instance.
 var Client *ent.Client
+
+// DB is the global standard SQL database instance.
+var DB *sql.DB
 
 // loadEnv loads the .env file.
 func loadEnv() {
@@ -37,42 +42,57 @@ func Init() {
 		os.Getenv("DB_SSLMODE"),
 	)
 
-	var client *ent.Client
+	// Open the standard SQL DB first.
 	var err error
+	DB, err = sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalf("Failed to open standard SQL DB: %v", err)
+	}
 
-	// Attempt to connect with retries.
+	// Attempt to ping the DB with retries.
 	maxRetries := 5
 	for i := 0; i < maxRetries; i++ {
-		client, err = ent.Open("postgres", dsn)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		err = DB.PingContext(ctx)
+		cancel()
 		if err != nil {
-			log.Printf("Attempt %d: Failed to open connection: %v. Retrying in 5 seconds...", i+1, err)
+			log.Printf("Attempt %d: Failed to ping DB: %v. Retrying in 5 seconds...", i+1, err)
 			time.Sleep(5 * time.Second)
 			continue
 		}
-
-		// Ping to ensure the connection is ready.
-		if err = client.DB().Ping(); err != nil {
-			log.Printf("Attempt %d: Connection ping failed: %v. Retrying in 5 seconds...", i+1, err)
-			time.Sleep(5 * time.Second)
-			continue
-		}
-
-		// Connection is established.
+		// Successful ping.
 		break
 	}
-
-	if err != nil || client == nil {
+	if err != nil {
 		log.Fatalf("Failed to connect to database after %d attempts: %v", maxRetries, err)
 	}
+
+	// Create the Ent client using the standard SQL DB.
+	drv := entsql.OpenDB("postgres", DB)
+	Client = ent.NewClient(ent.Driver(drv))
 
 	// Run database migrations using Atlas.
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-
-	if err := client.Schema.Create(ctx); err != nil {
+	if err := Client.Schema.Create(ctx); err != nil {
 		log.Fatalf("Failed to run database migrations: %v", err)
 	}
 
-	Client = client
+	// Optionally, query the PostgreSQL version using raw SQL.
+	if err := getVersions(ctx); err != nil {
+		log.Printf("Warning: failed to get PostgreSQL version: %v", err)
+	}
+
 	log.Println("Database connection established and migrations completed successfully.")
+}
+
+// getVersions queries the PostgreSQL version using raw SQL.
+func getVersions(ctx context.Context) error {
+	var version string
+	err := DB.QueryRowContext(ctx, "SELECT version()").Scan(&version)
+	if err != nil {
+		return err
+	}
+	log.Printf("PostgreSQL version: %s", version)
+	return nil
 }
