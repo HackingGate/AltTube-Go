@@ -29,7 +29,7 @@ var (
 				Symbol:     "access_tokens_refresh_tokens_access_tokens",
 				Columns:    []*schema.Column{AccessTokensColumns[6]},
 				RefColumns: []*schema.Column{RefreshTokensColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "access_tokens_users_access_tokens",
