@@ -26,7 +26,6 @@ type AccessTokenQuery struct {
 	predicates       []predicate.AccessToken
 	withUser         *UserQuery
 	withRefreshToken *RefreshTokenQuery
-	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -131,8 +130,8 @@ func (atq *AccessTokenQuery) FirstX(ctx context.Context) *AccessToken {
 
 // FirstID returns the first AccessToken ID from the query.
 // Returns a *NotFoundError when no AccessToken ID was found.
-func (atq *AccessTokenQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (atq *AccessTokenQuery) FirstID(ctx context.Context) (id uint, err error) {
+	var ids []uint
 	if ids, err = atq.Limit(1).IDs(setContextOp(ctx, atq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -144,7 +143,7 @@ func (atq *AccessTokenQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (atq *AccessTokenQuery) FirstIDX(ctx context.Context) int {
+func (atq *AccessTokenQuery) FirstIDX(ctx context.Context) uint {
 	id, err := atq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -182,8 +181,8 @@ func (atq *AccessTokenQuery) OnlyX(ctx context.Context) *AccessToken {
 // OnlyID is like Only, but returns the only AccessToken ID in the query.
 // Returns a *NotSingularError when more than one AccessToken ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (atq *AccessTokenQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (atq *AccessTokenQuery) OnlyID(ctx context.Context) (id uint, err error) {
+	var ids []uint
 	if ids, err = atq.Limit(2).IDs(setContextOp(ctx, atq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -199,7 +198,7 @@ func (atq *AccessTokenQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (atq *AccessTokenQuery) OnlyIDX(ctx context.Context) int {
+func (atq *AccessTokenQuery) OnlyIDX(ctx context.Context) uint {
 	id, err := atq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -227,7 +226,7 @@ func (atq *AccessTokenQuery) AllX(ctx context.Context) []*AccessToken {
 }
 
 // IDs executes the query and returns a list of AccessToken IDs.
-func (atq *AccessTokenQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (atq *AccessTokenQuery) IDs(ctx context.Context) (ids []uint, err error) {
 	if atq.ctx.Unique == nil && atq.path != nil {
 		atq.Unique(true)
 	}
@@ -239,7 +238,7 @@ func (atq *AccessTokenQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (atq *AccessTokenQuery) IDsX(ctx context.Context) []int {
+func (atq *AccessTokenQuery) IDsX(ctx context.Context) []uint {
 	ids, err := atq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -406,19 +405,12 @@ func (atq *AccessTokenQuery) prepareQuery(ctx context.Context) error {
 func (atq *AccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*AccessToken, error) {
 	var (
 		nodes       = []*AccessToken{}
-		withFKs     = atq.withFKs
 		_spec       = atq.querySpec()
 		loadedTypes = [2]bool{
 			atq.withUser != nil,
 			atq.withRefreshToken != nil,
 		}
 	)
-	if atq.withRefreshToken != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, accesstoken.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*AccessToken).scanValues(nil, columns)
 	}
@@ -485,10 +477,7 @@ func (atq *AccessTokenQuery) loadRefreshToken(ctx context.Context, query *Refres
 	ids := make([]uint, 0, len(nodes))
 	nodeids := make(map[uint][]*AccessToken)
 	for i := range nodes {
-		if nodes[i].refresh_token_access_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].refresh_token_access_tokens
+		fk := nodes[i].RefreshTokenID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -505,7 +494,7 @@ func (atq *AccessTokenQuery) loadRefreshToken(ctx context.Context, query *Refres
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "refresh_token_access_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "refresh_token_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -524,7 +513,7 @@ func (atq *AccessTokenQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (atq *AccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint))
 	_spec.From = atq.sql
 	if unique := atq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -541,6 +530,9 @@ func (atq *AccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if atq.withUser != nil {
 			_spec.Node.AddColumnOnce(accesstoken.FieldUserID)
+		}
+		if atq.withRefreshToken != nil {
+			_spec.Node.AddColumnOnce(accesstoken.FieldRefreshTokenID)
 		}
 	}
 	if ps := atq.predicates; len(ps) > 0 {

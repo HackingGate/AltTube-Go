@@ -10,14 +10,14 @@ import (
 var (
 	// AccessTokensColumns holds the columns for the "access_tokens" table.
 	AccessTokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUint, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "token", Type: field.TypeString, Nullable: true},
 		{Name: "expiry", Type: field.TypeTime, Nullable: true},
-		{Name: "refresh_token_access_tokens", Type: field.TypeUint, Nullable: true},
-		{Name: "user_id", Type: field.TypeString, Nullable: true},
+		{Name: "refresh_token_id", Type: field.TypeUint},
+		{Name: "user_id", Type: field.TypeString},
 	}
 	// AccessTokensTable holds the schema information for the "access_tokens" table.
 	AccessTokensTable = &schema.Table{
@@ -29,13 +29,13 @@ var (
 				Symbol:     "access_tokens_refresh_tokens_access_tokens",
 				Columns:    []*schema.Column{AccessTokensColumns[6]},
 				RefColumns: []*schema.Column{RefreshTokensColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "access_tokens_users_access_tokens",
 				Columns:    []*schema.Column{AccessTokensColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -45,8 +45,8 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "user_id", Type: field.TypeString, Nullable: true},
-		{Name: "video_id", Type: field.TypeString, Nullable: true},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "video_id", Type: field.TypeString},
 	}
 	// LikeVideosTable holds the schema information for the "like_videos" table.
 	LikeVideosTable = &schema.Table{
@@ -58,13 +58,13 @@ var (
 				Symbol:     "like_videos_users_like_videos",
 				Columns:    []*schema.Column{LikeVideosColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "like_videos_videos_like_videos",
 				Columns:    []*schema.Column{LikeVideosColumns[5]},
 				RefColumns: []*schema.Column{VideosColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -78,7 +78,7 @@ var (
 		{Name: "expiry", Type: field.TypeTime, Nullable: true},
 		{Name: "user_agent", Type: field.TypeString, Nullable: true},
 		{Name: "ip_address", Type: field.TypeString, Nullable: true},
-		{Name: "user_refresh_tokens", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
 	}
 	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
 	RefreshTokensTable = &schema.Table{

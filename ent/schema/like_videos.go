@@ -21,14 +21,14 @@ func (LikeVideo) Mixin() []ent.Mixin {
 
 func (LikeVideo) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("user_id").Optional(),
-		field.String("video_id").Optional(),
+		field.String("user_id"),
+		field.String("video_id"),
 	}
 }
 
 func (LikeVideo) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("like_videos").Field("user_id").Unique(),
-		edge.From("video", Video.Type).Ref("like_videos").Field("video_id").Unique(),
+		edge.From("user", User.Type).Ref("like_videos").Field("user_id").Unique().Required(),
+		edge.From("video", Video.Type).Ref("like_videos").Field("video_id").Unique().Required(),
 	}
 }

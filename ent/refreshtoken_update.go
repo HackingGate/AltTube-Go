@@ -136,9 +136,17 @@ func (rtu *RefreshTokenUpdate) ClearIPAddress() *RefreshTokenUpdate {
 	return rtu
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (rtu *RefreshTokenUpdate) SetUserID(id string) *RefreshTokenUpdate {
-	rtu.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (rtu *RefreshTokenUpdate) SetUserID(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetUserID(s)
+	return rtu
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableUserID(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetUserID(*s)
+	}
 	return rtu
 }
 
@@ -148,14 +156,14 @@ func (rtu *RefreshTokenUpdate) SetUser(u *User) *RefreshTokenUpdate {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (rtu *RefreshTokenUpdate) AddAccessTokenIDs(ids ...int) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) AddAccessTokenIDs(ids ...uint) *RefreshTokenUpdate {
 	rtu.mutation.AddAccessTokenIDs(ids...)
 	return rtu
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (rtu *RefreshTokenUpdate) AddAccessTokens(a ...*AccessToken) *RefreshTokenUpdate {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -180,14 +188,14 @@ func (rtu *RefreshTokenUpdate) ClearAccessTokens() *RefreshTokenUpdate {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (rtu *RefreshTokenUpdate) RemoveAccessTokenIDs(ids ...int) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) RemoveAccessTokenIDs(ids ...uint) *RefreshTokenUpdate {
 	rtu.mutation.RemoveAccessTokenIDs(ids...)
 	return rtu
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (rtu *RefreshTokenUpdate) RemoveAccessTokens(a ...*AccessToken) *RefreshTokenUpdate {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -320,7 +328,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -333,7 +341,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -349,7 +357,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -483,9 +491,17 @@ func (rtuo *RefreshTokenUpdateOne) ClearIPAddress() *RefreshTokenUpdateOne {
 	return rtuo
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (rtuo *RefreshTokenUpdateOne) SetUserID(id string) *RefreshTokenUpdateOne {
-	rtuo.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (rtuo *RefreshTokenUpdateOne) SetUserID(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetUserID(s)
+	return rtuo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableUserID(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetUserID(*s)
+	}
 	return rtuo
 }
 
@@ -495,14 +511,14 @@ func (rtuo *RefreshTokenUpdateOne) SetUser(u *User) *RefreshTokenUpdateOne {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (rtuo *RefreshTokenUpdateOne) AddAccessTokenIDs(ids ...int) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) AddAccessTokenIDs(ids ...uint) *RefreshTokenUpdateOne {
 	rtuo.mutation.AddAccessTokenIDs(ids...)
 	return rtuo
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (rtuo *RefreshTokenUpdateOne) AddAccessTokens(a ...*AccessToken) *RefreshTokenUpdateOne {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -527,14 +543,14 @@ func (rtuo *RefreshTokenUpdateOne) ClearAccessTokens() *RefreshTokenUpdateOne {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (rtuo *RefreshTokenUpdateOne) RemoveAccessTokenIDs(ids ...int) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) RemoveAccessTokenIDs(ids ...uint) *RefreshTokenUpdateOne {
 	rtuo.mutation.RemoveAccessTokenIDs(ids...)
 	return rtuo
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (rtuo *RefreshTokenUpdateOne) RemoveAccessTokens(a ...*AccessToken) *RefreshTokenUpdateOne {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -697,7 +713,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -710,7 +726,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -726,7 +742,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {

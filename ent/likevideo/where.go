@@ -265,16 +265,6 @@ func UserIDHasSuffix(v string) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldHasSuffix(FieldUserID, v))
 }
 
-// UserIDIsNil applies the IsNil predicate on the "user_id" field.
-func UserIDIsNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldIsNull(FieldUserID))
-}
-
-// UserIDNotNil applies the NotNil predicate on the "user_id" field.
-func UserIDNotNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldNotNull(FieldUserID))
-}
-
 // UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
 func UserIDEqualFold(v string) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldEqualFold(FieldUserID, v))
@@ -338,16 +328,6 @@ func VideoIDHasPrefix(v string) predicate.LikeVideo {
 // VideoIDHasSuffix applies the HasSuffix predicate on the "video_id" field.
 func VideoIDHasSuffix(v string) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldHasSuffix(FieldVideoID, v))
-}
-
-// VideoIDIsNil applies the IsNil predicate on the "video_id" field.
-func VideoIDIsNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldIsNull(FieldVideoID))
-}
-
-// VideoIDNotNil applies the NotNil predicate on the "video_id" field.
-func VideoIDNotNil() predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldNotNull(FieldVideoID))
 }
 
 // VideoIDEqualFold applies the EqualFold predicate on the "video_id" field.

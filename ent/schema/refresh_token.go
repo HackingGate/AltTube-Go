@@ -26,12 +26,13 @@ func (RefreshToken) Fields() []ent.Field {
 		field.Time("expiry").Optional(),
 		field.String("user_agent").Optional(),
 		field.String("ip_address").Optional(),
+		field.String("user_id"),
 	}
 }
 
 func (RefreshToken) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("refresh_tokens").Unique().Required(),
+		edge.From("user", User.Type).Ref("refresh_tokens").Field("user_id").Unique().Required(),
 		edge.To("access_tokens", AccessToken.Type),
 	}
 }

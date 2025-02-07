@@ -24,6 +24,8 @@ const (
 	FieldToken = "token"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldRefreshTokenID holds the string denoting the refresh_token_id field in the database.
+	FieldRefreshTokenID = "refresh_token_id"
 	// FieldExpiry holds the string denoting the expiry field in the database.
 	FieldExpiry = "expiry"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -45,7 +47,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "refreshtoken" package.
 	RefreshTokenInverseTable = "refresh_tokens"
 	// RefreshTokenColumn is the table column denoting the refresh_token relation/edge.
-	RefreshTokenColumn = "refresh_token_access_tokens"
+	RefreshTokenColumn = "refresh_token_id"
 )
 
 // Columns holds all SQL columns for accesstoken fields.
@@ -56,24 +58,14 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldToken,
 	FieldUserID,
+	FieldRefreshTokenID,
 	FieldExpiry,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "access_tokens"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"refresh_token_access_tokens",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -120,6 +112,11 @@ func ByToken(opts ...sql.OrderTermOption) OrderOption {
 // ByUserID orders the results by the user_id field.
 func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByRefreshTokenID orders the results by the refresh_token_id field.
+func ByRefreshTokenID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRefreshTokenID, opts...).ToFunc()
 }
 
 // ByExpiry orders the results by the expiry field.

@@ -299,7 +299,7 @@ func (c *AccessTokenClient) UpdateOne(at *AccessToken) *AccessTokenUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AccessTokenClient) UpdateOneID(id int) *AccessTokenUpdateOne {
+func (c *AccessTokenClient) UpdateOneID(id uint) *AccessTokenUpdateOne {
 	mutation := newAccessTokenMutation(c.config, OpUpdateOne, withAccessTokenID(id))
 	return &AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -316,7 +316,7 @@ func (c *AccessTokenClient) DeleteOne(at *AccessToken) *AccessTokenDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AccessTokenClient) DeleteOneID(id int) *AccessTokenDeleteOne {
+func (c *AccessTokenClient) DeleteOneID(id uint) *AccessTokenDeleteOne {
 	builder := c.Delete().Where(accesstoken.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -333,12 +333,12 @@ func (c *AccessTokenClient) Query() *AccessTokenQuery {
 }
 
 // Get returns a AccessToken entity by its id.
-func (c *AccessTokenClient) Get(ctx context.Context, id int) (*AccessToken, error) {
+func (c *AccessTokenClient) Get(ctx context.Context, id uint) (*AccessToken, error) {
 	return c.Query().Where(accesstoken.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AccessTokenClient) GetX(ctx context.Context, id int) *AccessToken {
+func (c *AccessTokenClient) GetX(ctx context.Context, id uint) *AccessToken {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

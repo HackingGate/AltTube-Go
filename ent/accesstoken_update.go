@@ -90,9 +90,17 @@ func (atu *AccessTokenUpdate) SetNillableUserID(s *string) *AccessTokenUpdate {
 	return atu
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (atu *AccessTokenUpdate) ClearUserID() *AccessTokenUpdate {
-	atu.mutation.ClearUserID()
+// SetRefreshTokenID sets the "refresh_token_id" field.
+func (atu *AccessTokenUpdate) SetRefreshTokenID(u uint) *AccessTokenUpdate {
+	atu.mutation.SetRefreshTokenID(u)
+	return atu
+}
+
+// SetNillableRefreshTokenID sets the "refresh_token_id" field if the given value is not nil.
+func (atu *AccessTokenUpdate) SetNillableRefreshTokenID(u *uint) *AccessTokenUpdate {
+	if u != nil {
+		atu.SetRefreshTokenID(*u)
+	}
 	return atu
 }
 
@@ -119,20 +127,6 @@ func (atu *AccessTokenUpdate) ClearExpiry() *AccessTokenUpdate {
 // SetUser sets the "user" edge to the User entity.
 func (atu *AccessTokenUpdate) SetUser(u *User) *AccessTokenUpdate {
 	return atu.SetUserID(u.ID)
-}
-
-// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID.
-func (atu *AccessTokenUpdate) SetRefreshTokenID(id uint) *AccessTokenUpdate {
-	atu.mutation.SetRefreshTokenID(id)
-	return atu
-}
-
-// SetNillableRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID if the given value is not nil.
-func (atu *AccessTokenUpdate) SetNillableRefreshTokenID(id *uint) *AccessTokenUpdate {
-	if id != nil {
-		atu = atu.SetRefreshTokenID(*id)
-	}
-	return atu
 }
 
 // SetRefreshToken sets the "refresh_token" edge to the RefreshToken entity.
@@ -193,8 +187,22 @@ func (atu *AccessTokenUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (atu *AccessTokenUpdate) check() error {
+	if atu.mutation.UserCleared() && len(atu.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "AccessToken.user"`)
+	}
+	if atu.mutation.RefreshTokenCleared() && len(atu.mutation.RefreshTokenIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "AccessToken.refresh_token"`)
+	}
+	return nil
+}
+
 func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
+	if err := atu.check(); err != nil {
+		return n, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint))
 	if ps := atu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -361,9 +369,17 @@ func (atuo *AccessTokenUpdateOne) SetNillableUserID(s *string) *AccessTokenUpdat
 	return atuo
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (atuo *AccessTokenUpdateOne) ClearUserID() *AccessTokenUpdateOne {
-	atuo.mutation.ClearUserID()
+// SetRefreshTokenID sets the "refresh_token_id" field.
+func (atuo *AccessTokenUpdateOne) SetRefreshTokenID(u uint) *AccessTokenUpdateOne {
+	atuo.mutation.SetRefreshTokenID(u)
+	return atuo
+}
+
+// SetNillableRefreshTokenID sets the "refresh_token_id" field if the given value is not nil.
+func (atuo *AccessTokenUpdateOne) SetNillableRefreshTokenID(u *uint) *AccessTokenUpdateOne {
+	if u != nil {
+		atuo.SetRefreshTokenID(*u)
+	}
 	return atuo
 }
 
@@ -390,20 +406,6 @@ func (atuo *AccessTokenUpdateOne) ClearExpiry() *AccessTokenUpdateOne {
 // SetUser sets the "user" edge to the User entity.
 func (atuo *AccessTokenUpdateOne) SetUser(u *User) *AccessTokenUpdateOne {
 	return atuo.SetUserID(u.ID)
-}
-
-// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID.
-func (atuo *AccessTokenUpdateOne) SetRefreshTokenID(id uint) *AccessTokenUpdateOne {
-	atuo.mutation.SetRefreshTokenID(id)
-	return atuo
-}
-
-// SetNillableRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID if the given value is not nil.
-func (atuo *AccessTokenUpdateOne) SetNillableRefreshTokenID(id *uint) *AccessTokenUpdateOne {
-	if id != nil {
-		atuo = atuo.SetRefreshTokenID(*id)
-	}
-	return atuo
 }
 
 // SetRefreshToken sets the "refresh_token" edge to the RefreshToken entity.
@@ -477,8 +479,22 @@ func (atuo *AccessTokenUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (atuo *AccessTokenUpdateOne) check() error {
+	if atuo.mutation.UserCleared() && len(atuo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "AccessToken.user"`)
+	}
+	if atuo.mutation.RefreshTokenCleared() && len(atuo.mutation.RefreshTokenIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "AccessToken.refresh_token"`)
+	}
+	return nil
+}
+
 func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessToken, err error) {
-	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
+	if err := atuo.check(); err != nil {
+		return _node, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(accesstoken.Table, accesstoken.Columns, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint))
 	id, ok := atuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AccessToken.id" for update`)}

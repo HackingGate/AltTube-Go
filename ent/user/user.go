@@ -52,7 +52,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "refreshtoken" package.
 	RefreshTokensInverseTable = "refresh_tokens"
 	// RefreshTokensColumn is the table column denoting the refresh_tokens relation/edge.
-	RefreshTokensColumn = "user_refresh_tokens"
+	RefreshTokensColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.

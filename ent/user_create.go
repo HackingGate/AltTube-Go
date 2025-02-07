@@ -100,14 +100,14 @@ func (uc *UserCreate) SetNillableID(s *string) *UserCreate {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (uc *UserCreate) AddAccessTokenIDs(ids ...int) *UserCreate {
+func (uc *UserCreate) AddAccessTokenIDs(ids ...uint) *UserCreate {
 	uc.mutation.AddAccessTokenIDs(ids...)
 	return uc
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (uc *UserCreate) AddAccessTokens(a ...*AccessToken) *UserCreate {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -272,7 +272,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {

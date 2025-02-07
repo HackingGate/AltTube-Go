@@ -32,11 +32,12 @@ type RefreshToken struct {
 	UserAgent string `json:"user_agent,omitempty"`
 	// IPAddress holds the value of the "ip_address" field.
 	IPAddress string `json:"ip_address,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID string `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
-	Edges               RefreshTokenEdges `json:"edges"`
-	user_refresh_tokens *string
-	selectValues        sql.SelectValues
+	Edges        RefreshTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // RefreshTokenEdges holds the relations/edges for other nodes in the graph.
@@ -77,12 +78,10 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case refreshtoken.FieldID:
 			values[i] = new(sql.NullInt64)
-		case refreshtoken.FieldToken, refreshtoken.FieldUserAgent, refreshtoken.FieldIPAddress:
+		case refreshtoken.FieldToken, refreshtoken.FieldUserAgent, refreshtoken.FieldIPAddress, refreshtoken.FieldUserID:
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldCreatedAt, refreshtoken.FieldUpdatedAt, refreshtoken.FieldDeletedAt, refreshtoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
-		case refreshtoken.ForeignKeys[0]: // user_refresh_tokens
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -147,12 +146,11 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				rt.IPAddress = value.String
 			}
-		case refreshtoken.ForeignKeys[0]:
+		case refreshtoken.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_refresh_tokens", values[i])
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				rt.user_refresh_tokens = new(string)
-				*rt.user_refresh_tokens = value.String
+				rt.UserID = value.String
 			}
 		default:
 			rt.selectValues.Set(columns[i], values[i])
@@ -222,6 +220,9 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("ip_address=")
 	builder.WriteString(rt.IPAddress)
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(rt.UserID)
 	builder.WriteByte(')')
 	return builder.String()
 }

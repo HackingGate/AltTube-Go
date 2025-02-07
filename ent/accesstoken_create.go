@@ -84,11 +84,9 @@ func (atc *AccessTokenCreate) SetUserID(s string) *AccessTokenCreate {
 	return atc
 }
 
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (atc *AccessTokenCreate) SetNillableUserID(s *string) *AccessTokenCreate {
-	if s != nil {
-		atc.SetUserID(*s)
-	}
+// SetRefreshTokenID sets the "refresh_token_id" field.
+func (atc *AccessTokenCreate) SetRefreshTokenID(u uint) *AccessTokenCreate {
+	atc.mutation.SetRefreshTokenID(u)
 	return atc
 }
 
@@ -106,23 +104,15 @@ func (atc *AccessTokenCreate) SetNillableExpiry(t *time.Time) *AccessTokenCreate
 	return atc
 }
 
+// SetID sets the "id" field.
+func (atc *AccessTokenCreate) SetID(u uint) *AccessTokenCreate {
+	atc.mutation.SetID(u)
+	return atc
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (atc *AccessTokenCreate) SetUser(u *User) *AccessTokenCreate {
 	return atc.SetUserID(u.ID)
-}
-
-// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID.
-func (atc *AccessTokenCreate) SetRefreshTokenID(id uint) *AccessTokenCreate {
-	atc.mutation.SetRefreshTokenID(id)
-	return atc
-}
-
-// SetNillableRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by ID if the given value is not nil.
-func (atc *AccessTokenCreate) SetNillableRefreshTokenID(id *uint) *AccessTokenCreate {
-	if id != nil {
-		atc = atc.SetRefreshTokenID(*id)
-	}
-	return atc
 }
 
 // SetRefreshToken sets the "refresh_token" edge to the RefreshToken entity.
@@ -183,6 +173,18 @@ func (atc *AccessTokenCreate) check() error {
 	if _, ok := atc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "AccessToken.updated_at"`)}
 	}
+	if _, ok := atc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "AccessToken.user_id"`)}
+	}
+	if _, ok := atc.mutation.RefreshTokenID(); !ok {
+		return &ValidationError{Name: "refresh_token_id", err: errors.New(`ent: missing required field "AccessToken.refresh_token_id"`)}
+	}
+	if len(atc.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "AccessToken.user"`)}
+	}
+	if len(atc.mutation.RefreshTokenIDs()) == 0 {
+		return &ValidationError{Name: "refresh_token", err: errors.New(`ent: missing required edge "AccessToken.refresh_token"`)}
+	}
 	return nil
 }
 
@@ -197,8 +199,10 @@ func (atc *AccessTokenCreate) sqlSave(ctx context.Context) (*AccessToken, error)
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint(id)
+	}
 	atc.mutation.id = &_node.ID
 	atc.mutation.done = true
 	return _node, nil
@@ -207,8 +211,12 @@ func (atc *AccessTokenCreate) sqlSave(ctx context.Context) (*AccessToken, error)
 func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) {
 	var (
 		_node = &AccessToken{config: atc.config}
-		_spec = sqlgraph.NewCreateSpec(accesstoken.Table, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(accesstoken.Table, sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint))
 	)
+	if id, ok := atc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := atc.mutation.CreatedAt(); ok {
 		_spec.SetField(accesstoken.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -260,7 +268,7 @@ func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.refresh_token_access_tokens = &nodes[0]
+		_node.RefreshTokenID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -311,9 +319,9 @@ func (atcb *AccessTokenCreateBulk) Save(ctx context.Context) ([]*AccessToken, er
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = uint(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

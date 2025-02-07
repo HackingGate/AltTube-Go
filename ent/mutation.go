@@ -40,7 +40,7 @@ type AccessTokenMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *int
+	id                   *uint
 	created_at           *time.Time
 	updated_at           *time.Time
 	deleted_at           *time.Time
@@ -76,7 +76,7 @@ func newAccessTokenMutation(c config, op Op, opts ...accesstokenOption) *AccessT
 }
 
 // withAccessTokenID sets the ID field of the mutation.
-func withAccessTokenID(id int) accesstokenOption {
+func withAccessTokenID(id uint) accesstokenOption {
 	return func(m *AccessTokenMutation) {
 		var (
 			err   error
@@ -126,9 +126,15 @@ func (m AccessTokenMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AccessToken entities.
+func (m *AccessTokenMutation) SetID(id uint) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AccessTokenMutation) ID() (id int, exists bool) {
+func (m *AccessTokenMutation) ID() (id uint, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -139,12 +145,12 @@ func (m *AccessTokenMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AccessTokenMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *AccessTokenMutation) IDs(ctx context.Context) ([]uint, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uint{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -355,22 +361,45 @@ func (m *AccessTokenMutation) OldUserID(ctx context.Context) (v string, err erro
 	return oldValue.UserID, nil
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (m *AccessTokenMutation) ClearUserID() {
-	m.user = nil
-	m.clearedFields[accesstoken.FieldUserID] = struct{}{}
-}
-
-// UserIDCleared returns if the "user_id" field was cleared in this mutation.
-func (m *AccessTokenMutation) UserIDCleared() bool {
-	_, ok := m.clearedFields[accesstoken.FieldUserID]
-	return ok
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *AccessTokenMutation) ResetUserID() {
 	m.user = nil
-	delete(m.clearedFields, accesstoken.FieldUserID)
+}
+
+// SetRefreshTokenID sets the "refresh_token_id" field.
+func (m *AccessTokenMutation) SetRefreshTokenID(u uint) {
+	m.refresh_token = &u
+}
+
+// RefreshTokenID returns the value of the "refresh_token_id" field in the mutation.
+func (m *AccessTokenMutation) RefreshTokenID() (r uint, exists bool) {
+	v := m.refresh_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefreshTokenID returns the old "refresh_token_id" field's value of the AccessToken entity.
+// If the AccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessTokenMutation) OldRefreshTokenID(ctx context.Context) (v uint, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefreshTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefreshTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefreshTokenID: %w", err)
+	}
+	return oldValue.RefreshTokenID, nil
+}
+
+// ResetRefreshTokenID resets all changes to the "refresh_token_id" field.
+func (m *AccessTokenMutation) ResetRefreshTokenID() {
+	m.refresh_token = nil
 }
 
 // SetExpiry sets the "expiry" field.
@@ -430,7 +459,7 @@ func (m *AccessTokenMutation) ClearUser() {
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *AccessTokenMutation) UserCleared() bool {
-	return m.UserIDCleared() || m.cleareduser
+	return m.cleareduser
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -449,27 +478,15 @@ func (m *AccessTokenMutation) ResetUser() {
 	m.cleareduser = false
 }
 
-// SetRefreshTokenID sets the "refresh_token" edge to the RefreshToken entity by id.
-func (m *AccessTokenMutation) SetRefreshTokenID(id uint) {
-	m.refresh_token = &id
-}
-
 // ClearRefreshToken clears the "refresh_token" edge to the RefreshToken entity.
 func (m *AccessTokenMutation) ClearRefreshToken() {
 	m.clearedrefresh_token = true
+	m.clearedFields[accesstoken.FieldRefreshTokenID] = struct{}{}
 }
 
 // RefreshTokenCleared reports if the "refresh_token" edge to the RefreshToken entity was cleared.
 func (m *AccessTokenMutation) RefreshTokenCleared() bool {
 	return m.clearedrefresh_token
-}
-
-// RefreshTokenID returns the "refresh_token" edge ID in the mutation.
-func (m *AccessTokenMutation) RefreshTokenID() (id uint, exists bool) {
-	if m.refresh_token != nil {
-		return *m.refresh_token, true
-	}
-	return
 }
 
 // RefreshTokenIDs returns the "refresh_token" edge IDs in the mutation.
@@ -522,7 +539,7 @@ func (m *AccessTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccessTokenMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, accesstoken.FieldCreatedAt)
 	}
@@ -537,6 +554,9 @@ func (m *AccessTokenMutation) Fields() []string {
 	}
 	if m.user != nil {
 		fields = append(fields, accesstoken.FieldUserID)
+	}
+	if m.refresh_token != nil {
+		fields = append(fields, accesstoken.FieldRefreshTokenID)
 	}
 	if m.expiry != nil {
 		fields = append(fields, accesstoken.FieldExpiry)
@@ -559,6 +579,8 @@ func (m *AccessTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Token()
 	case accesstoken.FieldUserID:
 		return m.UserID()
+	case accesstoken.FieldRefreshTokenID:
+		return m.RefreshTokenID()
 	case accesstoken.FieldExpiry:
 		return m.Expiry()
 	}
@@ -580,6 +602,8 @@ func (m *AccessTokenMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldToken(ctx)
 	case accesstoken.FieldUserID:
 		return m.OldUserID(ctx)
+	case accesstoken.FieldRefreshTokenID:
+		return m.OldRefreshTokenID(ctx)
 	case accesstoken.FieldExpiry:
 		return m.OldExpiry(ctx)
 	}
@@ -626,6 +650,13 @@ func (m *AccessTokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
+	case accesstoken.FieldRefreshTokenID:
+		v, ok := value.(uint)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefreshTokenID(v)
+		return nil
 	case accesstoken.FieldExpiry:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -640,13 +671,16 @@ func (m *AccessTokenMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *AccessTokenMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *AccessTokenMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -668,9 +702,6 @@ func (m *AccessTokenMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(accesstoken.FieldToken) {
 		fields = append(fields, accesstoken.FieldToken)
-	}
-	if m.FieldCleared(accesstoken.FieldUserID) {
-		fields = append(fields, accesstoken.FieldUserID)
 	}
 	if m.FieldCleared(accesstoken.FieldExpiry) {
 		fields = append(fields, accesstoken.FieldExpiry)
@@ -694,9 +725,6 @@ func (m *AccessTokenMutation) ClearField(name string) error {
 		return nil
 	case accesstoken.FieldToken:
 		m.ClearToken()
-		return nil
-	case accesstoken.FieldUserID:
-		m.ClearUserID()
 		return nil
 	case accesstoken.FieldExpiry:
 		m.ClearExpiry()
@@ -723,6 +751,9 @@ func (m *AccessTokenMutation) ResetField(name string) error {
 		return nil
 	case accesstoken.FieldUserID:
 		m.ResetUserID()
+		return nil
+	case accesstoken.FieldRefreshTokenID:
+		m.ResetRefreshTokenID()
 		return nil
 	case accesstoken.FieldExpiry:
 		m.ResetExpiry()
@@ -1092,22 +1123,9 @@ func (m *LikeVideoMutation) OldUserID(ctx context.Context) (v string, err error)
 	return oldValue.UserID, nil
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (m *LikeVideoMutation) ClearUserID() {
-	m.user = nil
-	m.clearedFields[likevideo.FieldUserID] = struct{}{}
-}
-
-// UserIDCleared returns if the "user_id" field was cleared in this mutation.
-func (m *LikeVideoMutation) UserIDCleared() bool {
-	_, ok := m.clearedFields[likevideo.FieldUserID]
-	return ok
-}
-
 // ResetUserID resets all changes to the "user_id" field.
 func (m *LikeVideoMutation) ResetUserID() {
 	m.user = nil
-	delete(m.clearedFields, likevideo.FieldUserID)
 }
 
 // SetVideoID sets the "video_id" field.
@@ -1141,22 +1159,9 @@ func (m *LikeVideoMutation) OldVideoID(ctx context.Context) (v string, err error
 	return oldValue.VideoID, nil
 }
 
-// ClearVideoID clears the value of the "video_id" field.
-func (m *LikeVideoMutation) ClearVideoID() {
-	m.video = nil
-	m.clearedFields[likevideo.FieldVideoID] = struct{}{}
-}
-
-// VideoIDCleared returns if the "video_id" field was cleared in this mutation.
-func (m *LikeVideoMutation) VideoIDCleared() bool {
-	_, ok := m.clearedFields[likevideo.FieldVideoID]
-	return ok
-}
-
 // ResetVideoID resets all changes to the "video_id" field.
 func (m *LikeVideoMutation) ResetVideoID() {
 	m.video = nil
-	delete(m.clearedFields, likevideo.FieldVideoID)
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -1167,7 +1172,7 @@ func (m *LikeVideoMutation) ClearUser() {
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *LikeVideoMutation) UserCleared() bool {
-	return m.UserIDCleared() || m.cleareduser
+	return m.cleareduser
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -1194,7 +1199,7 @@ func (m *LikeVideoMutation) ClearVideo() {
 
 // VideoCleared reports if the "video" edge to the Video entity was cleared.
 func (m *LikeVideoMutation) VideoCleared() bool {
-	return m.VideoIDCleared() || m.clearedvideo
+	return m.clearedvideo
 }
 
 // VideoIDs returns the "video" edge IDs in the mutation.
@@ -1377,12 +1382,6 @@ func (m *LikeVideoMutation) ClearedFields() []string {
 	if m.FieldCleared(likevideo.FieldDeletedAt) {
 		fields = append(fields, likevideo.FieldDeletedAt)
 	}
-	if m.FieldCleared(likevideo.FieldUserID) {
-		fields = append(fields, likevideo.FieldUserID)
-	}
-	if m.FieldCleared(likevideo.FieldVideoID) {
-		fields = append(fields, likevideo.FieldVideoID)
-	}
 	return fields
 }
 
@@ -1399,12 +1398,6 @@ func (m *LikeVideoMutation) ClearField(name string) error {
 	switch name {
 	case likevideo.FieldDeletedAt:
 		m.ClearDeletedAt()
-		return nil
-	case likevideo.FieldUserID:
-		m.ClearUserID()
-		return nil
-	case likevideo.FieldVideoID:
-		m.ClearVideoID()
 		return nil
 	}
 	return fmt.Errorf("unknown LikeVideo nullable field %s", name)
@@ -1541,8 +1534,8 @@ type RefreshTokenMutation struct {
 	clearedFields        map[string]struct{}
 	user                 *string
 	cleareduser          bool
-	access_tokens        map[int]struct{}
-	removedaccess_tokens map[int]struct{}
+	access_tokens        map[uint]struct{}
+	removedaccess_tokens map[uint]struct{}
 	clearedaccess_tokens bool
 	done                 bool
 	oldValue             func(context.Context) (*RefreshToken, error)
@@ -1970,27 +1963,51 @@ func (m *RefreshTokenMutation) ResetIPAddress() {
 	delete(m.clearedFields, refreshtoken.FieldIPAddress)
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *RefreshTokenMutation) SetUserID(id string) {
-	m.user = &id
+// SetUserID sets the "user_id" field.
+func (m *RefreshTokenMutation) SetUserID(s string) {
+	m.user = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *RefreshTokenMutation) UserID() (r string, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the RefreshToken entity.
+// If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RefreshTokenMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *RefreshTokenMutation) ResetUserID() {
+	m.user = nil
 }
 
 // ClearUser clears the "user" edge to the User entity.
 func (m *RefreshTokenMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[refreshtoken.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *RefreshTokenMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *RefreshTokenMutation) UserID() (id string, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -2010,9 +2027,9 @@ func (m *RefreshTokenMutation) ResetUser() {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by ids.
-func (m *RefreshTokenMutation) AddAccessTokenIDs(ids ...int) {
+func (m *RefreshTokenMutation) AddAccessTokenIDs(ids ...uint) {
 	if m.access_tokens == nil {
-		m.access_tokens = make(map[int]struct{})
+		m.access_tokens = make(map[uint]struct{})
 	}
 	for i := range ids {
 		m.access_tokens[ids[i]] = struct{}{}
@@ -2030,9 +2047,9 @@ func (m *RefreshTokenMutation) AccessTokensCleared() bool {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to the AccessToken entity by IDs.
-func (m *RefreshTokenMutation) RemoveAccessTokenIDs(ids ...int) {
+func (m *RefreshTokenMutation) RemoveAccessTokenIDs(ids ...uint) {
 	if m.removedaccess_tokens == nil {
-		m.removedaccess_tokens = make(map[int]struct{})
+		m.removedaccess_tokens = make(map[uint]struct{})
 	}
 	for i := range ids {
 		delete(m.access_tokens, ids[i])
@@ -2041,7 +2058,7 @@ func (m *RefreshTokenMutation) RemoveAccessTokenIDs(ids ...int) {
 }
 
 // RemovedAccessTokens returns the removed IDs of the "access_tokens" edge to the AccessToken entity.
-func (m *RefreshTokenMutation) RemovedAccessTokensIDs() (ids []int) {
+func (m *RefreshTokenMutation) RemovedAccessTokensIDs() (ids []uint) {
 	for id := range m.removedaccess_tokens {
 		ids = append(ids, id)
 	}
@@ -2049,7 +2066,7 @@ func (m *RefreshTokenMutation) RemovedAccessTokensIDs() (ids []int) {
 }
 
 // AccessTokensIDs returns the "access_tokens" edge IDs in the mutation.
-func (m *RefreshTokenMutation) AccessTokensIDs() (ids []int) {
+func (m *RefreshTokenMutation) AccessTokensIDs() (ids []uint) {
 	for id := range m.access_tokens {
 		ids = append(ids, id)
 	}
@@ -2097,7 +2114,7 @@ func (m *RefreshTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RefreshTokenMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, refreshtoken.FieldCreatedAt)
 	}
@@ -2118,6 +2135,9 @@ func (m *RefreshTokenMutation) Fields() []string {
 	}
 	if m.ip_address != nil {
 		fields = append(fields, refreshtoken.FieldIPAddress)
+	}
+	if m.user != nil {
+		fields = append(fields, refreshtoken.FieldUserID)
 	}
 	return fields
 }
@@ -2141,6 +2161,8 @@ func (m *RefreshTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.UserAgent()
 	case refreshtoken.FieldIPAddress:
 		return m.IPAddress()
+	case refreshtoken.FieldUserID:
+		return m.UserID()
 	}
 	return nil, false
 }
@@ -2164,6 +2186,8 @@ func (m *RefreshTokenMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUserAgent(ctx)
 	case refreshtoken.FieldIPAddress:
 		return m.OldIPAddress(ctx)
+	case refreshtoken.FieldUserID:
+		return m.OldUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -2221,6 +2245,13 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIPAddress(v)
+		return nil
+	case refreshtoken.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
@@ -2324,6 +2355,9 @@ func (m *RefreshTokenMutation) ResetField(name string) error {
 		return nil
 	case refreshtoken.FieldIPAddress:
 		m.ResetIPAddress()
+		return nil
+	case refreshtoken.FieldUserID:
+		m.ResetUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
@@ -2443,8 +2477,8 @@ type UserMutation struct {
 	email                 *string
 	password              *string
 	clearedFields         map[string]struct{}
-	access_tokens         map[int]struct{}
-	removedaccess_tokens  map[int]struct{}
+	access_tokens         map[uint]struct{}
+	removedaccess_tokens  map[uint]struct{}
 	clearedaccess_tokens  bool
 	like_videos           map[int]struct{}
 	removedlike_videos    map[int]struct{}
@@ -2768,9 +2802,9 @@ func (m *UserMutation) ResetPassword() {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by ids.
-func (m *UserMutation) AddAccessTokenIDs(ids ...int) {
+func (m *UserMutation) AddAccessTokenIDs(ids ...uint) {
 	if m.access_tokens == nil {
-		m.access_tokens = make(map[int]struct{})
+		m.access_tokens = make(map[uint]struct{})
 	}
 	for i := range ids {
 		m.access_tokens[ids[i]] = struct{}{}
@@ -2788,9 +2822,9 @@ func (m *UserMutation) AccessTokensCleared() bool {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to the AccessToken entity by IDs.
-func (m *UserMutation) RemoveAccessTokenIDs(ids ...int) {
+func (m *UserMutation) RemoveAccessTokenIDs(ids ...uint) {
 	if m.removedaccess_tokens == nil {
-		m.removedaccess_tokens = make(map[int]struct{})
+		m.removedaccess_tokens = make(map[uint]struct{})
 	}
 	for i := range ids {
 		delete(m.access_tokens, ids[i])
@@ -2799,7 +2833,7 @@ func (m *UserMutation) RemoveAccessTokenIDs(ids ...int) {
 }
 
 // RemovedAccessTokens returns the removed IDs of the "access_tokens" edge to the AccessToken entity.
-func (m *UserMutation) RemovedAccessTokensIDs() (ids []int) {
+func (m *UserMutation) RemovedAccessTokensIDs() (ids []uint) {
 	for id := range m.removedaccess_tokens {
 		ids = append(ids, id)
 	}
@@ -2807,7 +2841,7 @@ func (m *UserMutation) RemovedAccessTokensIDs() (ids []int) {
 }
 
 // AccessTokensIDs returns the "access_tokens" edge IDs in the mutation.
-func (m *UserMutation) AccessTokensIDs() (ids []int) {
+func (m *UserMutation) AccessTokensIDs() (ids []uint) {
 	for id := range m.access_tokens {
 		ids = append(ids, id)
 	}

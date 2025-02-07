@@ -120,15 +120,15 @@ func (rtc *RefreshTokenCreate) SetNillableIPAddress(s *string) *RefreshTokenCrea
 	return rtc
 }
 
-// SetID sets the "id" field.
-func (rtc *RefreshTokenCreate) SetID(u uint) *RefreshTokenCreate {
-	rtc.mutation.SetID(u)
+// SetUserID sets the "user_id" field.
+func (rtc *RefreshTokenCreate) SetUserID(s string) *RefreshTokenCreate {
+	rtc.mutation.SetUserID(s)
 	return rtc
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (rtc *RefreshTokenCreate) SetUserID(id string) *RefreshTokenCreate {
-	rtc.mutation.SetUserID(id)
+// SetID sets the "id" field.
+func (rtc *RefreshTokenCreate) SetID(u uint) *RefreshTokenCreate {
+	rtc.mutation.SetID(u)
 	return rtc
 }
 
@@ -138,14 +138,14 @@ func (rtc *RefreshTokenCreate) SetUser(u *User) *RefreshTokenCreate {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (rtc *RefreshTokenCreate) AddAccessTokenIDs(ids ...int) *RefreshTokenCreate {
+func (rtc *RefreshTokenCreate) AddAccessTokenIDs(ids ...uint) *RefreshTokenCreate {
 	rtc.mutation.AddAccessTokenIDs(ids...)
 	return rtc
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (rtc *RefreshTokenCreate) AddAccessTokens(a ...*AccessToken) *RefreshTokenCreate {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -204,6 +204,9 @@ func (rtc *RefreshTokenCreate) check() error {
 	}
 	if _, ok := rtc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "RefreshToken.updated_at"`)}
+	}
+	if _, ok := rtc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "RefreshToken.user_id"`)}
 	}
 	if len(rtc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "RefreshToken.user"`)}
@@ -282,7 +285,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_refresh_tokens = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := rtc.mutation.AccessTokensIDs(); len(nodes) > 0 {
@@ -293,7 +296,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 			Columns: []string{refreshtoken.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {

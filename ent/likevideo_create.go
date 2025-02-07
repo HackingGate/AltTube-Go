@@ -70,25 +70,9 @@ func (lvc *LikeVideoCreate) SetUserID(s string) *LikeVideoCreate {
 	return lvc
 }
 
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lvc *LikeVideoCreate) SetNillableUserID(s *string) *LikeVideoCreate {
-	if s != nil {
-		lvc.SetUserID(*s)
-	}
-	return lvc
-}
-
 // SetVideoID sets the "video_id" field.
 func (lvc *LikeVideoCreate) SetVideoID(s string) *LikeVideoCreate {
 	lvc.mutation.SetVideoID(s)
-	return lvc
-}
-
-// SetNillableVideoID sets the "video_id" field if the given value is not nil.
-func (lvc *LikeVideoCreate) SetNillableVideoID(s *string) *LikeVideoCreate {
-	if s != nil {
-		lvc.SetVideoID(*s)
-	}
 	return lvc
 }
 
@@ -154,6 +138,18 @@ func (lvc *LikeVideoCreate) check() error {
 	}
 	if _, ok := lvc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "LikeVideo.updated_at"`)}
+	}
+	if _, ok := lvc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "LikeVideo.user_id"`)}
+	}
+	if _, ok := lvc.mutation.VideoID(); !ok {
+		return &ValidationError{Name: "video_id", err: errors.New(`ent: missing required field "LikeVideo.video_id"`)}
+	}
+	if len(lvc.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "LikeVideo.user"`)}
+	}
+	if len(lvc.mutation.VideoIDs()) == 0 {
+		return &ValidationError{Name: "video", err: errors.New(`ent: missing required edge "LikeVideo.video"`)}
 	}
 	return nil
 }

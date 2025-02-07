@@ -92,14 +92,14 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (uu *UserUpdate) AddAccessTokenIDs(ids ...int) *UserUpdate {
+func (uu *UserUpdate) AddAccessTokenIDs(ids ...uint) *UserUpdate {
 	uu.mutation.AddAccessTokenIDs(ids...)
 	return uu
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (uu *UserUpdate) AddAccessTokens(a ...*AccessToken) *UserUpdate {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -148,14 +148,14 @@ func (uu *UserUpdate) ClearAccessTokens() *UserUpdate {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (uu *UserUpdate) RemoveAccessTokenIDs(ids ...int) *UserUpdate {
+func (uu *UserUpdate) RemoveAccessTokenIDs(ids ...uint) *UserUpdate {
 	uu.mutation.RemoveAccessTokenIDs(ids...)
 	return uu
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (uu *UserUpdate) RemoveAccessTokens(a ...*AccessToken) *UserUpdate {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -288,7 +288,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -301,7 +301,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -317,7 +317,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -496,14 +496,14 @@ func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 }
 
 // AddAccessTokenIDs adds the "access_tokens" edge to the AccessToken entity by IDs.
-func (uuo *UserUpdateOne) AddAccessTokenIDs(ids ...int) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddAccessTokenIDs(ids ...uint) *UserUpdateOne {
 	uuo.mutation.AddAccessTokenIDs(ids...)
 	return uuo
 }
 
 // AddAccessTokens adds the "access_tokens" edges to the AccessToken entity.
 func (uuo *UserUpdateOne) AddAccessTokens(a ...*AccessToken) *UserUpdateOne {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -552,14 +552,14 @@ func (uuo *UserUpdateOne) ClearAccessTokens() *UserUpdateOne {
 }
 
 // RemoveAccessTokenIDs removes the "access_tokens" edge to AccessToken entities by IDs.
-func (uuo *UserUpdateOne) RemoveAccessTokenIDs(ids ...int) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveAccessTokenIDs(ids ...uint) *UserUpdateOne {
 	uuo.mutation.RemoveAccessTokenIDs(ids...)
 	return uuo
 }
 
 // RemoveAccessTokens removes "access_tokens" edges to AccessToken entities.
 func (uuo *UserUpdateOne) RemoveAccessTokens(a ...*AccessToken) *UserUpdateOne {
-	ids := make([]int, len(a))
+	ids := make([]uint, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -722,7 +722,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -735,7 +735,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {
@@ -751,7 +751,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AccessTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeUint),
 			},
 		}
 		for _, k := range nodes {

@@ -18,7 +18,7 @@ import (
 type AccessToken struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uint `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -29,13 +29,14 @@ type AccessToken struct {
 	Token string `json:"token,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
+	// RefreshTokenID holds the value of the "refresh_token_id" field.
+	RefreshTokenID uint `json:"refresh_token_id,omitempty"`
 	// Expiry holds the value of the "expiry" field.
 	Expiry time.Time `json:"expiry,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccessTokenQuery when eager-loading is set.
-	Edges                       AccessTokenEdges `json:"edges"`
-	refresh_token_access_tokens *uint
-	selectValues                sql.SelectValues
+	Edges        AccessTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // AccessTokenEdges holds the relations/edges for other nodes in the graph.
@@ -76,14 +77,12 @@ func (*AccessToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case accesstoken.FieldID:
+		case accesstoken.FieldID, accesstoken.FieldRefreshTokenID:
 			values[i] = new(sql.NullInt64)
 		case accesstoken.FieldToken, accesstoken.FieldUserID:
 			values[i] = new(sql.NullString)
 		case accesstoken.FieldCreatedAt, accesstoken.FieldUpdatedAt, accesstoken.FieldDeletedAt, accesstoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
-		case accesstoken.ForeignKeys[0]: // refresh_token_access_tokens
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -104,7 +103,7 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			at.ID = int(value.Int64)
+			at.ID = uint(value.Int64)
 		case accesstoken.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -136,18 +135,17 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				at.UserID = value.String
 			}
+		case accesstoken.FieldRefreshTokenID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field refresh_token_id", values[i])
+			} else if value.Valid {
+				at.RefreshTokenID = uint(value.Int64)
+			}
 		case accesstoken.FieldExpiry:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expiry", values[i])
 			} else if value.Valid {
 				at.Expiry = value.Time
-			}
-		case accesstoken.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field refresh_token_access_tokens", value)
-			} else if value.Valid {
-				at.refresh_token_access_tokens = new(uint)
-				*at.refresh_token_access_tokens = uint(value.Int64)
 			}
 		default:
 			at.selectValues.Set(columns[i], values[i])
@@ -211,6 +209,9 @@ func (at *AccessToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(at.UserID)
+	builder.WriteString(", ")
+	builder.WriteString("refresh_token_id=")
+	builder.WriteString(fmt.Sprintf("%v", at.RefreshTokenID))
 	builder.WriteString(", ")
 	builder.WriteString("expiry=")
 	builder.WriteString(at.Expiry.Format(time.ANSIC))

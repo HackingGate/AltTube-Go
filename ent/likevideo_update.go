@@ -70,12 +70,6 @@ func (lvu *LikeVideoUpdate) SetNillableUserID(s *string) *LikeVideoUpdate {
 	return lvu
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (lvu *LikeVideoUpdate) ClearUserID() *LikeVideoUpdate {
-	lvu.mutation.ClearUserID()
-	return lvu
-}
-
 // SetVideoID sets the "video_id" field.
 func (lvu *LikeVideoUpdate) SetVideoID(s string) *LikeVideoUpdate {
 	lvu.mutation.SetVideoID(s)
@@ -87,12 +81,6 @@ func (lvu *LikeVideoUpdate) SetNillableVideoID(s *string) *LikeVideoUpdate {
 	if s != nil {
 		lvu.SetVideoID(*s)
 	}
-	return lvu
-}
-
-// ClearVideoID clears the value of the "video_id" field.
-func (lvu *LikeVideoUpdate) ClearVideoID() *LikeVideoUpdate {
-	lvu.mutation.ClearVideoID()
 	return lvu
 }
 
@@ -159,7 +147,21 @@ func (lvu *LikeVideoUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (lvu *LikeVideoUpdate) check() error {
+	if lvu.mutation.UserCleared() && len(lvu.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "LikeVideo.user"`)
+	}
+	if lvu.mutation.VideoCleared() && len(lvu.mutation.VideoIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "LikeVideo.video"`)
+	}
+	return nil
+}
+
 func (lvu *LikeVideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := lvu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	if ps := lvu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -295,12 +297,6 @@ func (lvuo *LikeVideoUpdateOne) SetNillableUserID(s *string) *LikeVideoUpdateOne
 	return lvuo
 }
 
-// ClearUserID clears the value of the "user_id" field.
-func (lvuo *LikeVideoUpdateOne) ClearUserID() *LikeVideoUpdateOne {
-	lvuo.mutation.ClearUserID()
-	return lvuo
-}
-
 // SetVideoID sets the "video_id" field.
 func (lvuo *LikeVideoUpdateOne) SetVideoID(s string) *LikeVideoUpdateOne {
 	lvuo.mutation.SetVideoID(s)
@@ -312,12 +308,6 @@ func (lvuo *LikeVideoUpdateOne) SetNillableVideoID(s *string) *LikeVideoUpdateOn
 	if s != nil {
 		lvuo.SetVideoID(*s)
 	}
-	return lvuo
-}
-
-// ClearVideoID clears the value of the "video_id" field.
-func (lvuo *LikeVideoUpdateOne) ClearVideoID() *LikeVideoUpdateOne {
-	lvuo.mutation.ClearVideoID()
 	return lvuo
 }
 
@@ -397,7 +387,21 @@ func (lvuo *LikeVideoUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (lvuo *LikeVideoUpdateOne) check() error {
+	if lvuo.mutation.UserCleared() && len(lvuo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "LikeVideo.user"`)
+	}
+	if lvuo.mutation.VideoCleared() && len(lvuo.mutation.VideoIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "LikeVideo.video"`)
+	}
+	return nil
+}
+
 func (lvuo *LikeVideoUpdateOne) sqlSave(ctx context.Context) (_node *LikeVideo, err error) {
+	if err := lvuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(likevideo.Table, likevideo.Columns, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	id, ok := lvuo.mutation.ID()
 	if !ok {
