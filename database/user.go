@@ -2,6 +2,7 @@ package database
 
 import (
 	"AltTube-Go/ent"
+	"AltTube-Go/ent/refreshtoken"
 	"AltTube-Go/ent/user"
 	"AltTube-Go/models"
 	"context"
@@ -20,6 +21,17 @@ func GetUserByID(ctx context.Context, id string) (*ent.User, error) {
 	userQueried, err := Client.User.
 		Query().
 		Where(user.IDEQ(id)).
+		Only(ctx)
+	return userQueried, err
+}
+
+// GetUserByRefreshToken gets a user by refresh token.
+func GetUserByRefreshToken(ctx context.Context, token string) (*ent.User, error) {
+	userQueried, err := Client.User.
+		Query().
+		Where(
+			user.HasRefreshTokensWith(refreshtoken.Token(token)),
+		).
 		Only(ctx)
 	return userQueried, err
 }

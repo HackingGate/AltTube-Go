@@ -36,6 +36,31 @@ func AddRefreshToken(ctx context.Context, token string, user *ent.User, expiry t
 	return err
 }
 
+// RemoveAccessTokenByRefreshToken deletes all access tokens associated with the specified refresh token.
+func RemoveAccessTokenByRefreshToken(ctx context.Context, token string) error {
+	// Query the database for the refresh token with the given token.
+	refreshToken, err := Client.RefreshToken.
+		Query().
+		Where(
+			refreshtoken.Token(token),
+		).
+		Only(ctx)
+
+	// If an error occurs or no result is found, return the error.
+	if err != nil {
+		return err
+	}
+
+	// Delete all access tokens associated with the refresh token.
+	_, err = Client.AccessToken.
+		Delete().
+		Where(
+			accesstoken.HasRefreshTokenWith(refreshtoken.IDEQ(refreshToken.ID)),
+		).
+		Exec(ctx)
+	return err
+}
+
 // RemoveRefreshTokenByToken deletes the refresh token with the given token.
 func RemoveRefreshTokenByToken(ctx context.Context, token string) error {
 	// Delete the refresh token with the given token.
