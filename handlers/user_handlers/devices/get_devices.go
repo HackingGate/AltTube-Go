@@ -50,7 +50,7 @@ func GetDevices(ctx *gin.Context) {
 	for i := range refreshTokens {
 		devices = append(devices, models.Device{
 			ID:         refreshTokens[i].ID,
-			LastActive: refreshTokens[i].CreatedAt,
+			LastActive: refreshTokens[i].CreateTime,
 			UserAgent:  refreshTokens[i].UserAgent,
 			IPAddress:  refreshTokens[i].IPAddress,
 		})

@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"AltTube-Go/ent/mixins"
+	"entgo.io/ent/schema/mixin"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -15,7 +15,7 @@ type LikeVideo struct {
 
 func (LikeVideo) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixins.BaseMixin{},
+		mixin.Time{},
 	}
 }
 

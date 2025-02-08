@@ -19,12 +19,10 @@ type LikeVideo struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// VideoID holds the value of the "video_id" field.
@@ -77,7 +75,7 @@ func (*LikeVideo) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case likevideo.FieldUserID, likevideo.FieldVideoID:
 			values[i] = new(sql.NullString)
-		case likevideo.FieldCreatedAt, likevideo.FieldUpdatedAt, likevideo.FieldDeletedAt:
+		case likevideo.FieldCreateTime, likevideo.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -100,24 +98,17 @@ func (lv *LikeVideo) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			lv.ID = int(value.Int64)
-		case likevideo.FieldCreatedAt:
+		case likevideo.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				lv.CreatedAt = value.Time
+				lv.CreateTime = value.Time
 			}
-		case likevideo.FieldUpdatedAt:
+		case likevideo.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				lv.UpdatedAt = value.Time
-			}
-		case likevideo.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				lv.DeletedAt = new(time.Time)
-				*lv.DeletedAt = value.Time
+				lv.UpdateTime = value.Time
 			}
 		case likevideo.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -177,16 +168,11 @@ func (lv *LikeVideo) String() string {
 	var builder strings.Builder
 	builder.WriteString("LikeVideo(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", lv.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(lv.CreatedAt.Format(time.ANSIC))
+	builder.WriteString("create_time=")
+	builder.WriteString(lv.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(lv.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := lv.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("update_time=")
+	builder.WriteString(lv.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(lv.UserID)

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"AltTube-Go/ent/mixins"
+	"entgo.io/ent/schema/mixin"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -15,7 +16,7 @@ type RefreshToken struct {
 
 func (RefreshToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixins.BaseMixin{},
+		mixin.Time{},
 		mixins.UintIDMixin{},
 	}
 }

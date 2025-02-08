@@ -19,12 +19,10 @@ type AccessToken struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// UserID holds the value of the "user_id" field.
@@ -81,7 +79,7 @@ func (*AccessToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case accesstoken.FieldToken, accesstoken.FieldUserID:
 			values[i] = new(sql.NullString)
-		case accesstoken.FieldCreatedAt, accesstoken.FieldUpdatedAt, accesstoken.FieldDeletedAt, accesstoken.FieldExpiry:
+		case accesstoken.FieldCreateTime, accesstoken.FieldUpdateTime, accesstoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -104,24 +102,17 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			at.ID = uint(value.Int64)
-		case accesstoken.FieldCreatedAt:
+		case accesstoken.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				at.CreatedAt = value.Time
+				at.CreateTime = value.Time
 			}
-		case accesstoken.FieldUpdatedAt:
+		case accesstoken.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				at.UpdatedAt = value.Time
-			}
-		case accesstoken.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				at.DeletedAt = new(time.Time)
-				*at.DeletedAt = value.Time
+				at.UpdateTime = value.Time
 			}
 		case accesstoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -193,16 +184,11 @@ func (at *AccessToken) String() string {
 	var builder strings.Builder
 	builder.WriteString("AccessToken(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", at.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(at.CreatedAt.Format(time.ANSIC))
+	builder.WriteString("create_time=")
+	builder.WriteString(at.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(at.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := at.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("update_time=")
+	builder.WriteString(at.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(at.Token)

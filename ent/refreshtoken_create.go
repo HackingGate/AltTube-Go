@@ -22,44 +22,30 @@ type RefreshTokenCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (rtc *RefreshTokenCreate) SetCreatedAt(t time.Time) *RefreshTokenCreate {
-	rtc.mutation.SetCreatedAt(t)
+// SetCreateTime sets the "create_time" field.
+func (rtc *RefreshTokenCreate) SetCreateTime(t time.Time) *RefreshTokenCreate {
+	rtc.mutation.SetCreateTime(t)
 	return rtc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableCreatedAt(t *time.Time) *RefreshTokenCreate {
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (rtc *RefreshTokenCreate) SetNillableCreateTime(t *time.Time) *RefreshTokenCreate {
 	if t != nil {
-		rtc.SetCreatedAt(*t)
+		rtc.SetCreateTime(*t)
 	}
 	return rtc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (rtc *RefreshTokenCreate) SetUpdatedAt(t time.Time) *RefreshTokenCreate {
-	rtc.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (rtc *RefreshTokenCreate) SetUpdateTime(t time.Time) *RefreshTokenCreate {
+	rtc.mutation.SetUpdateTime(t)
 	return rtc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableUpdatedAt(t *time.Time) *RefreshTokenCreate {
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (rtc *RefreshTokenCreate) SetNillableUpdateTime(t *time.Time) *RefreshTokenCreate {
 	if t != nil {
-		rtc.SetUpdatedAt(*t)
-	}
-	return rtc
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (rtc *RefreshTokenCreate) SetDeletedAt(t time.Time) *RefreshTokenCreate {
-	rtc.mutation.SetDeletedAt(t)
-	return rtc
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableDeletedAt(t *time.Time) *RefreshTokenCreate {
-	if t != nil {
-		rtc.SetDeletedAt(*t)
+		rtc.SetUpdateTime(*t)
 	}
 	return rtc
 }
@@ -187,23 +173,23 @@ func (rtc *RefreshTokenCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (rtc *RefreshTokenCreate) defaults() {
-	if _, ok := rtc.mutation.CreatedAt(); !ok {
-		v := refreshtoken.DefaultCreatedAt()
-		rtc.mutation.SetCreatedAt(v)
+	if _, ok := rtc.mutation.CreateTime(); !ok {
+		v := refreshtoken.DefaultCreateTime()
+		rtc.mutation.SetCreateTime(v)
 	}
-	if _, ok := rtc.mutation.UpdatedAt(); !ok {
-		v := refreshtoken.DefaultUpdatedAt()
-		rtc.mutation.SetUpdatedAt(v)
+	if _, ok := rtc.mutation.UpdateTime(); !ok {
+		v := refreshtoken.DefaultUpdateTime()
+		rtc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (rtc *RefreshTokenCreate) check() error {
-	if _, ok := rtc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "RefreshToken.created_at"`)}
+	if _, ok := rtc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "RefreshToken.create_time"`)}
 	}
-	if _, ok := rtc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "RefreshToken.updated_at"`)}
+	if _, ok := rtc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "RefreshToken.update_time"`)}
 	}
 	if _, ok := rtc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "RefreshToken.user_id"`)}
@@ -243,17 +229,13 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := rtc.mutation.CreatedAt(); ok {
-		_spec.SetField(refreshtoken.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := rtc.mutation.CreateTime(); ok {
+		_spec.SetField(refreshtoken.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
 	}
-	if value, ok := rtc.mutation.UpdatedAt(); ok {
-		_spec.SetField(refreshtoken.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := rtc.mutation.DeletedAt(); ok {
-		_spec.SetField(refreshtoken.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+	if value, ok := rtc.mutation.UpdateTime(); ok {
+		_spec.SetField(refreshtoken.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if value, ok := rtc.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)

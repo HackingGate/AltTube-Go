@@ -334,12 +334,12 @@ func (atq *AccessTokenQuery) WithRefreshToken(opts ...func(*RefreshTokenQuery)) 
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.AccessToken.Query().
-//		GroupBy(accesstoken.FieldCreatedAt).
+//		GroupBy(accesstoken.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (atq *AccessTokenQuery) GroupBy(field string, fields ...string) *AccessTokenGroupBy {
@@ -357,11 +357,11 @@ func (atq *AccessTokenQuery) GroupBy(field string, fields ...string) *AccessToke
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.AccessToken.Query().
-//		Select(accesstoken.FieldCreatedAt).
+//		Select(accesstoken.FieldCreateTime).
 //		Scan(ctx, &v)
 func (atq *AccessTokenQuery) Select(fields ...string) *AccessTokenSelect {
 	atq.ctx.Fields = append(atq.ctx.Fields, fields...)

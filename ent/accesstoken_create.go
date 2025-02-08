@@ -22,44 +22,30 @@ type AccessTokenCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (atc *AccessTokenCreate) SetCreatedAt(t time.Time) *AccessTokenCreate {
-	atc.mutation.SetCreatedAt(t)
+// SetCreateTime sets the "create_time" field.
+func (atc *AccessTokenCreate) SetCreateTime(t time.Time) *AccessTokenCreate {
+	atc.mutation.SetCreateTime(t)
 	return atc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (atc *AccessTokenCreate) SetNillableCreatedAt(t *time.Time) *AccessTokenCreate {
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (atc *AccessTokenCreate) SetNillableCreateTime(t *time.Time) *AccessTokenCreate {
 	if t != nil {
-		atc.SetCreatedAt(*t)
+		atc.SetCreateTime(*t)
 	}
 	return atc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (atc *AccessTokenCreate) SetUpdatedAt(t time.Time) *AccessTokenCreate {
-	atc.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (atc *AccessTokenCreate) SetUpdateTime(t time.Time) *AccessTokenCreate {
+	atc.mutation.SetUpdateTime(t)
 	return atc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (atc *AccessTokenCreate) SetNillableUpdatedAt(t *time.Time) *AccessTokenCreate {
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (atc *AccessTokenCreate) SetNillableUpdateTime(t *time.Time) *AccessTokenCreate {
 	if t != nil {
-		atc.SetUpdatedAt(*t)
-	}
-	return atc
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (atc *AccessTokenCreate) SetDeletedAt(t time.Time) *AccessTokenCreate {
-	atc.mutation.SetDeletedAt(t)
-	return atc
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (atc *AccessTokenCreate) SetNillableDeletedAt(t *time.Time) *AccessTokenCreate {
-	if t != nil {
-		atc.SetDeletedAt(*t)
+		atc.SetUpdateTime(*t)
 	}
 	return atc
 }
@@ -155,23 +141,23 @@ func (atc *AccessTokenCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (atc *AccessTokenCreate) defaults() {
-	if _, ok := atc.mutation.CreatedAt(); !ok {
-		v := accesstoken.DefaultCreatedAt()
-		atc.mutation.SetCreatedAt(v)
+	if _, ok := atc.mutation.CreateTime(); !ok {
+		v := accesstoken.DefaultCreateTime()
+		atc.mutation.SetCreateTime(v)
 	}
-	if _, ok := atc.mutation.UpdatedAt(); !ok {
-		v := accesstoken.DefaultUpdatedAt()
-		atc.mutation.SetUpdatedAt(v)
+	if _, ok := atc.mutation.UpdateTime(); !ok {
+		v := accesstoken.DefaultUpdateTime()
+		atc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (atc *AccessTokenCreate) check() error {
-	if _, ok := atc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "AccessToken.created_at"`)}
+	if _, ok := atc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "AccessToken.create_time"`)}
 	}
-	if _, ok := atc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "AccessToken.updated_at"`)}
+	if _, ok := atc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "AccessToken.update_time"`)}
 	}
 	if _, ok := atc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "AccessToken.user_id"`)}
@@ -217,17 +203,13 @@ func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) 
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := atc.mutation.CreatedAt(); ok {
-		_spec.SetField(accesstoken.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := atc.mutation.CreateTime(); ok {
+		_spec.SetField(accesstoken.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
 	}
-	if value, ok := atc.mutation.UpdatedAt(); ok {
-		_spec.SetField(accesstoken.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := atc.mutation.DeletedAt(); ok {
-		_spec.SetField(accesstoken.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+	if value, ok := atc.mutation.UpdateTime(); ok {
+		_spec.SetField(accesstoken.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if value, ok := atc.mutation.Token(); ok {
 		_spec.SetField(accesstoken.FieldToken, field.TypeString, value)

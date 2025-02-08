@@ -30,29 +30,9 @@ func (atu *AccessTokenUpdate) Where(ps ...predicate.AccessToken) *AccessTokenUpd
 	return atu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (atu *AccessTokenUpdate) SetUpdatedAt(t time.Time) *AccessTokenUpdate {
-	atu.mutation.SetUpdatedAt(t)
-	return atu
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (atu *AccessTokenUpdate) SetDeletedAt(t time.Time) *AccessTokenUpdate {
-	atu.mutation.SetDeletedAt(t)
-	return atu
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (atu *AccessTokenUpdate) SetNillableDeletedAt(t *time.Time) *AccessTokenUpdate {
-	if t != nil {
-		atu.SetDeletedAt(*t)
-	}
-	return atu
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (atu *AccessTokenUpdate) ClearDeletedAt() *AccessTokenUpdate {
-	atu.mutation.ClearDeletedAt()
+// SetUpdateTime sets the "update_time" field.
+func (atu *AccessTokenUpdate) SetUpdateTime(t time.Time) *AccessTokenUpdate {
+	atu.mutation.SetUpdateTime(t)
 	return atu
 }
 
@@ -181,9 +161,9 @@ func (atu *AccessTokenUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (atu *AccessTokenUpdate) defaults() {
-	if _, ok := atu.mutation.UpdatedAt(); !ok {
-		v := accesstoken.UpdateDefaultUpdatedAt()
-		atu.mutation.SetUpdatedAt(v)
+	if _, ok := atu.mutation.UpdateTime(); !ok {
+		v := accesstoken.UpdateDefaultUpdateTime()
+		atu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -210,14 +190,8 @@ func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := atu.mutation.UpdatedAt(); ok {
-		_spec.SetField(accesstoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := atu.mutation.DeletedAt(); ok {
-		_spec.SetField(accesstoken.FieldDeletedAt, field.TypeTime, value)
-	}
-	if atu.mutation.DeletedAtCleared() {
-		_spec.ClearField(accesstoken.FieldDeletedAt, field.TypeTime)
+	if value, ok := atu.mutation.UpdateTime(); ok {
+		_spec.SetField(accesstoken.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := atu.mutation.Token(); ok {
 		_spec.SetField(accesstoken.FieldToken, field.TypeString, value)
@@ -309,29 +283,9 @@ type AccessTokenUpdateOne struct {
 	mutation *AccessTokenMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (atuo *AccessTokenUpdateOne) SetUpdatedAt(t time.Time) *AccessTokenUpdateOne {
-	atuo.mutation.SetUpdatedAt(t)
-	return atuo
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (atuo *AccessTokenUpdateOne) SetDeletedAt(t time.Time) *AccessTokenUpdateOne {
-	atuo.mutation.SetDeletedAt(t)
-	return atuo
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (atuo *AccessTokenUpdateOne) SetNillableDeletedAt(t *time.Time) *AccessTokenUpdateOne {
-	if t != nil {
-		atuo.SetDeletedAt(*t)
-	}
-	return atuo
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (atuo *AccessTokenUpdateOne) ClearDeletedAt() *AccessTokenUpdateOne {
-	atuo.mutation.ClearDeletedAt()
+// SetUpdateTime sets the "update_time" field.
+func (atuo *AccessTokenUpdateOne) SetUpdateTime(t time.Time) *AccessTokenUpdateOne {
+	atuo.mutation.SetUpdateTime(t)
 	return atuo
 }
 
@@ -473,9 +427,9 @@ func (atuo *AccessTokenUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (atuo *AccessTokenUpdateOne) defaults() {
-	if _, ok := atuo.mutation.UpdatedAt(); !ok {
-		v := accesstoken.UpdateDefaultUpdatedAt()
-		atuo.mutation.SetUpdatedAt(v)
+	if _, ok := atuo.mutation.UpdateTime(); !ok {
+		v := accesstoken.UpdateDefaultUpdateTime()
+		atuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -519,14 +473,8 @@ func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessTok
 			}
 		}
 	}
-	if value, ok := atuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(accesstoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := atuo.mutation.DeletedAt(); ok {
-		_spec.SetField(accesstoken.FieldDeletedAt, field.TypeTime, value)
-	}
-	if atuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(accesstoken.FieldDeletedAt, field.TypeTime)
+	if value, ok := atuo.mutation.UpdateTime(); ok {
+		_spec.SetField(accesstoken.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := atuo.mutation.Token(); ok {
 		_spec.SetField(accesstoken.FieldToken, field.TypeString, value)

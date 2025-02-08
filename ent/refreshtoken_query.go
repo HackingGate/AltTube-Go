@@ -335,12 +335,12 @@ func (rtq *RefreshTokenQuery) WithAccessTokens(opts ...func(*AccessTokenQuery)) 
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.RefreshToken.Query().
-//		GroupBy(refreshtoken.FieldCreatedAt).
+//		GroupBy(refreshtoken.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (rtq *RefreshTokenQuery) GroupBy(field string, fields ...string) *RefreshTokenGroupBy {
@@ -358,11 +358,11 @@ func (rtq *RefreshTokenQuery) GroupBy(field string, fields ...string) *RefreshTo
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.RefreshToken.Query().
-//		Select(refreshtoken.FieldCreatedAt).
+//		Select(refreshtoken.FieldCreateTime).
 //		Scan(ctx, &v)
 func (rtq *RefreshTokenQuery) Select(fields ...string) *RefreshTokenSelect {
 	rtq.ctx.Fields = append(rtq.ctx.Fields, fields...)

@@ -21,44 +21,30 @@ type VideoCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (vc *VideoCreate) SetCreatedAt(t time.Time) *VideoCreate {
-	vc.mutation.SetCreatedAt(t)
+// SetCreateTime sets the "create_time" field.
+func (vc *VideoCreate) SetCreateTime(t time.Time) *VideoCreate {
+	vc.mutation.SetCreateTime(t)
 	return vc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (vc *VideoCreate) SetNillableCreatedAt(t *time.Time) *VideoCreate {
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (vc *VideoCreate) SetNillableCreateTime(t *time.Time) *VideoCreate {
 	if t != nil {
-		vc.SetCreatedAt(*t)
+		vc.SetCreateTime(*t)
 	}
 	return vc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (vc *VideoCreate) SetUpdatedAt(t time.Time) *VideoCreate {
-	vc.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (vc *VideoCreate) SetUpdateTime(t time.Time) *VideoCreate {
+	vc.mutation.SetUpdateTime(t)
 	return vc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (vc *VideoCreate) SetNillableUpdatedAt(t *time.Time) *VideoCreate {
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (vc *VideoCreate) SetNillableUpdateTime(t *time.Time) *VideoCreate {
 	if t != nil {
-		vc.SetUpdatedAt(*t)
-	}
-	return vc
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (vc *VideoCreate) SetDeletedAt(t time.Time) *VideoCreate {
-	vc.mutation.SetDeletedAt(t)
-	return vc
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (vc *VideoCreate) SetNillableDeletedAt(t *time.Time) *VideoCreate {
-	if t != nil {
-		vc.SetDeletedAt(*t)
+		vc.SetUpdateTime(*t)
 	}
 	return vc
 }
@@ -155,23 +141,23 @@ func (vc *VideoCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (vc *VideoCreate) defaults() {
-	if _, ok := vc.mutation.CreatedAt(); !ok {
-		v := video.DefaultCreatedAt()
-		vc.mutation.SetCreatedAt(v)
+	if _, ok := vc.mutation.CreateTime(); !ok {
+		v := video.DefaultCreateTime()
+		vc.mutation.SetCreateTime(v)
 	}
-	if _, ok := vc.mutation.UpdatedAt(); !ok {
-		v := video.DefaultUpdatedAt()
-		vc.mutation.SetUpdatedAt(v)
+	if _, ok := vc.mutation.UpdateTime(); !ok {
+		v := video.DefaultUpdateTime()
+		vc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (vc *VideoCreate) check() error {
-	if _, ok := vc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Video.created_at"`)}
+	if _, ok := vc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Video.create_time"`)}
 	}
-	if _, ok := vc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Video.updated_at"`)}
+	if _, ok := vc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Video.update_time"`)}
 	}
 	if _, ok := vc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "Video.title"`)}
@@ -256,17 +242,13 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := vc.mutation.CreatedAt(); ok {
-		_spec.SetField(video.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := vc.mutation.CreateTime(); ok {
+		_spec.SetField(video.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
 	}
-	if value, ok := vc.mutation.UpdatedAt(); ok {
-		_spec.SetField(video.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := vc.mutation.DeletedAt(); ok {
-		_spec.SetField(video.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+	if value, ok := vc.mutation.UpdateTime(); ok {
+		_spec.SetField(video.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if value, ok := vc.mutation.Title(); ok {
 		_spec.SetField(video.FieldTitle, field.TypeString, value)

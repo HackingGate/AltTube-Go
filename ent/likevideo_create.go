@@ -22,44 +22,30 @@ type LikeVideoCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (lvc *LikeVideoCreate) SetCreatedAt(t time.Time) *LikeVideoCreate {
-	lvc.mutation.SetCreatedAt(t)
+// SetCreateTime sets the "create_time" field.
+func (lvc *LikeVideoCreate) SetCreateTime(t time.Time) *LikeVideoCreate {
+	lvc.mutation.SetCreateTime(t)
 	return lvc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lvc *LikeVideoCreate) SetNillableCreatedAt(t *time.Time) *LikeVideoCreate {
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (lvc *LikeVideoCreate) SetNillableCreateTime(t *time.Time) *LikeVideoCreate {
 	if t != nil {
-		lvc.SetCreatedAt(*t)
+		lvc.SetCreateTime(*t)
 	}
 	return lvc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (lvc *LikeVideoCreate) SetUpdatedAt(t time.Time) *LikeVideoCreate {
-	lvc.mutation.SetUpdatedAt(t)
+// SetUpdateTime sets the "update_time" field.
+func (lvc *LikeVideoCreate) SetUpdateTime(t time.Time) *LikeVideoCreate {
+	lvc.mutation.SetUpdateTime(t)
 	return lvc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (lvc *LikeVideoCreate) SetNillableUpdatedAt(t *time.Time) *LikeVideoCreate {
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (lvc *LikeVideoCreate) SetNillableUpdateTime(t *time.Time) *LikeVideoCreate {
 	if t != nil {
-		lvc.SetUpdatedAt(*t)
-	}
-	return lvc
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (lvc *LikeVideoCreate) SetDeletedAt(t time.Time) *LikeVideoCreate {
-	lvc.mutation.SetDeletedAt(t)
-	return lvc
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (lvc *LikeVideoCreate) SetNillableDeletedAt(t *time.Time) *LikeVideoCreate {
-	if t != nil {
-		lvc.SetDeletedAt(*t)
+		lvc.SetUpdateTime(*t)
 	}
 	return lvc
 }
@@ -121,23 +107,23 @@ func (lvc *LikeVideoCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (lvc *LikeVideoCreate) defaults() {
-	if _, ok := lvc.mutation.CreatedAt(); !ok {
-		v := likevideo.DefaultCreatedAt()
-		lvc.mutation.SetCreatedAt(v)
+	if _, ok := lvc.mutation.CreateTime(); !ok {
+		v := likevideo.DefaultCreateTime()
+		lvc.mutation.SetCreateTime(v)
 	}
-	if _, ok := lvc.mutation.UpdatedAt(); !ok {
-		v := likevideo.DefaultUpdatedAt()
-		lvc.mutation.SetUpdatedAt(v)
+	if _, ok := lvc.mutation.UpdateTime(); !ok {
+		v := likevideo.DefaultUpdateTime()
+		lvc.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (lvc *LikeVideoCreate) check() error {
-	if _, ok := lvc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "LikeVideo.created_at"`)}
+	if _, ok := lvc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "LikeVideo.create_time"`)}
 	}
-	if _, ok := lvc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "LikeVideo.updated_at"`)}
+	if _, ok := lvc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "LikeVideo.update_time"`)}
 	}
 	if _, ok := lvc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "LikeVideo.user_id"`)}
@@ -177,17 +163,13 @@ func (lvc *LikeVideoCreate) createSpec() (*LikeVideo, *sqlgraph.CreateSpec) {
 		_node = &LikeVideo{config: lvc.config}
 		_spec = sqlgraph.NewCreateSpec(likevideo.Table, sqlgraph.NewFieldSpec(likevideo.FieldID, field.TypeInt))
 	)
-	if value, ok := lvc.mutation.CreatedAt(); ok {
-		_spec.SetField(likevideo.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := lvc.mutation.CreateTime(); ok {
+		_spec.SetField(likevideo.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
 	}
-	if value, ok := lvc.mutation.UpdatedAt(); ok {
-		_spec.SetField(likevideo.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := lvc.mutation.DeletedAt(); ok {
-		_spec.SetField(likevideo.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+	if value, ok := lvc.mutation.UpdateTime(); ok {
+		_spec.SetField(likevideo.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if nodes := lvc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

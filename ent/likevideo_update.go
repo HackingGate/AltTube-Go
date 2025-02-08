@@ -30,29 +30,9 @@ func (lvu *LikeVideoUpdate) Where(ps ...predicate.LikeVideo) *LikeVideoUpdate {
 	return lvu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (lvu *LikeVideoUpdate) SetUpdatedAt(t time.Time) *LikeVideoUpdate {
-	lvu.mutation.SetUpdatedAt(t)
-	return lvu
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (lvu *LikeVideoUpdate) SetDeletedAt(t time.Time) *LikeVideoUpdate {
-	lvu.mutation.SetDeletedAt(t)
-	return lvu
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (lvu *LikeVideoUpdate) SetNillableDeletedAt(t *time.Time) *LikeVideoUpdate {
-	if t != nil {
-		lvu.SetDeletedAt(*t)
-	}
-	return lvu
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (lvu *LikeVideoUpdate) ClearDeletedAt() *LikeVideoUpdate {
-	lvu.mutation.ClearDeletedAt()
+// SetUpdateTime sets the "update_time" field.
+func (lvu *LikeVideoUpdate) SetUpdateTime(t time.Time) *LikeVideoUpdate {
+	lvu.mutation.SetUpdateTime(t)
 	return lvu
 }
 
@@ -141,9 +121,9 @@ func (lvu *LikeVideoUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (lvu *LikeVideoUpdate) defaults() {
-	if _, ok := lvu.mutation.UpdatedAt(); !ok {
-		v := likevideo.UpdateDefaultUpdatedAt()
-		lvu.mutation.SetUpdatedAt(v)
+	if _, ok := lvu.mutation.UpdateTime(); !ok {
+		v := likevideo.UpdateDefaultUpdateTime()
+		lvu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -170,14 +150,8 @@ func (lvu *LikeVideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := lvu.mutation.UpdatedAt(); ok {
-		_spec.SetField(likevideo.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := lvu.mutation.DeletedAt(); ok {
-		_spec.SetField(likevideo.FieldDeletedAt, field.TypeTime, value)
-	}
-	if lvu.mutation.DeletedAtCleared() {
-		_spec.ClearField(likevideo.FieldDeletedAt, field.TypeTime)
+	if value, ok := lvu.mutation.UpdateTime(); ok {
+		_spec.SetField(likevideo.FieldUpdateTime, field.TypeTime, value)
 	}
 	if lvu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -257,29 +231,9 @@ type LikeVideoUpdateOne struct {
 	mutation *LikeVideoMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (lvuo *LikeVideoUpdateOne) SetUpdatedAt(t time.Time) *LikeVideoUpdateOne {
-	lvuo.mutation.SetUpdatedAt(t)
-	return lvuo
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (lvuo *LikeVideoUpdateOne) SetDeletedAt(t time.Time) *LikeVideoUpdateOne {
-	lvuo.mutation.SetDeletedAt(t)
-	return lvuo
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (lvuo *LikeVideoUpdateOne) SetNillableDeletedAt(t *time.Time) *LikeVideoUpdateOne {
-	if t != nil {
-		lvuo.SetDeletedAt(*t)
-	}
-	return lvuo
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (lvuo *LikeVideoUpdateOne) ClearDeletedAt() *LikeVideoUpdateOne {
-	lvuo.mutation.ClearDeletedAt()
+// SetUpdateTime sets the "update_time" field.
+func (lvuo *LikeVideoUpdateOne) SetUpdateTime(t time.Time) *LikeVideoUpdateOne {
+	lvuo.mutation.SetUpdateTime(t)
 	return lvuo
 }
 
@@ -381,9 +335,9 @@ func (lvuo *LikeVideoUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (lvuo *LikeVideoUpdateOne) defaults() {
-	if _, ok := lvuo.mutation.UpdatedAt(); !ok {
-		v := likevideo.UpdateDefaultUpdatedAt()
-		lvuo.mutation.SetUpdatedAt(v)
+	if _, ok := lvuo.mutation.UpdateTime(); !ok {
+		v := likevideo.UpdateDefaultUpdateTime()
+		lvuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -427,14 +381,8 @@ func (lvuo *LikeVideoUpdateOne) sqlSave(ctx context.Context) (_node *LikeVideo, 
 			}
 		}
 	}
-	if value, ok := lvuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(likevideo.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := lvuo.mutation.DeletedAt(); ok {
-		_spec.SetField(likevideo.FieldDeletedAt, field.TypeTime, value)
-	}
-	if lvuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(likevideo.FieldDeletedAt, field.TypeTime)
+	if value, ok := lvuo.mutation.UpdateTime(); ok {
+		_spec.SetField(likevideo.FieldUpdateTime, field.TypeTime, value)
 	}
 	if lvuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

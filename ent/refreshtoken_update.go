@@ -30,29 +30,9 @@ func (rtu *RefreshTokenUpdate) Where(ps ...predicate.RefreshToken) *RefreshToken
 	return rtu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (rtu *RefreshTokenUpdate) SetUpdatedAt(t time.Time) *RefreshTokenUpdate {
-	rtu.mutation.SetUpdatedAt(t)
-	return rtu
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (rtu *RefreshTokenUpdate) SetDeletedAt(t time.Time) *RefreshTokenUpdate {
-	rtu.mutation.SetDeletedAt(t)
-	return rtu
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableDeletedAt(t *time.Time) *RefreshTokenUpdate {
-	if t != nil {
-		rtu.SetDeletedAt(*t)
-	}
-	return rtu
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (rtu *RefreshTokenUpdate) ClearDeletedAt() *RefreshTokenUpdate {
-	rtu.mutation.ClearDeletedAt()
+// SetUpdateTime sets the "update_time" field.
+func (rtu *RefreshTokenUpdate) SetUpdateTime(t time.Time) *RefreshTokenUpdate {
+	rtu.mutation.SetUpdateTime(t)
 	return rtu
 }
 
@@ -232,9 +212,9 @@ func (rtu *RefreshTokenUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (rtu *RefreshTokenUpdate) defaults() {
-	if _, ok := rtu.mutation.UpdatedAt(); !ok {
-		v := refreshtoken.UpdateDefaultUpdatedAt()
-		rtu.mutation.SetUpdatedAt(v)
+	if _, ok := rtu.mutation.UpdateTime(); !ok {
+		v := refreshtoken.UpdateDefaultUpdateTime()
+		rtu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -258,14 +238,8 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := rtu.mutation.UpdatedAt(); ok {
-		_spec.SetField(refreshtoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := rtu.mutation.DeletedAt(); ok {
-		_spec.SetField(refreshtoken.FieldDeletedAt, field.TypeTime, value)
-	}
-	if rtu.mutation.DeletedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldDeletedAt, field.TypeTime)
+	if value, ok := rtu.mutation.UpdateTime(); ok {
+		_spec.SetField(refreshtoken.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := rtu.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)
@@ -385,29 +359,9 @@ type RefreshTokenUpdateOne struct {
 	mutation *RefreshTokenMutation
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (rtuo *RefreshTokenUpdateOne) SetUpdatedAt(t time.Time) *RefreshTokenUpdateOne {
-	rtuo.mutation.SetUpdatedAt(t)
-	return rtuo
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (rtuo *RefreshTokenUpdateOne) SetDeletedAt(t time.Time) *RefreshTokenUpdateOne {
-	rtuo.mutation.SetDeletedAt(t)
-	return rtuo
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableDeletedAt(t *time.Time) *RefreshTokenUpdateOne {
-	if t != nil {
-		rtuo.SetDeletedAt(*t)
-	}
-	return rtuo
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (rtuo *RefreshTokenUpdateOne) ClearDeletedAt() *RefreshTokenUpdateOne {
-	rtuo.mutation.ClearDeletedAt()
+// SetUpdateTime sets the "update_time" field.
+func (rtuo *RefreshTokenUpdateOne) SetUpdateTime(t time.Time) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetUpdateTime(t)
 	return rtuo
 }
 
@@ -600,9 +554,9 @@ func (rtuo *RefreshTokenUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (rtuo *RefreshTokenUpdateOne) defaults() {
-	if _, ok := rtuo.mutation.UpdatedAt(); !ok {
-		v := refreshtoken.UpdateDefaultUpdatedAt()
-		rtuo.mutation.SetUpdatedAt(v)
+	if _, ok := rtuo.mutation.UpdateTime(); !ok {
+		v := refreshtoken.UpdateDefaultUpdateTime()
+		rtuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -643,14 +597,8 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			}
 		}
 	}
-	if value, ok := rtuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(refreshtoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := rtuo.mutation.DeletedAt(); ok {
-		_spec.SetField(refreshtoken.FieldDeletedAt, field.TypeTime, value)
-	}
-	if rtuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldDeletedAt, field.TypeTime)
+	if value, ok := rtuo.mutation.UpdateTime(); ok {
+		_spec.SetField(refreshtoken.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := rtuo.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)

@@ -21,46 +21,46 @@ func init() {
 	_ = accesstokenMixinFields0
 	accesstokenFields := schema.AccessToken{}.Fields()
 	_ = accesstokenFields
-	// accesstokenDescCreatedAt is the schema descriptor for created_at field.
-	accesstokenDescCreatedAt := accesstokenMixinFields0[0].Descriptor()
-	// accesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
-	accesstoken.DefaultCreatedAt = accesstokenDescCreatedAt.Default.(func() time.Time)
-	// accesstokenDescUpdatedAt is the schema descriptor for updated_at field.
-	accesstokenDescUpdatedAt := accesstokenMixinFields0[1].Descriptor()
-	// accesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	accesstoken.DefaultUpdatedAt = accesstokenDescUpdatedAt.Default.(func() time.Time)
-	// accesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	accesstoken.UpdateDefaultUpdatedAt = accesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// accesstokenDescCreateTime is the schema descriptor for create_time field.
+	accesstokenDescCreateTime := accesstokenMixinFields0[0].Descriptor()
+	// accesstoken.DefaultCreateTime holds the default value on creation for the create_time field.
+	accesstoken.DefaultCreateTime = accesstokenDescCreateTime.Default.(func() time.Time)
+	// accesstokenDescUpdateTime is the schema descriptor for update_time field.
+	accesstokenDescUpdateTime := accesstokenMixinFields0[1].Descriptor()
+	// accesstoken.DefaultUpdateTime holds the default value on creation for the update_time field.
+	accesstoken.DefaultUpdateTime = accesstokenDescUpdateTime.Default.(func() time.Time)
+	// accesstoken.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	accesstoken.UpdateDefaultUpdateTime = accesstokenDescUpdateTime.UpdateDefault.(func() time.Time)
 	likevideoMixin := schema.LikeVideo{}.Mixin()
 	likevideoMixinFields0 := likevideoMixin[0].Fields()
 	_ = likevideoMixinFields0
 	likevideoFields := schema.LikeVideo{}.Fields()
 	_ = likevideoFields
-	// likevideoDescCreatedAt is the schema descriptor for created_at field.
-	likevideoDescCreatedAt := likevideoMixinFields0[0].Descriptor()
-	// likevideo.DefaultCreatedAt holds the default value on creation for the created_at field.
-	likevideo.DefaultCreatedAt = likevideoDescCreatedAt.Default.(func() time.Time)
-	// likevideoDescUpdatedAt is the schema descriptor for updated_at field.
-	likevideoDescUpdatedAt := likevideoMixinFields0[1].Descriptor()
-	// likevideo.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	likevideo.DefaultUpdatedAt = likevideoDescUpdatedAt.Default.(func() time.Time)
-	// likevideo.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	likevideo.UpdateDefaultUpdatedAt = likevideoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// likevideoDescCreateTime is the schema descriptor for create_time field.
+	likevideoDescCreateTime := likevideoMixinFields0[0].Descriptor()
+	// likevideo.DefaultCreateTime holds the default value on creation for the create_time field.
+	likevideo.DefaultCreateTime = likevideoDescCreateTime.Default.(func() time.Time)
+	// likevideoDescUpdateTime is the schema descriptor for update_time field.
+	likevideoDescUpdateTime := likevideoMixinFields0[1].Descriptor()
+	// likevideo.DefaultUpdateTime holds the default value on creation for the update_time field.
+	likevideo.DefaultUpdateTime = likevideoDescUpdateTime.Default.(func() time.Time)
+	// likevideo.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	likevideo.UpdateDefaultUpdateTime = likevideoDescUpdateTime.UpdateDefault.(func() time.Time)
 	refreshtokenMixin := schema.RefreshToken{}.Mixin()
 	refreshtokenMixinFields0 := refreshtokenMixin[0].Fields()
 	_ = refreshtokenMixinFields0
 	refreshtokenFields := schema.RefreshToken{}.Fields()
 	_ = refreshtokenFields
-	// refreshtokenDescCreatedAt is the schema descriptor for created_at field.
-	refreshtokenDescCreatedAt := refreshtokenMixinFields0[0].Descriptor()
-	// refreshtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
-	refreshtoken.DefaultCreatedAt = refreshtokenDescCreatedAt.Default.(func() time.Time)
-	// refreshtokenDescUpdatedAt is the schema descriptor for updated_at field.
-	refreshtokenDescUpdatedAt := refreshtokenMixinFields0[1].Descriptor()
-	// refreshtoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	refreshtoken.DefaultUpdatedAt = refreshtokenDescUpdatedAt.Default.(func() time.Time)
-	// refreshtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	refreshtoken.UpdateDefaultUpdatedAt = refreshtokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// refreshtokenDescCreateTime is the schema descriptor for create_time field.
+	refreshtokenDescCreateTime := refreshtokenMixinFields0[0].Descriptor()
+	// refreshtoken.DefaultCreateTime holds the default value on creation for the create_time field.
+	refreshtoken.DefaultCreateTime = refreshtokenDescCreateTime.Default.(func() time.Time)
+	// refreshtokenDescUpdateTime is the schema descriptor for update_time field.
+	refreshtokenDescUpdateTime := refreshtokenMixinFields0[1].Descriptor()
+	// refreshtoken.DefaultUpdateTime holds the default value on creation for the update_time field.
+	refreshtoken.DefaultUpdateTime = refreshtokenDescUpdateTime.Default.(func() time.Time)
+	// refreshtoken.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	refreshtoken.UpdateDefaultUpdateTime = refreshtokenDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
@@ -68,16 +68,16 @@ func init() {
 	_ = userMixinFields1
 	userFields := schema.User{}.Fields()
 	_ = userFields
-	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userMixinFields0[0].Descriptor()
-	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
-	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
-	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userMixinFields0[1].Descriptor()
-	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
-	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescCreateTime is the schema descriptor for create_time field.
+	userDescCreateTime := userMixinFields0[0].Descriptor()
+	// user.DefaultCreateTime holds the default value on creation for the create_time field.
+	user.DefaultCreateTime = userDescCreateTime.Default.(func() time.Time)
+	// userDescUpdateTime is the schema descriptor for update_time field.
+	userDescUpdateTime := userMixinFields0[1].Descriptor()
+	// user.DefaultUpdateTime holds the default value on creation for the update_time field.
+	user.DefaultUpdateTime = userDescUpdateTime.Default.(func() time.Time)
+	// user.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	user.UpdateDefaultUpdateTime = userDescUpdateTime.UpdateDefault.(func() time.Time)
 	// userDescPassword is the schema descriptor for password field.
 	userDescPassword := userFields[1].Descriptor()
 	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
@@ -91,16 +91,16 @@ func init() {
 	_ = videoMixinFields0
 	videoFields := schema.Video{}.Fields()
 	_ = videoFields
-	// videoDescCreatedAt is the schema descriptor for created_at field.
-	videoDescCreatedAt := videoMixinFields0[0].Descriptor()
-	// video.DefaultCreatedAt holds the default value on creation for the created_at field.
-	video.DefaultCreatedAt = videoDescCreatedAt.Default.(func() time.Time)
-	// videoDescUpdatedAt is the schema descriptor for updated_at field.
-	videoDescUpdatedAt := videoMixinFields0[1].Descriptor()
-	// video.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	video.DefaultUpdatedAt = videoDescUpdatedAt.Default.(func() time.Time)
-	// video.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	video.UpdateDefaultUpdatedAt = videoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// videoDescCreateTime is the schema descriptor for create_time field.
+	videoDescCreateTime := videoMixinFields0[0].Descriptor()
+	// video.DefaultCreateTime holds the default value on creation for the create_time field.
+	video.DefaultCreateTime = videoDescCreateTime.Default.(func() time.Time)
+	// videoDescUpdateTime is the schema descriptor for update_time field.
+	videoDescUpdateTime := videoMixinFields0[1].Descriptor()
+	// video.DefaultUpdateTime holds the default value on creation for the update_time field.
+	video.DefaultUpdateTime = videoDescUpdateTime.Default.(func() time.Time)
+	// video.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	video.UpdateDefaultUpdateTime = videoDescUpdateTime.UpdateDefault.(func() time.Time)
 	// videoDescTitle is the schema descriptor for title field.
 	videoDescTitle := videoFields[1].Descriptor()
 	// video.TitleValidator is a validator for the "title" field. It is called by the builders before save.
