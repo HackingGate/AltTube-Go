@@ -37,27 +37,28 @@ func RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	// Generate new tokens
-	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(user.ID)
+	// Generate new access token
+	newAccessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
 	}
 
-	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(user.ID)
+	// Generate new refresh token
+	newRefreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
 		return
 	}
 
-	// Remove access tokens associated with the refresh token
+	// Remove access tokens associated with the old refresh token
 	err = database.RemoveAccessTokenByRefreshToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access token"})
 		return
 	}
 
-	// Replace the old refresh token with the new one
+	// Remove the old refresh token
 	err = database.RemoveRefreshTokenByToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
@@ -71,26 +72,26 @@ func RefreshToken(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store the new refresh token
-	err = database.AddRefreshToken(ctx.Request.Context(), refreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(ctx.Request.Context(), newRefreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token " + err.Error()})
 		return
 	}
 
-	refreshToken, err := database.GetRefreshTokenByToken(ctx.Request.Context(), refreshTokenString)
+	refreshToken, err := database.GetRefreshTokenByToken(ctx.Request.Context(), newRefreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh token"})
 		return
 	}
 
-	err = database.AddAccessToken(ctx.Request.Context(), accessTokenString, user, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(ctx.Request.Context(), newAccessTokenString, user, accessTokenExpiry, refreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token " + err.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"access_token":  accessTokenString,
-		"refresh_token": refreshTokenString,
+		"access_token":  newAccessTokenString,
+		"refresh_token": newRefreshTokenString,
 	})
 }
