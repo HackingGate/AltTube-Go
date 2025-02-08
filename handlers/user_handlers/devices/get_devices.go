@@ -3,6 +3,7 @@ package devices
 import (
 	"AltTube-Go/database"
 	"AltTube-Go/models"
+	"github.com/google/uuid"
 	"net/http"
 	"strings"
 
@@ -30,7 +31,7 @@ func GetDevices(ctx *gin.Context) {
 		return
 	}
 
-	authUserID, ok := authUserIDInterface.(string)
+	authUserID, ok := authUserIDInterface.(uuid.UUID)
 	if !ok {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UserID format invalid"})
 		return

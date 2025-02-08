@@ -4,10 +4,11 @@ import (
 	"AltTube-Go/ent"
 	"AltTube-Go/ent/likevideo"
 	"context"
+	"github.com/google/uuid"
 )
 
 // AddLikeVideo adds a like to a video by a user.
-func AddLikeVideo(ctx context.Context, id string, videoID string) error {
+func AddLikeVideo(ctx context.Context, id uuid.UUID, videoID string) error {
 	_, err := Client.LikeVideo.
 		Create().
 		SetUserID(id).
@@ -17,7 +18,7 @@ func AddLikeVideo(ctx context.Context, id string, videoID string) error {
 }
 
 // ReadIsLikedVideo checks if a user has liked a video.
-func ReadIsLikedVideo(ctx context.Context, id string, videoID string) (bool, error) {
+func ReadIsLikedVideo(ctx context.Context, id uuid.UUID, videoID string) (bool, error) {
 	likedVideo, err := Client.LikeVideo.
 		Query().
 		Where(
@@ -29,7 +30,7 @@ func ReadIsLikedVideo(ctx context.Context, id string, videoID string) (bool, err
 }
 
 // RemoveLikeVideo removes a like from a video by a user.
-func RemoveLikeVideo(ctx context.Context, id string, videoID string) error {
+func RemoveLikeVideo(ctx context.Context, id uuid.UUID, videoID string) error {
 	_, err := Client.LikeVideo.
 		Delete().
 		Where(
@@ -41,7 +42,7 @@ func RemoveLikeVideo(ctx context.Context, id string, videoID string) error {
 }
 
 // RemoveAllLikesByUserID removes all likes by a user.
-func RemoveAllLikesByUserID(ctx context.Context, id string) error {
+func RemoveAllLikesByUserID(ctx context.Context, id uuid.UUID) error {
 	_, err := Client.LikeVideo.
 		Delete().
 		Where(likevideo.UserIDEQ(id)).
@@ -50,7 +51,7 @@ func RemoveAllLikesByUserID(ctx context.Context, id string) error {
 }
 
 // GetAllLikesByUserID gets all likes by a user.
-func GetAllLikesByUserID(ctx context.Context, id string) ([]*ent.LikeVideo, error) {
+func GetAllLikesByUserID(ctx context.Context, id uuid.UUID) ([]*ent.LikeVideo, error) {
 	likes, err := Client.LikeVideo.
 		Query().
 		Where(likevideo.UserIDEQ(id)).

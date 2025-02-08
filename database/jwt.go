@@ -6,6 +6,7 @@ import (
 	"AltTube-Go/ent/refreshtoken"
 	"AltTube-Go/ent/user"
 	"context"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -74,9 +75,9 @@ func RemoveRefreshTokenByToken(ctx context.Context, token string) error {
 }
 
 // ValidateRefreshToken checks if the given token exists and is not expired.
-func ValidateRefreshToken(ctx context.Context, tokenString string) (string, bool) {
+func ValidateRefreshToken(ctx context.Context, tokenString string) (bool, error) {
 	// Query database for the token
-	refreshToken, err := Client.RefreshToken.
+	_, err := Client.RefreshToken.
 		Query().
 		Where(
 			refreshtoken.Token(tokenString),
@@ -86,17 +87,17 @@ func ValidateRefreshToken(ctx context.Context, tokenString string) (string, bool
 
 	// If an error occurs or no result is found, return false
 	if err != nil {
-		return "", false
+		return false, err
 	}
 
-	// Return token and success status
-	return refreshToken.Token, true
+	// Return success status
+	return true, nil
 }
 
 // ValidateAccessToken checks if the given token exists and is not expired.
-func ValidateAccessToken(ctx context.Context, tokenString string) (string, bool) {
+func ValidateAccessToken(ctx context.Context, tokenString string) (bool, error) {
 	// Query database for the token
-	accessToken, err := Client.AccessToken.
+	_, err := Client.AccessToken.
 		Query().
 		Where(
 			accesstoken.Token(tokenString),
@@ -106,11 +107,11 @@ func ValidateAccessToken(ctx context.Context, tokenString string) (string, bool)
 
 	// If an error occurs or no result is found, return false
 	if err != nil {
-		return "", false
+		return false, err
 	}
 
-	// Return user ID and success status
-	return accessToken.UserID, true
+	// Return success status
+	return true, nil
 }
 
 // RemoveAccessToken deletes the access token with the given token.
@@ -126,7 +127,7 @@ func RemoveAccessToken(ctx context.Context, token string) error {
 }
 
 // GetAllRefreshTokensByUserID returns all refresh tokens associated with the given user.
-func GetAllRefreshTokensByUserID(ctx context.Context, userID string) ([]*ent.RefreshToken, error) {
+func GetAllRefreshTokensByUserID(ctx context.Context, userID uuid.UUID) ([]*ent.RefreshToken, error) {
 	// Query the database for refresh tokens belonging to the user.
 	refreshTokens, err := Client.RefreshToken.
 		Query().

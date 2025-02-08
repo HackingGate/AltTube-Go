@@ -6,10 +6,11 @@ import (
 	"AltTube-Go/ent/user"
 	"AltTube-Go/models"
 	"context"
+	"github.com/google/uuid"
 )
 
 // DeleteUserByID deletes a user by ID.
-func DeleteUserByID(ctx context.Context, id string) error {
+func DeleteUserByID(ctx context.Context, id uuid.UUID) error {
 	err := Client.User.
 		DeleteOneID(id).
 		Exec(ctx)
@@ -17,7 +18,7 @@ func DeleteUserByID(ctx context.Context, id string) error {
 }
 
 // GetUserByID gets a user by ID.
-func GetUserByID(ctx context.Context, id string) (*ent.User, error) {
+func GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error) {
 	userQueried, err := Client.User.
 		Query().
 		Where(user.IDEQ(id)).
@@ -56,7 +57,7 @@ func GetUserByEmail(ctx context.Context, email string) (*ent.User, error) {
 }
 
 // UpdateUserByID updates a user by ID.
-func UpdateUserByID(ctx context.Context, id string, updateEmailRequest models.UpdateEmailRequest) error {
+func UpdateUserByID(ctx context.Context, id uuid.UUID, updateEmailRequest models.UpdateEmailRequest) error {
 	_, err := Client.User.
 		UpdateOneID(id).
 		SetEmail(updateEmailRequest.Email).

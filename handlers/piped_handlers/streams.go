@@ -71,6 +71,9 @@ func Streams(ctx *gin.Context) {
 		return
 	}
 
+	// Print the modified body in formatted JSON in the console for debugging
+	print(string(modifiedBody))
+
 	// Add Video to database if it doesn't exist
 	if resp.StatusCode == 200 {
 		var videoToAdd ent.Video

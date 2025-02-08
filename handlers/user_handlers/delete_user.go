@@ -2,6 +2,7 @@ package user_handlers
 
 import (
 	"AltTube-Go/database"
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +25,7 @@ func DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	authUUID, ok := authUUIDInterface.(string)
+	authUUID, ok := authUUIDInterface.(uuid.UUID)
 	if !ok {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UserID format invalid"})
 		ctx.Abort()

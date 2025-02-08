@@ -24,40 +24,41 @@ func RefreshToken(ctx *gin.Context) {
 	// Assuming token is provided as 'Bearer <token>'
 	refreshTokenString = strings.TrimPrefix(refreshTokenString, "Bearer ")
 
-	validatedRefreshTokenString, exists := database.ValidateRefreshToken(ctx.Request.Context(), refreshTokenString)
+	exists, err := database.ValidateRefreshToken(ctx.Request.Context(), refreshTokenString)
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return
 	}
 
+	// Find user associated with the refresh token
+	user, err := database.GetUserByRefreshToken(ctx.Request.Context(), refreshTokenString)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
+		return
+	}
+
 	// Generate new tokens
-	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(validatedRefreshTokenString)
+	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
 	}
 
-	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(validatedRefreshTokenString)
+	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
 		return
 	}
 
 	// Remove access tokens associated with the refresh token
-	err = database.RemoveAccessTokenByRefreshToken(ctx.Request.Context(), validatedRefreshTokenString)
+	err = database.RemoveAccessTokenByRefreshToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access token"})
 		return
 	}
 
-	user, err := database.GetUserByRefreshToken(ctx.Request.Context(), validatedRefreshTokenString)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
-		return
-	}
-
 	// Replace the old refresh token with the new one
-	err = database.RemoveRefreshTokenByToken(ctx.Request.Context(), validatedRefreshTokenString)
+	err = database.RemoveRefreshTokenByToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
 		return
