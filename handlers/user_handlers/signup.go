@@ -1,9 +1,9 @@
 package user_handlers
 
 import (
-	"AltTube-Go/database"
-	"AltTube-Go/models"
-	"AltTube-Go/utils"
+	"github.com/hackinggate/alttube-go/database"
+	"github.com/hackinggate/alttube-go/models"
+	"github.com/hackinggate/alttube-go/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

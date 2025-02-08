@@ -1,7 +1,7 @@
 package piped_handlers
 
 import (
-	"AltTube-Go/utils"
+	"github.com/hackinggate/alttube-go/utils"
 	"io"
 	"net/http"
 	"os"

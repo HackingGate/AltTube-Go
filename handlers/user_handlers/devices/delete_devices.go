@@ -1,8 +1,8 @@
 package devices
 
 import (
-	"AltTube-Go/database"
-	"AltTube-Go/models"
+	"github.com/hackinggate/alttube-go/database"
+	"github.com/hackinggate/alttube-go/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

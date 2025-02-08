@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"AltTube-Go/models"
+	"github.com/hackinggate/alttube-go/models"
 	"os"
 	"time"
 

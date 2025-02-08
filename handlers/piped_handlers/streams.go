@@ -1,10 +1,10 @@
 package piped_handlers
 
 import (
-	"AltTube-Go/database"
-	"AltTube-Go/models"
-	"AltTube-Go/utils"
 	"encoding/json"
+	"github.com/hackinggate/alttube-go/database"
+	"github.com/hackinggate/alttube-go/models"
+	"github.com/hackinggate/alttube-go/utils"
 	"io"
 	"net/http"
 	"os"

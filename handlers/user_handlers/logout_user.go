@@ -1,7 +1,7 @@
 package user_handlers
 
 import (
-	"AltTube-Go/database"
+	"github.com/hackinggate/alttube-go/database"
 	"strings"
 
 	"github.com/gin-gonic/gin"

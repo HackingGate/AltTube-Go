@@ -1,16 +1,16 @@
 package main
 
 import (
-	"AltTube-Go/auth"
-	"AltTube-Go/database"
-	docs "AltTube-Go/docs"
-	"AltTube-Go/handlers"
-	"AltTube-Go/handlers/like_video_handlers"
-	"AltTube-Go/handlers/piped_handlers"
-	"AltTube-Go/handlers/piped_handlers/opensearch"
-	"AltTube-Go/handlers/pipedproxy"
-	"AltTube-Go/handlers/user_handlers"
-	"AltTube-Go/handlers/user_handlers/devices"
+	"github.com/hackinggate/alttube-go/auth"
+	"github.com/hackinggate/alttube-go/database"
+	docs "github.com/hackinggate/alttube-go/docs"
+	"github.com/hackinggate/alttube-go/handlers"
+	"github.com/hackinggate/alttube-go/handlers/like_video_handlers"
+	"github.com/hackinggate/alttube-go/handlers/piped_handlers"
+	"github.com/hackinggate/alttube-go/handlers/piped_handlers/opensearch"
+	"github.com/hackinggate/alttube-go/handlers/pipedproxy"
+	"github.com/hackinggate/alttube-go/handlers/user_handlers"
+	"github.com/hackinggate/alttube-go/handlers/user_handlers/devices"
 	"log"
 	"os"
 

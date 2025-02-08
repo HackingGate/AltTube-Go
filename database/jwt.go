@@ -1,7 +1,7 @@
 package database
 
 import (
-	"AltTube-Go/models"
+	"github.com/hackinggate/alttube-go/models"
 	"time"
 )
 

@@ -1,8 +1,8 @@
 package database
 
 import (
-	"AltTube-Go/models"
 	"fmt"
+	"github.com/hackinggate/alttube-go/models"
 	"log"
 	"os"
 	"time"
