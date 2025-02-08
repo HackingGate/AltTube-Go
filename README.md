@@ -1,5 +1,11 @@
 # AltTube-Go
 
+[![Lint](https://github.com/HackingGate/AltTube-Go/actions/workflows/lint.yml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/lint.yml)
+[![golangci-lint](https://github.com/HackingGate/AltTube-Go/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/golangci-lint.yml)
+[![Build and Test](https://github.com/HackingGate/AltTube-Go/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/build-and-test.yml)
+[![CodeQL](https://github.com/HackingGate/AltTube-Go/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/github-code-scanning/codeql)
+[![Dependabot Updates](https://github.com/HackingGate/AltTube-Go/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/dependabot/dependabot-updates)
+
 ## Getting Started
 
 ### Common steps
