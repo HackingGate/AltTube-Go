@@ -47,7 +47,7 @@ func AddLikeVideo(ctx *gin.Context) {
 	}
 
 	isLiked, err := database.ReadIsLikedVideo(ctx.Request.Context(), user.ID, video.ID)
-	if err != nil {
+	if err != nil && err.Error() != "ent: like_video not found" {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error reading if video is liked"})
 		return
 	}
