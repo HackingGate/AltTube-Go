@@ -6,8 +6,9 @@ import (
 	"AltTube-Go/ent/refreshtoken"
 	"AltTube-Go/ent/user"
 	"context"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // AddAccessToken creates and stores a new access token in the database.

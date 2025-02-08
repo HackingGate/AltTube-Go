@@ -2,6 +2,7 @@ package schema
 
 import (
 	"AltTube-Go/ent/mixins"
+
 	"entgo.io/ent/schema/mixin"
 	"github.com/google/uuid"
 

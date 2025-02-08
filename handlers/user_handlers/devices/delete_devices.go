@@ -3,8 +3,9 @@ package devices
 import (
 	"AltTube-Go/database"
 	"AltTube-Go/ent"
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )

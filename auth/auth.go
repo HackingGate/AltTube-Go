@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/golang-jwt/jwt/v5"
 )

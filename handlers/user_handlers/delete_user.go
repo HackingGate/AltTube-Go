@@ -2,8 +2,9 @@ package user_handlers
 
 import (
 	"AltTube-Go/database"
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )

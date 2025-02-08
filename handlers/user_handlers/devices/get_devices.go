@@ -3,9 +3,10 @@ package devices
 import (
 	"AltTube-Go/database"
 	"AltTube-Go/models"
-	"github.com/google/uuid"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
