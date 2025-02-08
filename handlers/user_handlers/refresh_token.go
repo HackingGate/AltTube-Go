@@ -25,6 +25,10 @@ func RefreshToken(ctx *gin.Context) {
 	refreshTokenString = strings.TrimPrefix(refreshTokenString, "Bearer ")
 
 	exists, err := database.ValidateRefreshToken(ctx.Request.Context(), refreshTokenString)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error validating refresh token"})
+		return
+	}
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return

@@ -1,6 +1,11 @@
 pre-commit:
   parallel: true
   commands:
+    golangci-lint:
+      glob:
+        - "**/*.go"
+      run: |
+        golangci-lint run --fix
     ent:
       glob:
         - "ent/schema/*.go"
