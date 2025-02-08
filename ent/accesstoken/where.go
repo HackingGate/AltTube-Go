@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 )
 
 // ID filters vertices based on their ID field.
@@ -71,7 +72,7 @@ func Token(v string) predicate.AccessToken {
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.AccessToken {
+func UserID(v uuid.UUID) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -241,68 +242,23 @@ func TokenContainsFold(v string) predicate.AccessToken {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.AccessToken {
+func UserIDEQ(v uuid.UUID) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.AccessToken {
+func UserIDNEQ(v uuid.UUID) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.AccessToken {
+func UserIDIn(vs ...uuid.UUID) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.AccessToken {
+func UserIDNotIn(vs ...uuid.UUID) predicate.AccessToken {
 	return predicate.AccessToken(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.AccessToken {
-	return predicate.AccessToken(sql.FieldContainsFold(FieldUserID, v))
 }
 
 // RefreshTokenIDEQ applies the EQ predicate on the "refresh_token_id" field.

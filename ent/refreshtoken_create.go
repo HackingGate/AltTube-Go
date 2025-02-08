@@ -13,6 +13,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // RefreshTokenCreate is the builder for creating a RefreshToken entity.
@@ -107,8 +108,8 @@ func (rtc *RefreshTokenCreate) SetNillableIPAddress(s *string) *RefreshTokenCrea
 }
 
 // SetUserID sets the "user_id" field.
-func (rtc *RefreshTokenCreate) SetUserID(s string) *RefreshTokenCreate {
-	rtc.mutation.SetUserID(s)
+func (rtc *RefreshTokenCreate) SetUserID(u uuid.UUID) *RefreshTokenCreate {
+	rtc.mutation.SetUserID(u)
 	return rtc
 }
 
@@ -261,7 +262,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 			Columns: []string{refreshtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

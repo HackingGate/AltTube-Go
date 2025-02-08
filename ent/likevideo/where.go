@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 )
 
 // ID filters vertices based on their ID field.
@@ -66,7 +67,7 @@ func UpdateTime(v time.Time) predicate.LikeVideo {
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.LikeVideo {
+func UserID(v uuid.UUID) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -156,68 +157,23 @@ func UpdateTimeLTE(v time.Time) predicate.LikeVideo {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.LikeVideo {
+func UserIDEQ(v uuid.UUID) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.LikeVideo {
+func UserIDNEQ(v uuid.UUID) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.LikeVideo {
+func UserIDIn(vs ...uuid.UUID) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.LikeVideo {
+func UserIDNotIn(vs ...uuid.UUID) predicate.LikeVideo {
 	return predicate.LikeVideo(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.LikeVideo {
-	return predicate.LikeVideo(sql.FieldContainsFold(FieldUserID, v))
 }
 
 // VideoIDEQ applies the EQ predicate on the "video_id" field.

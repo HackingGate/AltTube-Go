@@ -13,6 +13,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // AccessTokenCreate is the builder for creating a AccessToken entity.
@@ -65,8 +66,8 @@ func (atc *AccessTokenCreate) SetNillableToken(s *string) *AccessTokenCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (atc *AccessTokenCreate) SetUserID(s string) *AccessTokenCreate {
-	atc.mutation.SetUserID(s)
+func (atc *AccessTokenCreate) SetUserID(u uuid.UUID) *AccessTokenCreate {
+	atc.mutation.SetUserID(u)
 	return atc
 }
 
@@ -227,7 +228,7 @@ func (atc *AccessTokenCreate) createSpec() (*AccessToken, *sqlgraph.CreateSpec) 
 			Columns: []string{accesstoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

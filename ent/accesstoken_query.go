@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // AccessTokenQuery is the builder for querying AccessToken entities.
@@ -445,8 +446,8 @@ func (atq *AccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 }
 
 func (atq *AccessTokenQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*AccessToken, init func(*AccessToken), assign func(*AccessToken, *User)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*AccessToken)
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*AccessToken)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {

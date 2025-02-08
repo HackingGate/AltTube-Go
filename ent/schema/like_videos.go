@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent/schema/mixin"
+	"github.com/google/uuid"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -21,7 +22,7 @@ func (LikeVideo) Mixin() []ent.Mixin {
 
 func (LikeVideo) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("user_id"),
+		field.UUID("user_id", uuid.UUID{}),
 		field.String("video_id"),
 	}
 }

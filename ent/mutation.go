@@ -17,6 +17,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 const (
@@ -46,7 +47,7 @@ type AccessTokenMutation struct {
 	token                *string
 	expiry               *time.Time
 	clearedFields        map[string]struct{}
-	user                 *string
+	user                 *uuid.UUID
 	cleareduser          bool
 	refresh_token        *uint
 	clearedrefresh_token bool
@@ -281,12 +282,12 @@ func (m *AccessTokenMutation) ResetToken() {
 }
 
 // SetUserID sets the "user_id" field.
-func (m *AccessTokenMutation) SetUserID(s string) {
-	m.user = &s
+func (m *AccessTokenMutation) SetUserID(u uuid.UUID) {
+	m.user = &u
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *AccessTokenMutation) UserID() (r string, exists bool) {
+func (m *AccessTokenMutation) UserID() (r uuid.UUID, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -297,7 +298,7 @@ func (m *AccessTokenMutation) UserID() (r string, exists bool) {
 // OldUserID returns the old "user_id" field's value of the AccessToken entity.
 // If the AccessToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccessTokenMutation) OldUserID(ctx context.Context) (v string, err error) {
+func (m *AccessTokenMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -415,7 +416,7 @@ func (m *AccessTokenMutation) UserCleared() bool {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *AccessTokenMutation) UserIDs() (ids []string) {
+func (m *AccessTokenMutation) UserIDs() (ids []uuid.UUID) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -580,7 +581,7 @@ func (m *AccessTokenMutation) SetField(name string, value ent.Value) error {
 		m.SetToken(v)
 		return nil
 	case accesstoken.FieldUserID:
-		v, ok := value.(string)
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -790,7 +791,7 @@ type LikeVideoMutation struct {
 	create_time   *time.Time
 	update_time   *time.Time
 	clearedFields map[string]struct{}
-	user          *string
+	user          *uuid.UUID
 	cleareduser   bool
 	video         *string
 	clearedvideo  bool
@@ -970,12 +971,12 @@ func (m *LikeVideoMutation) ResetUpdateTime() {
 }
 
 // SetUserID sets the "user_id" field.
-func (m *LikeVideoMutation) SetUserID(s string) {
-	m.user = &s
+func (m *LikeVideoMutation) SetUserID(u uuid.UUID) {
+	m.user = &u
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *LikeVideoMutation) UserID() (r string, exists bool) {
+func (m *LikeVideoMutation) UserID() (r uuid.UUID, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -986,7 +987,7 @@ func (m *LikeVideoMutation) UserID() (r string, exists bool) {
 // OldUserID returns the old "user_id" field's value of the LikeVideo entity.
 // If the LikeVideo object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LikeVideoMutation) OldUserID(ctx context.Context) (v string, err error) {
+func (m *LikeVideoMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -1055,7 +1056,7 @@ func (m *LikeVideoMutation) UserCleared() bool {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *LikeVideoMutation) UserIDs() (ids []string) {
+func (m *LikeVideoMutation) UserIDs() (ids []uuid.UUID) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1199,7 +1200,7 @@ func (m *LikeVideoMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdateTime(v)
 		return nil
 	case likevideo.FieldUserID:
-		v, ok := value.(string)
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1382,7 +1383,7 @@ type RefreshTokenMutation struct {
 	user_agent           *string
 	ip_address           *string
 	clearedFields        map[string]struct{}
-	user                 *string
+	user                 *uuid.UUID
 	cleareduser          bool
 	access_tokens        map[uint]struct{}
 	removedaccess_tokens map[uint]struct{}
@@ -1765,12 +1766,12 @@ func (m *RefreshTokenMutation) ResetIPAddress() {
 }
 
 // SetUserID sets the "user_id" field.
-func (m *RefreshTokenMutation) SetUserID(s string) {
-	m.user = &s
+func (m *RefreshTokenMutation) SetUserID(u uuid.UUID) {
+	m.user = &u
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *RefreshTokenMutation) UserID() (r string, exists bool) {
+func (m *RefreshTokenMutation) UserID() (r uuid.UUID, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -1781,7 +1782,7 @@ func (m *RefreshTokenMutation) UserID() (r string, exists bool) {
 // OldUserID returns the old "user_id" field's value of the RefreshToken entity.
 // If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefreshTokenMutation) OldUserID(ctx context.Context) (v string, err error) {
+func (m *RefreshTokenMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -1814,7 +1815,7 @@ func (m *RefreshTokenMutation) UserCleared() bool {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *RefreshTokenMutation) UserIDs() (ids []string) {
+func (m *RefreshTokenMutation) UserIDs() (ids []uuid.UUID) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2034,7 +2035,7 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 		m.SetIPAddress(v)
 		return nil
 	case refreshtoken.FieldUserID:
-		v, ok := value.(string)
+		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2248,7 +2249,7 @@ type UserMutation struct {
 	config
 	op                    Op
 	typ                   string
-	id                    *string
+	id                    *uuid.UUID
 	create_time           *time.Time
 	update_time           *time.Time
 	email                 *string
@@ -2288,7 +2289,7 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 }
 
 // withUserID sets the ID field of the mutation.
-func withUserID(id string) userOption {
+func withUserID(id uuid.UUID) userOption {
 	return func(m *UserMutation) {
 		var (
 			err   error
@@ -2340,13 +2341,13 @@ func (m UserMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of User entities.
-func (m *UserMutation) SetID(id string) {
+func (m *UserMutation) SetID(id uuid.UUID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id string, exists bool) {
+func (m *UserMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2357,12 +2358,12 @@ func (m *UserMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *UserMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []string{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):

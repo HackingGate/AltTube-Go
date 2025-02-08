@@ -3,6 +3,7 @@ package schema
 import (
 	"AltTube-Go/ent/mixins"
 	"entgo.io/ent/schema/mixin"
+	"github.com/google/uuid"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -24,7 +25,7 @@ func (AccessToken) Mixin() []ent.Mixin {
 func (AccessToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("token").Optional(),
-		field.String("user_id"),
+		field.UUID("user_id", uuid.UUID{}),
 		field.Uint("refresh_token_id"),
 		field.Time("expiry").Optional(),
 	}

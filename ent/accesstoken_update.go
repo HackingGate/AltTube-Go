@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // AccessTokenUpdate is the builder for updating AccessToken entities.
@@ -57,15 +58,15 @@ func (atu *AccessTokenUpdate) ClearToken() *AccessTokenUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (atu *AccessTokenUpdate) SetUserID(s string) *AccessTokenUpdate {
-	atu.mutation.SetUserID(s)
+func (atu *AccessTokenUpdate) SetUserID(u uuid.UUID) *AccessTokenUpdate {
+	atu.mutation.SetUserID(u)
 	return atu
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (atu *AccessTokenUpdate) SetNillableUserID(s *string) *AccessTokenUpdate {
-	if s != nil {
-		atu.SetUserID(*s)
+func (atu *AccessTokenUpdate) SetNillableUserID(u *uuid.UUID) *AccessTokenUpdate {
+	if u != nil {
+		atu.SetUserID(*u)
 	}
 	return atu
 }
@@ -213,7 +214,7 @@ func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{accesstoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -226,7 +227,7 @@ func (atu *AccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{accesstoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -310,15 +311,15 @@ func (atuo *AccessTokenUpdateOne) ClearToken() *AccessTokenUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (atuo *AccessTokenUpdateOne) SetUserID(s string) *AccessTokenUpdateOne {
-	atuo.mutation.SetUserID(s)
+func (atuo *AccessTokenUpdateOne) SetUserID(u uuid.UUID) *AccessTokenUpdateOne {
+	atuo.mutation.SetUserID(u)
 	return atuo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (atuo *AccessTokenUpdateOne) SetNillableUserID(s *string) *AccessTokenUpdateOne {
-	if s != nil {
-		atuo.SetUserID(*s)
+func (atuo *AccessTokenUpdateOne) SetNillableUserID(u *uuid.UUID) *AccessTokenUpdateOne {
+	if u != nil {
+		atuo.SetUserID(*u)
 	}
 	return atuo
 }
@@ -496,7 +497,7 @@ func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessTok
 			Columns: []string{accesstoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -509,7 +510,7 @@ func (atuo *AccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *AccessTok
 			Columns: []string{accesstoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

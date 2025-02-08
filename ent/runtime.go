@@ -10,6 +10,8 @@ import (
 	"AltTube-Go/ent/user"
 	"AltTube-Go/ent/video"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -85,7 +87,7 @@ func init() {
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields1[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
-	user.DefaultID = userDescID.Default.(func() string)
+	user.DefaultID = userDescID.Default.(func() uuid.UUID)
 	videoMixin := schema.Video{}.Mixin()
 	videoMixinFields0 := videoMixin[0].Fields()
 	_ = videoMixinFields0

@@ -13,6 +13,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // LikeVideoCreate is the builder for creating a LikeVideo entity.
@@ -51,8 +52,8 @@ func (lvc *LikeVideoCreate) SetNillableUpdateTime(t *time.Time) *LikeVideoCreate
 }
 
 // SetUserID sets the "user_id" field.
-func (lvc *LikeVideoCreate) SetUserID(s string) *LikeVideoCreate {
-	lvc.mutation.SetUserID(s)
+func (lvc *LikeVideoCreate) SetUserID(u uuid.UUID) *LikeVideoCreate {
+	lvc.mutation.SetUserID(u)
 	return lvc
 }
 
@@ -179,7 +180,7 @@ func (lvc *LikeVideoCreate) createSpec() (*LikeVideo, *sqlgraph.CreateSpec) {
 			Columns: []string{likevideo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

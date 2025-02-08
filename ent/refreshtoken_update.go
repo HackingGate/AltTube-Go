@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // RefreshTokenUpdate is the builder for updating RefreshToken entities.
@@ -117,15 +118,15 @@ func (rtu *RefreshTokenUpdate) ClearIPAddress() *RefreshTokenUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (rtu *RefreshTokenUpdate) SetUserID(s string) *RefreshTokenUpdate {
-	rtu.mutation.SetUserID(s)
+func (rtu *RefreshTokenUpdate) SetUserID(u uuid.UUID) *RefreshTokenUpdate {
+	rtu.mutation.SetUserID(u)
 	return rtu
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableUserID(s *string) *RefreshTokenUpdate {
-	if s != nil {
-		rtu.SetUserID(*s)
+func (rtu *RefreshTokenUpdate) SetNillableUserID(u *uuid.UUID) *RefreshTokenUpdate {
+	if u != nil {
+		rtu.SetUserID(*u)
 	}
 	return rtu
 }
@@ -273,7 +274,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -286,7 +287,7 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{refreshtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -446,15 +447,15 @@ func (rtuo *RefreshTokenUpdateOne) ClearIPAddress() *RefreshTokenUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (rtuo *RefreshTokenUpdateOne) SetUserID(s string) *RefreshTokenUpdateOne {
-	rtuo.mutation.SetUserID(s)
+func (rtuo *RefreshTokenUpdateOne) SetUserID(u uuid.UUID) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetUserID(u)
 	return rtuo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableUserID(s *string) *RefreshTokenUpdateOne {
-	if s != nil {
-		rtuo.SetUserID(*s)
+func (rtuo *RefreshTokenUpdateOne) SetNillableUserID(u *uuid.UUID) *RefreshTokenUpdateOne {
+	if u != nil {
+		rtuo.SetUserID(*u)
 	}
 	return rtuo
 }
@@ -632,7 +633,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -645,7 +646,7 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 			Columns: []string{refreshtoken.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -12,6 +12,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 // AccessToken is the model entity for the AccessToken schema.
@@ -26,7 +27,7 @@ type AccessToken struct {
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID string `json:"user_id,omitempty"`
+	UserID uuid.UUID `json:"user_id,omitempty"`
 	// RefreshTokenID holds the value of the "refresh_token_id" field.
 	RefreshTokenID uint `json:"refresh_token_id,omitempty"`
 	// Expiry holds the value of the "expiry" field.
@@ -77,10 +78,12 @@ func (*AccessToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case accesstoken.FieldID, accesstoken.FieldRefreshTokenID:
 			values[i] = new(sql.NullInt64)
-		case accesstoken.FieldToken, accesstoken.FieldUserID:
+		case accesstoken.FieldToken:
 			values[i] = new(sql.NullString)
 		case accesstoken.FieldCreateTime, accesstoken.FieldUpdateTime, accesstoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
+		case accesstoken.FieldUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -121,10 +124,10 @@ func (at *AccessToken) assignValues(columns []string, values []any) error {
 				at.Token = value.String
 			}
 		case accesstoken.FieldUserID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				at.UserID = value.String
+			} else if value != nil {
+				at.UserID = *value
 			}
 		case accesstoken.FieldRefreshTokenID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -194,7 +197,7 @@ func (at *AccessToken) String() string {
 	builder.WriteString(at.Token)
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(at.UserID)
+	builder.WriteString(fmt.Sprintf("%v", at.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("refresh_token_id=")
 	builder.WriteString(fmt.Sprintf("%v", at.RefreshTokenID))

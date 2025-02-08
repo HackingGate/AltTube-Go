@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // RefreshTokenQuery is the builder for querying RefreshToken entities.
@@ -447,8 +448,8 @@ func (rtq *RefreshTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 }
 
 func (rtq *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*RefreshToken, init func(*RefreshToken), assign func(*RefreshToken, *User)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*RefreshToken)
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*RefreshToken)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {

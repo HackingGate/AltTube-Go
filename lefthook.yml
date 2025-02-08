@@ -2,7 +2,9 @@ pre-commit:
   parallel: true
   commands:
     ent:
-      glob: "ent/schema/*.go"
+      glob:
+        - "ent/schema/*.go"
+        - "ent/mixins/*.go"
       run: |
         go generate ./ent
     swag:

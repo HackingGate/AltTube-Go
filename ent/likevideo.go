@@ -12,6 +12,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 // LikeVideo is the model entity for the LikeVideo schema.
@@ -24,7 +25,7 @@ type LikeVideo struct {
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID string `json:"user_id,omitempty"`
+	UserID uuid.UUID `json:"user_id,omitempty"`
 	// VideoID holds the value of the "video_id" field.
 	VideoID string `json:"video_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -73,10 +74,12 @@ func (*LikeVideo) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case likevideo.FieldID:
 			values[i] = new(sql.NullInt64)
-		case likevideo.FieldUserID, likevideo.FieldVideoID:
+		case likevideo.FieldVideoID:
 			values[i] = new(sql.NullString)
 		case likevideo.FieldCreateTime, likevideo.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
+		case likevideo.FieldUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -111,10 +114,10 @@ func (lv *LikeVideo) assignValues(columns []string, values []any) error {
 				lv.UpdateTime = value.Time
 			}
 		case likevideo.FieldUserID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				lv.UserID = value.String
+			} else if value != nil {
+				lv.UserID = *value
 			}
 		case likevideo.FieldVideoID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -175,7 +178,7 @@ func (lv *LikeVideo) String() string {
 	builder.WriteString(lv.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(lv.UserID)
+	builder.WriteString(fmt.Sprintf("%v", lv.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("video_id=")
 	builder.WriteString(lv.VideoID)

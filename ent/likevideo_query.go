@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // LikeVideoQuery is the builder for querying LikeVideo entities.
@@ -445,8 +446,8 @@ func (lvq *LikeVideoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*L
 }
 
 func (lvq *LikeVideoQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*LikeVideo, init func(*LikeVideo), assign func(*LikeVideo, *User)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*LikeVideo)
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*LikeVideo)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {

@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 // RefreshToken is the model entity for the RefreshToken schema.
@@ -31,7 +32,7 @@ type RefreshToken struct {
 	// IPAddress holds the value of the "ip_address" field.
 	IPAddress string `json:"ip_address,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID string `json:"user_id,omitempty"`
+	UserID uuid.UUID `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
 	Edges        RefreshTokenEdges `json:"edges"`
@@ -76,10 +77,12 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case refreshtoken.FieldID:
 			values[i] = new(sql.NullInt64)
-		case refreshtoken.FieldToken, refreshtoken.FieldUserAgent, refreshtoken.FieldIPAddress, refreshtoken.FieldUserID:
+		case refreshtoken.FieldToken, refreshtoken.FieldUserAgent, refreshtoken.FieldIPAddress:
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldCreateTime, refreshtoken.FieldUpdateTime, refreshtoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
+		case refreshtoken.FieldUserID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -138,10 +141,10 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 				rt.IPAddress = value.String
 			}
 		case refreshtoken.FieldUserID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				rt.UserID = value.String
+			} else if value != nil {
+				rt.UserID = *value
 			}
 		default:
 			rt.selectValues.Set(columns[i], values[i])
@@ -208,7 +211,7 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString(rt.IPAddress)
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(rt.UserID)
+	builder.WriteString(fmt.Sprintf("%v", rt.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

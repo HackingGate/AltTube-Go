@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 )
 
 // LikeVideoUpdate is the builder for updating LikeVideo entities.
@@ -37,15 +38,15 @@ func (lvu *LikeVideoUpdate) SetUpdateTime(t time.Time) *LikeVideoUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (lvu *LikeVideoUpdate) SetUserID(s string) *LikeVideoUpdate {
-	lvu.mutation.SetUserID(s)
+func (lvu *LikeVideoUpdate) SetUserID(u uuid.UUID) *LikeVideoUpdate {
+	lvu.mutation.SetUserID(u)
 	return lvu
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lvu *LikeVideoUpdate) SetNillableUserID(s *string) *LikeVideoUpdate {
-	if s != nil {
-		lvu.SetUserID(*s)
+func (lvu *LikeVideoUpdate) SetNillableUserID(u *uuid.UUID) *LikeVideoUpdate {
+	if u != nil {
+		lvu.SetUserID(*u)
 	}
 	return lvu
 }
@@ -161,7 +162,7 @@ func (lvu *LikeVideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{likevideo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -174,7 +175,7 @@ func (lvu *LikeVideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{likevideo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -238,15 +239,15 @@ func (lvuo *LikeVideoUpdateOne) SetUpdateTime(t time.Time) *LikeVideoUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (lvuo *LikeVideoUpdateOne) SetUserID(s string) *LikeVideoUpdateOne {
-	lvuo.mutation.SetUserID(s)
+func (lvuo *LikeVideoUpdateOne) SetUserID(u uuid.UUID) *LikeVideoUpdateOne {
+	lvuo.mutation.SetUserID(u)
 	return lvuo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (lvuo *LikeVideoUpdateOne) SetNillableUserID(s *string) *LikeVideoUpdateOne {
-	if s != nil {
-		lvuo.SetUserID(*s)
+func (lvuo *LikeVideoUpdateOne) SetNillableUserID(u *uuid.UUID) *LikeVideoUpdateOne {
+	if u != nil {
+		lvuo.SetUserID(*u)
 	}
 	return lvuo
 }
@@ -392,7 +393,7 @@ func (lvuo *LikeVideoUpdateOne) sqlSave(ctx context.Context) (_node *LikeVideo, 
 			Columns: []string{likevideo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -405,7 +406,7 @@ func (lvuo *LikeVideoUpdateOne) sqlSave(ctx context.Context) (_node *LikeVideo, 
 			Columns: []string{likevideo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

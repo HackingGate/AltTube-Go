@@ -16,7 +16,7 @@ var (
 		{Name: "token", Type: field.TypeString, Nullable: true},
 		{Name: "expiry", Type: field.TypeTime, Nullable: true},
 		{Name: "refresh_token_id", Type: field.TypeUint},
-		{Name: "user_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeUUID, SchemaType: map[string]string{"postgres": "uuid"}},
 	}
 	// AccessTokensTable holds the schema information for the "access_tokens" table.
 	AccessTokensTable = &schema.Table{
@@ -43,7 +43,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeUUID, SchemaType: map[string]string{"postgres": "uuid"}},
 		{Name: "video_id", Type: field.TypeString},
 	}
 	// LikeVideosTable holds the schema information for the "like_videos" table.
@@ -75,7 +75,7 @@ var (
 		{Name: "expiry", Type: field.TypeTime, Nullable: true},
 		{Name: "user_agent", Type: field.TypeString, Nullable: true},
 		{Name: "ip_address", Type: field.TypeString, Nullable: true},
-		{Name: "user_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeUUID, SchemaType: map[string]string{"postgres": "uuid"}},
 	}
 	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
 	RefreshTokensTable = &schema.Table{
@@ -93,7 +93,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "id", Type: field.TypeUUID, Unique: true, SchemaType: map[string]string{"postgres": "uuid"}},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},

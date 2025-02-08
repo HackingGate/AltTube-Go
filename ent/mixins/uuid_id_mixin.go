@@ -15,21 +15,11 @@ type UuidIdMixin struct {
 // Fields of the UuidIdMixin. These fields will be added to any schema that embeds this mixin.
 func (UuidIdMixin) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").
-			DefaultFunc(func() string {
-				// TODO: migrate String to UUID type
-				/*
-						return []ent.Field{
-					        field.UUID("id", uuid.UUID{}).
-					            Default(uuid.New).
-					            // For PostgreSQL, you can ensure the column is of type UUID.
-					            SchemaType(map[string]string{
-					                "postgres": "uuid",
-					            }).
-					            Immutable(),
-					    }
-				*/
-				return uuid.New().String()
+		field.UUID("id", uuid.UUID{}).
+			Default(uuid.New).
+			// For PostgreSQL, you can ensure the column is of type UUID.
+			SchemaType(map[string]string{
+				"postgres": "uuid",
 			}).
 			Immutable().
 			Unique(),
