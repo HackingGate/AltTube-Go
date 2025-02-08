@@ -1,8 +1,9 @@
 package database
 
 import (
-	"AltTube-Go/models"
 	"errors"
+
+	"github.com/hackinggate/alttube-go/models"
 
 	"gorm.io/gorm"
 )

@@ -1,11 +1,12 @@
 package database
 
 import (
-	"AltTube-Go/models"
 	"fmt"
 	"log"
 	"os"
 	"time"
+
+	"github.com/hackinggate/alttube-go/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
