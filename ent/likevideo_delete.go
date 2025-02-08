@@ -3,13 +3,13 @@
 package ent
 
 import (
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/predicate"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/predicate"
 )
 
 // LikeVideoDelete is the builder for deleting a LikeVideo entity.

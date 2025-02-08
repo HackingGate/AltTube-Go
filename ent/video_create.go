@@ -3,8 +3,6 @@
 package ent
 
 import (
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/video"
 	"context"
 	"errors"
 	"fmt"
@@ -12,6 +10,8 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // VideoCreate is the builder for creating a Video entity.

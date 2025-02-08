@@ -1,12 +1,12 @@
 package like_video_handlers
 
 import (
-	"AltTube-Go/database"
-	"AltTube-Go/ent"
-	"AltTube-Go/models"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/database"
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/models"
 
 	"github.com/gin-gonic/gin"
 )

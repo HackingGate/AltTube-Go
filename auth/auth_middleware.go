@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"AltTube-Go/database"
 	"net/http"
 	"strings"
+
+	"github.com/hackinggate/alttube-go/database"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"

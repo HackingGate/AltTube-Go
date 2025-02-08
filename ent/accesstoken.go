@@ -3,9 +3,6 @@
 package ent
 
 import (
-	"AltTube-Go/ent/accesstoken"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/user"
 	"fmt"
 	"strings"
 	"time"
@@ -13,6 +10,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
 )
 
 // AccessToken is the model entity for the AccessToken schema.

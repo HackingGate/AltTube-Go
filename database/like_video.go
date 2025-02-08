@@ -1,11 +1,11 @@
 package database
 
 import (
-	"AltTube-Go/ent"
-	"AltTube-Go/ent/likevideo"
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
 )
 
 // AddLikeVideo adds a like to a video by a user.

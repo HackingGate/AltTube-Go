@@ -1,13 +1,13 @@
 package database
 
 import (
-	"AltTube-Go/ent"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/user"
-	"AltTube-Go/models"
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
+	"github.com/hackinggate/alttube-go/models"
 )
 
 // DeleteUserByID deletes a user by ID.

@@ -3,13 +3,13 @@
 package ent
 
 import (
-	"AltTube-Go/ent/video"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // Video is the model entity for the Video schema.

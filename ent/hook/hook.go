@@ -3,9 +3,10 @@
 package hook
 
 import (
-	"AltTube-Go/ent"
 	"context"
 	"fmt"
+
+	"github.com/hackinggate/alttube-go/ent"
 )
 
 // The AccessTokenFunc type is an adapter to allow the use of ordinary

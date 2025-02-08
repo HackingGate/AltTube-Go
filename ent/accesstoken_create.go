@@ -3,9 +3,6 @@
 package ent
 
 import (
-	"AltTube-Go/ent/accesstoken"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/user"
 	"context"
 	"errors"
 	"fmt"
@@ -14,6 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
 )
 
 // AccessTokenCreate is the builder for creating a AccessToken entity.

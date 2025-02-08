@@ -1,11 +1,11 @@
 package devices
 
 import (
-	"AltTube-Go/database"
-	"AltTube-Go/ent"
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/database"
+	"github.com/hackinggate/alttube-go/ent"
 
 	"github.com/gin-gonic/gin"
 )

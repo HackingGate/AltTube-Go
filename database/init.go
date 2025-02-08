@@ -1,7 +1,6 @@
 package database
 
 import (
-	"AltTube-Go/ent"
 	"context"
 	"database/sql"
 	"fmt"
@@ -9,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hackinggate/alttube-go/ent"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 

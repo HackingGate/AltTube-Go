@@ -3,10 +3,6 @@
 package ent
 
 import (
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/predicate"
-	"AltTube-Go/ent/user"
-	"AltTube-Go/ent/video"
 	"context"
 	"errors"
 	"fmt"
@@ -16,6 +12,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/predicate"
+	"github.com/hackinggate/alttube-go/ent/user"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // LikeVideoUpdate is the builder for updating LikeVideo entities.

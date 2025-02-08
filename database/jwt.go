@@ -1,14 +1,14 @@
 package database
 
 import (
-	"AltTube-Go/ent"
-	"AltTube-Go/ent/accesstoken"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/user"
 	"context"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
 )
 
 // AddAccessToken creates and stores a new access token in the database.

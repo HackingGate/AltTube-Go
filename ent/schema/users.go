@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"AltTube-Go/ent/mixins"
+	"github.com/hackinggate/alttube-go/ent/mixins"
 
 	"entgo.io/ent/schema/mixin"
 

@@ -3,15 +3,15 @@
 package ent
 
 import (
-	"AltTube-Go/ent/accesstoken"
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/schema"
-	"AltTube-Go/ent/user"
-	"AltTube-Go/ent/video"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/schema"
+	"github.com/hackinggate/alttube-go/ent/user"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // The init function reads all schema descriptors with runtime code

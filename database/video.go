@@ -1,9 +1,10 @@
 package database
 
 import (
-	"AltTube-Go/ent"
-	"AltTube-Go/ent/video"
 	"context"
+
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // AddVideo adds a new video to the database.

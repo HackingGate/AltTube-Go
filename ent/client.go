@@ -9,19 +9,18 @@ import (
 	"log"
 	"reflect"
 
-	"AltTube-Go/ent/migrate"
-
-	"AltTube-Go/ent/accesstoken"
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/user"
-	"AltTube-Go/ent/video"
+	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // Client is the client that holds all ent builders.

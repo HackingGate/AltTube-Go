@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in AltTube-Go/ent/runtime.go
+// The schema-stitching logic is generated in github.com/hackinggate/alttube-go/ent/runtime.go
 
 const (
 	Version = "v0.14.1"                                         // Version of ent codegen.

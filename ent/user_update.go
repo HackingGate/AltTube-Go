@@ -3,11 +3,6 @@
 package ent
 
 import (
-	"AltTube-Go/ent/accesstoken"
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/predicate"
-	"AltTube-Go/ent/refreshtoken"
-	"AltTube-Go/ent/user"
 	"context"
 	"errors"
 	"fmt"
@@ -16,6 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/predicate"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
 )
 
 // UserUpdate is the builder for updating User entities.

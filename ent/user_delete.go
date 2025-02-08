@@ -3,13 +3,13 @@
 package ent
 
 import (
-	"AltTube-Go/ent/predicate"
-	"AltTube-Go/ent/user"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/hackinggate/alttube-go/ent/predicate"
+	"github.com/hackinggate/alttube-go/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.

@@ -3,9 +3,6 @@
 package ent
 
 import (
-	"AltTube-Go/ent/likevideo"
-	"AltTube-Go/ent/user"
-	"AltTube-Go/ent/video"
 	"fmt"
 	"strings"
 	"time"
@@ -13,6 +10,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
+	"github.com/hackinggate/alttube-go/ent/user"
+	"github.com/hackinggate/alttube-go/ent/video"
 )
 
 // LikeVideo is the model entity for the LikeVideo schema.

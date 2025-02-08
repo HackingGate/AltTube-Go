@@ -5,13 +5,12 @@ package enttest
 import (
 	"context"
 
-	"AltTube-Go/ent"
+	"github.com/hackinggate/alttube-go/ent"
 	// required by schema hooks.
-	_ "AltTube-Go/ent/runtime"
-
-	"AltTube-Go/ent/migrate"
+	_ "github.com/hackinggate/alttube-go/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
+	"github.com/hackinggate/alttube-go/ent/migrate"
 )
 
 type (
