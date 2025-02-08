@@ -1,4 +1,4 @@
-module github.com/hackinggate/alttube-go
+module AltTube-Go
 
 go 1.21.6
 
