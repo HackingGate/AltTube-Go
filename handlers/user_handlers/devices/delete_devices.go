@@ -1,9 +1,10 @@
 package devices
 
 import (
+	"net/http"
+
 	"github.com/hackinggate/alttube-go/database"
 	"github.com/hackinggate/alttube-go/models"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

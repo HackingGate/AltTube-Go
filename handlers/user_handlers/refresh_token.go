@@ -1,10 +1,11 @@
 package user_handlers
 
 import (
-	"github.com/hackinggate/alttube-go/auth"
-	"github.com/hackinggate/alttube-go/database"
 	"net/http"
 	"strings"
+
+	"github.com/hackinggate/alttube-go/auth"
+	"github.com/hackinggate/alttube-go/database"
 
 	"github.com/gin-gonic/gin"
 )

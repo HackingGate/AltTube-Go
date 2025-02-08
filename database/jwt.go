@@ -1,8 +1,9 @@
 package database
 
 import (
-	"github.com/hackinggate/alttube-go/models"
 	"time"
+
+	"github.com/hackinggate/alttube-go/models"
 )
 
 // AddAccessToken creates and stores a new access token in the database.

@@ -1,8 +1,9 @@
 package like_video_handlers
 
 import (
-	"github.com/hackinggate/alttube-go/database"
 	"net/http"
+
+	"github.com/hackinggate/alttube-go/database"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/hackinggate/alttube-go/auth"
 	"github.com/hackinggate/alttube-go/database"
 	docs "github.com/hackinggate/alttube-go/docs"
@@ -11,8 +14,6 @@ import (
 	"github.com/hackinggate/alttube-go/handlers/pipedproxy"
 	"github.com/hackinggate/alttube-go/handlers/user_handlers"
 	"github.com/hackinggate/alttube-go/handlers/user_handlers/devices"
-	"log"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"

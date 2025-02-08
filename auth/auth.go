@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"github.com/hackinggate/alttube-go/models"
 	"os"
 	"time"
+
+	"github.com/hackinggate/alttube-go/models"
 
 	"github.com/golang-jwt/jwt/v5"
 )
