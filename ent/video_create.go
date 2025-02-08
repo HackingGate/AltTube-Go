@@ -61,7 +61,7 @@ func (vc *VideoCreate) SetDescription(s string) *VideoCreate {
 	return vc
 }
 
-// SetUploadDate sets the "upload_date" field.
+// SetUploadDate sets the "uploadDate" field.
 func (vc *VideoCreate) SetUploadDate(t time.Time) *VideoCreate {
 	vc.mutation.SetUploadDate(t)
 	return vc
@@ -73,15 +73,15 @@ func (vc *VideoCreate) SetUploader(s string) *VideoCreate {
 	return vc
 }
 
-// SetUploaderURL sets the "uploader_url" field.
-func (vc *VideoCreate) SetUploaderURL(s string) *VideoCreate {
-	vc.mutation.SetUploaderURL(s)
+// SetUploaderUrl sets the "uploaderUrl" field.
+func (vc *VideoCreate) SetUploaderUrl(s string) *VideoCreate {
+	vc.mutation.SetUploaderUrl(s)
 	return vc
 }
 
-// SetThumbnailURL sets the "thumbnail_url" field.
-func (vc *VideoCreate) SetThumbnailURL(s string) *VideoCreate {
-	vc.mutation.SetThumbnailURL(s)
+// SetThumbnailUrl sets the "thumbnailUrl" field.
+func (vc *VideoCreate) SetThumbnailUrl(s string) *VideoCreate {
+	vc.mutation.SetThumbnailUrl(s)
 	return vc
 }
 
@@ -170,13 +170,8 @@ func (vc *VideoCreate) check() error {
 	if _, ok := vc.mutation.Description(); !ok {
 		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Video.description"`)}
 	}
-	if v, ok := vc.mutation.Description(); ok {
-		if err := video.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Video.description": %w`, err)}
-		}
-	}
 	if _, ok := vc.mutation.UploadDate(); !ok {
-		return &ValidationError{Name: "upload_date", err: errors.New(`ent: missing required field "Video.upload_date"`)}
+		return &ValidationError{Name: "uploadDate", err: errors.New(`ent: missing required field "Video.uploadDate"`)}
 	}
 	if _, ok := vc.mutation.Uploader(); !ok {
 		return &ValidationError{Name: "uploader", err: errors.New(`ent: missing required field "Video.uploader"`)}
@@ -186,21 +181,11 @@ func (vc *VideoCreate) check() error {
 			return &ValidationError{Name: "uploader", err: fmt.Errorf(`ent: validator failed for field "Video.uploader": %w`, err)}
 		}
 	}
-	if _, ok := vc.mutation.UploaderURL(); !ok {
-		return &ValidationError{Name: "uploader_url", err: errors.New(`ent: missing required field "Video.uploader_url"`)}
+	if _, ok := vc.mutation.UploaderUrl(); !ok {
+		return &ValidationError{Name: "uploaderUrl", err: errors.New(`ent: missing required field "Video.uploaderUrl"`)}
 	}
-	if v, ok := vc.mutation.UploaderURL(); ok {
-		if err := video.UploaderURLValidator(v); err != nil {
-			return &ValidationError{Name: "uploader_url", err: fmt.Errorf(`ent: validator failed for field "Video.uploader_url": %w`, err)}
-		}
-	}
-	if _, ok := vc.mutation.ThumbnailURL(); !ok {
-		return &ValidationError{Name: "thumbnail_url", err: errors.New(`ent: missing required field "Video.thumbnail_url"`)}
-	}
-	if v, ok := vc.mutation.ThumbnailURL(); ok {
-		if err := video.ThumbnailURLValidator(v); err != nil {
-			return &ValidationError{Name: "thumbnail_url", err: fmt.Errorf(`ent: validator failed for field "Video.thumbnail_url": %w`, err)}
-		}
+	if _, ok := vc.mutation.ThumbnailUrl(); !ok {
+		return &ValidationError{Name: "thumbnailUrl", err: errors.New(`ent: missing required field "Video.thumbnailUrl"`)}
 	}
 	if v, ok := vc.mutation.ID(); ok {
 		if err := video.IDValidator(v); err != nil {
@@ -266,13 +251,13 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 		_spec.SetField(video.FieldUploader, field.TypeString, value)
 		_node.Uploader = value
 	}
-	if value, ok := vc.mutation.UploaderURL(); ok {
-		_spec.SetField(video.FieldUploaderURL, field.TypeString, value)
-		_node.UploaderURL = value
+	if value, ok := vc.mutation.UploaderUrl(); ok {
+		_spec.SetField(video.FieldUploaderUrl, field.TypeString, value)
+		_node.UploaderUrl = value
 	}
-	if value, ok := vc.mutation.ThumbnailURL(); ok {
-		_spec.SetField(video.FieldThumbnailURL, field.TypeString, value)
-		_node.ThumbnailURL = value
+	if value, ok := vc.mutation.ThumbnailUrl(); ok {
+		_spec.SetField(video.FieldThumbnailUrl, field.TypeString, value)
+		_node.ThumbnailUrl = value
 	}
 	if nodes := vc.mutation.LikeVideosIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

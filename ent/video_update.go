@@ -63,13 +63,13 @@ func (vu *VideoUpdate) SetNillableDescription(s *string) *VideoUpdate {
 	return vu
 }
 
-// SetUploadDate sets the "upload_date" field.
+// SetUploadDate sets the "uploadDate" field.
 func (vu *VideoUpdate) SetUploadDate(t time.Time) *VideoUpdate {
 	vu.mutation.SetUploadDate(t)
 	return vu
 }
 
-// SetNillableUploadDate sets the "upload_date" field if the given value is not nil.
+// SetNillableUploadDate sets the "uploadDate" field if the given value is not nil.
 func (vu *VideoUpdate) SetNillableUploadDate(t *time.Time) *VideoUpdate {
 	if t != nil {
 		vu.SetUploadDate(*t)
@@ -91,30 +91,30 @@ func (vu *VideoUpdate) SetNillableUploader(s *string) *VideoUpdate {
 	return vu
 }
 
-// SetUploaderURL sets the "uploader_url" field.
-func (vu *VideoUpdate) SetUploaderURL(s string) *VideoUpdate {
-	vu.mutation.SetUploaderURL(s)
+// SetUploaderUrl sets the "uploaderUrl" field.
+func (vu *VideoUpdate) SetUploaderUrl(s string) *VideoUpdate {
+	vu.mutation.SetUploaderUrl(s)
 	return vu
 }
 
-// SetNillableUploaderURL sets the "uploader_url" field if the given value is not nil.
-func (vu *VideoUpdate) SetNillableUploaderURL(s *string) *VideoUpdate {
+// SetNillableUploaderUrl sets the "uploaderUrl" field if the given value is not nil.
+func (vu *VideoUpdate) SetNillableUploaderUrl(s *string) *VideoUpdate {
 	if s != nil {
-		vu.SetUploaderURL(*s)
+		vu.SetUploaderUrl(*s)
 	}
 	return vu
 }
 
-// SetThumbnailURL sets the "thumbnail_url" field.
-func (vu *VideoUpdate) SetThumbnailURL(s string) *VideoUpdate {
-	vu.mutation.SetThumbnailURL(s)
+// SetThumbnailUrl sets the "thumbnailUrl" field.
+func (vu *VideoUpdate) SetThumbnailUrl(s string) *VideoUpdate {
+	vu.mutation.SetThumbnailUrl(s)
 	return vu
 }
 
-// SetNillableThumbnailURL sets the "thumbnail_url" field if the given value is not nil.
-func (vu *VideoUpdate) SetNillableThumbnailURL(s *string) *VideoUpdate {
+// SetNillableThumbnailUrl sets the "thumbnailUrl" field if the given value is not nil.
+func (vu *VideoUpdate) SetNillableThumbnailUrl(s *string) *VideoUpdate {
 	if s != nil {
-		vu.SetThumbnailURL(*s)
+		vu.SetThumbnailUrl(*s)
 	}
 	return vu
 }
@@ -203,24 +203,9 @@ func (vu *VideoUpdate) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Video.title": %w`, err)}
 		}
 	}
-	if v, ok := vu.mutation.Description(); ok {
-		if err := video.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Video.description": %w`, err)}
-		}
-	}
 	if v, ok := vu.mutation.Uploader(); ok {
 		if err := video.UploaderValidator(v); err != nil {
 			return &ValidationError{Name: "uploader", err: fmt.Errorf(`ent: validator failed for field "Video.uploader": %w`, err)}
-		}
-	}
-	if v, ok := vu.mutation.UploaderURL(); ok {
-		if err := video.UploaderURLValidator(v); err != nil {
-			return &ValidationError{Name: "uploader_url", err: fmt.Errorf(`ent: validator failed for field "Video.uploader_url": %w`, err)}
-		}
-	}
-	if v, ok := vu.mutation.ThumbnailURL(); ok {
-		if err := video.ThumbnailURLValidator(v); err != nil {
-			return &ValidationError{Name: "thumbnail_url", err: fmt.Errorf(`ent: validator failed for field "Video.thumbnail_url": %w`, err)}
 		}
 	}
 	return nil
@@ -253,11 +238,11 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := vu.mutation.Uploader(); ok {
 		_spec.SetField(video.FieldUploader, field.TypeString, value)
 	}
-	if value, ok := vu.mutation.UploaderURL(); ok {
-		_spec.SetField(video.FieldUploaderURL, field.TypeString, value)
+	if value, ok := vu.mutation.UploaderUrl(); ok {
+		_spec.SetField(video.FieldUploaderUrl, field.TypeString, value)
 	}
-	if value, ok := vu.mutation.ThumbnailURL(); ok {
-		_spec.SetField(video.FieldThumbnailURL, field.TypeString, value)
+	if value, ok := vu.mutation.ThumbnailUrl(); ok {
+		_spec.SetField(video.FieldThumbnailUrl, field.TypeString, value)
 	}
 	if vu.mutation.LikeVideosCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -358,13 +343,13 @@ func (vuo *VideoUpdateOne) SetNillableDescription(s *string) *VideoUpdateOne {
 	return vuo
 }
 
-// SetUploadDate sets the "upload_date" field.
+// SetUploadDate sets the "uploadDate" field.
 func (vuo *VideoUpdateOne) SetUploadDate(t time.Time) *VideoUpdateOne {
 	vuo.mutation.SetUploadDate(t)
 	return vuo
 }
 
-// SetNillableUploadDate sets the "upload_date" field if the given value is not nil.
+// SetNillableUploadDate sets the "uploadDate" field if the given value is not nil.
 func (vuo *VideoUpdateOne) SetNillableUploadDate(t *time.Time) *VideoUpdateOne {
 	if t != nil {
 		vuo.SetUploadDate(*t)
@@ -386,30 +371,30 @@ func (vuo *VideoUpdateOne) SetNillableUploader(s *string) *VideoUpdateOne {
 	return vuo
 }
 
-// SetUploaderURL sets the "uploader_url" field.
-func (vuo *VideoUpdateOne) SetUploaderURL(s string) *VideoUpdateOne {
-	vuo.mutation.SetUploaderURL(s)
+// SetUploaderUrl sets the "uploaderUrl" field.
+func (vuo *VideoUpdateOne) SetUploaderUrl(s string) *VideoUpdateOne {
+	vuo.mutation.SetUploaderUrl(s)
 	return vuo
 }
 
-// SetNillableUploaderURL sets the "uploader_url" field if the given value is not nil.
-func (vuo *VideoUpdateOne) SetNillableUploaderURL(s *string) *VideoUpdateOne {
+// SetNillableUploaderUrl sets the "uploaderUrl" field if the given value is not nil.
+func (vuo *VideoUpdateOne) SetNillableUploaderUrl(s *string) *VideoUpdateOne {
 	if s != nil {
-		vuo.SetUploaderURL(*s)
+		vuo.SetUploaderUrl(*s)
 	}
 	return vuo
 }
 
-// SetThumbnailURL sets the "thumbnail_url" field.
-func (vuo *VideoUpdateOne) SetThumbnailURL(s string) *VideoUpdateOne {
-	vuo.mutation.SetThumbnailURL(s)
+// SetThumbnailUrl sets the "thumbnailUrl" field.
+func (vuo *VideoUpdateOne) SetThumbnailUrl(s string) *VideoUpdateOne {
+	vuo.mutation.SetThumbnailUrl(s)
 	return vuo
 }
 
-// SetNillableThumbnailURL sets the "thumbnail_url" field if the given value is not nil.
-func (vuo *VideoUpdateOne) SetNillableThumbnailURL(s *string) *VideoUpdateOne {
+// SetNillableThumbnailUrl sets the "thumbnailUrl" field if the given value is not nil.
+func (vuo *VideoUpdateOne) SetNillableThumbnailUrl(s *string) *VideoUpdateOne {
 	if s != nil {
-		vuo.SetThumbnailURL(*s)
+		vuo.SetThumbnailUrl(*s)
 	}
 	return vuo
 }
@@ -511,24 +496,9 @@ func (vuo *VideoUpdateOne) check() error {
 			return &ValidationError{Name: "title", err: fmt.Errorf(`ent: validator failed for field "Video.title": %w`, err)}
 		}
 	}
-	if v, ok := vuo.mutation.Description(); ok {
-		if err := video.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Video.description": %w`, err)}
-		}
-	}
 	if v, ok := vuo.mutation.Uploader(); ok {
 		if err := video.UploaderValidator(v); err != nil {
 			return &ValidationError{Name: "uploader", err: fmt.Errorf(`ent: validator failed for field "Video.uploader": %w`, err)}
-		}
-	}
-	if v, ok := vuo.mutation.UploaderURL(); ok {
-		if err := video.UploaderURLValidator(v); err != nil {
-			return &ValidationError{Name: "uploader_url", err: fmt.Errorf(`ent: validator failed for field "Video.uploader_url": %w`, err)}
-		}
-	}
-	if v, ok := vuo.mutation.ThumbnailURL(); ok {
-		if err := video.ThumbnailURLValidator(v); err != nil {
-			return &ValidationError{Name: "thumbnail_url", err: fmt.Errorf(`ent: validator failed for field "Video.thumbnail_url": %w`, err)}
 		}
 	}
 	return nil
@@ -578,11 +548,11 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 	if value, ok := vuo.mutation.Uploader(); ok {
 		_spec.SetField(video.FieldUploader, field.TypeString, value)
 	}
-	if value, ok := vuo.mutation.UploaderURL(); ok {
-		_spec.SetField(video.FieldUploaderURL, field.TypeString, value)
+	if value, ok := vuo.mutation.UploaderUrl(); ok {
+		_spec.SetField(video.FieldUploaderUrl, field.TypeString, value)
 	}
-	if value, ok := vuo.mutation.ThumbnailURL(); ok {
-		_spec.SetField(video.FieldThumbnailURL, field.TypeString, value)
+	if value, ok := vuo.mutation.ThumbnailUrl(); ok {
+		_spec.SetField(video.FieldThumbnailUrl, field.TypeString, value)
 	}
 	if vuo.mutation.LikeVideosCleared() {
 		edge := &sqlgraph.EdgeSpec{

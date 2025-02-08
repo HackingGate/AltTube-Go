@@ -107,22 +107,10 @@ func init() {
 	videoDescTitle := videoFields[1].Descriptor()
 	// video.TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	video.TitleValidator = videoDescTitle.Validators[0].(func(string) error)
-	// videoDescDescription is the schema descriptor for description field.
-	videoDescDescription := videoFields[2].Descriptor()
-	// video.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
-	video.DescriptionValidator = videoDescDescription.Validators[0].(func(string) error)
 	// videoDescUploader is the schema descriptor for uploader field.
 	videoDescUploader := videoFields[4].Descriptor()
 	// video.UploaderValidator is a validator for the "uploader" field. It is called by the builders before save.
 	video.UploaderValidator = videoDescUploader.Validators[0].(func(string) error)
-	// videoDescUploaderURL is the schema descriptor for uploader_url field.
-	videoDescUploaderURL := videoFields[5].Descriptor()
-	// video.UploaderURLValidator is a validator for the "uploader_url" field. It is called by the builders before save.
-	video.UploaderURLValidator = videoDescUploaderURL.Validators[0].(func(string) error)
-	// videoDescThumbnailURL is the schema descriptor for thumbnail_url field.
-	videoDescThumbnailURL := videoFields[6].Descriptor()
-	// video.ThumbnailURLValidator is a validator for the "thumbnail_url" field. It is called by the builders before save.
-	video.ThumbnailURLValidator = videoDescThumbnailURL.Validators[0].(func(string) error)
 	// videoDescID is the schema descriptor for id field.
 	videoDescID := videoFields[0].Descriptor()
 	// video.IDValidator is a validator for the "id" field. It is called by the builders before save.

@@ -11,9 +11,13 @@ import (
 func AddVideo(ctx context.Context, videoToAdd ent.Video) (*ent.Video, error) {
 	videoAdded, err := Client.Video.
 		Create().
+		SetID(videoToAdd.ID).
 		SetTitle(videoToAdd.Title).
 		SetDescription(videoToAdd.Description).
 		SetUploadDate(videoToAdd.UploadDate).
+		SetUploader(videoToAdd.Uploader).
+		SetUploaderUrl(videoToAdd.UploaderUrl).
+		SetThumbnailUrl(videoToAdd.ThumbnailUrl).
 		Save(ctx)
 
 	return videoAdded, err

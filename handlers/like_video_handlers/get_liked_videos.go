@@ -56,7 +56,7 @@ func GetLikedVideos(ctx *gin.Context) {
 		likeVideosResponse = append(likeVideosResponse, models.LikeVideoResponse{
 			ID:           video.ID,
 			Title:        video.Title,
-			ThumbnailUrl: video.ThumbnailURL,
+			ThumbnailUrl: video.ThumbnailUrl,
 		})
 	}
 

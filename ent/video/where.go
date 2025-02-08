@@ -85,7 +85,7 @@ func Description(v string) predicate.Video {
 	return predicate.Video(sql.FieldEQ(FieldDescription, v))
 }
 
-// UploadDate applies equality check predicate on the "upload_date" field. It's identical to UploadDateEQ.
+// UploadDate applies equality check predicate on the "uploadDate" field. It's identical to UploadDateEQ.
 func UploadDate(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldEQ(FieldUploadDate, v))
 }
@@ -95,14 +95,14 @@ func Uploader(v string) predicate.Video {
 	return predicate.Video(sql.FieldEQ(FieldUploader, v))
 }
 
-// UploaderURL applies equality check predicate on the "uploader_url" field. It's identical to UploaderURLEQ.
-func UploaderURL(v string) predicate.Video {
-	return predicate.Video(sql.FieldEQ(FieldUploaderURL, v))
+// UploaderUrl applies equality check predicate on the "uploaderUrl" field. It's identical to UploaderUrlEQ.
+func UploaderUrl(v string) predicate.Video {
+	return predicate.Video(sql.FieldEQ(FieldUploaderUrl, v))
 }
 
-// ThumbnailURL applies equality check predicate on the "thumbnail_url" field. It's identical to ThumbnailURLEQ.
-func ThumbnailURL(v string) predicate.Video {
-	return predicate.Video(sql.FieldEQ(FieldThumbnailURL, v))
+// ThumbnailUrl applies equality check predicate on the "thumbnailUrl" field. It's identical to ThumbnailUrlEQ.
+func ThumbnailUrl(v string) predicate.Video {
+	return predicate.Video(sql.FieldEQ(FieldThumbnailUrl, v))
 }
 
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
@@ -315,42 +315,42 @@ func DescriptionContainsFold(v string) predicate.Video {
 	return predicate.Video(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// UploadDateEQ applies the EQ predicate on the "upload_date" field.
+// UploadDateEQ applies the EQ predicate on the "uploadDate" field.
 func UploadDateEQ(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldEQ(FieldUploadDate, v))
 }
 
-// UploadDateNEQ applies the NEQ predicate on the "upload_date" field.
+// UploadDateNEQ applies the NEQ predicate on the "uploadDate" field.
 func UploadDateNEQ(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldNEQ(FieldUploadDate, v))
 }
 
-// UploadDateIn applies the In predicate on the "upload_date" field.
+// UploadDateIn applies the In predicate on the "uploadDate" field.
 func UploadDateIn(vs ...time.Time) predicate.Video {
 	return predicate.Video(sql.FieldIn(FieldUploadDate, vs...))
 }
 
-// UploadDateNotIn applies the NotIn predicate on the "upload_date" field.
+// UploadDateNotIn applies the NotIn predicate on the "uploadDate" field.
 func UploadDateNotIn(vs ...time.Time) predicate.Video {
 	return predicate.Video(sql.FieldNotIn(FieldUploadDate, vs...))
 }
 
-// UploadDateGT applies the GT predicate on the "upload_date" field.
+// UploadDateGT applies the GT predicate on the "uploadDate" field.
 func UploadDateGT(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldGT(FieldUploadDate, v))
 }
 
-// UploadDateGTE applies the GTE predicate on the "upload_date" field.
+// UploadDateGTE applies the GTE predicate on the "uploadDate" field.
 func UploadDateGTE(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldGTE(FieldUploadDate, v))
 }
 
-// UploadDateLT applies the LT predicate on the "upload_date" field.
+// UploadDateLT applies the LT predicate on the "uploadDate" field.
 func UploadDateLT(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldLT(FieldUploadDate, v))
 }
 
-// UploadDateLTE applies the LTE predicate on the "upload_date" field.
+// UploadDateLTE applies the LTE predicate on the "uploadDate" field.
 func UploadDateLTE(v time.Time) predicate.Video {
 	return predicate.Video(sql.FieldLTE(FieldUploadDate, v))
 }
@@ -420,134 +420,134 @@ func UploaderContainsFold(v string) predicate.Video {
 	return predicate.Video(sql.FieldContainsFold(FieldUploader, v))
 }
 
-// UploaderURLEQ applies the EQ predicate on the "uploader_url" field.
-func UploaderURLEQ(v string) predicate.Video {
-	return predicate.Video(sql.FieldEQ(FieldUploaderURL, v))
+// UploaderUrlEQ applies the EQ predicate on the "uploaderUrl" field.
+func UploaderUrlEQ(v string) predicate.Video {
+	return predicate.Video(sql.FieldEQ(FieldUploaderUrl, v))
 }
 
-// UploaderURLNEQ applies the NEQ predicate on the "uploader_url" field.
-func UploaderURLNEQ(v string) predicate.Video {
-	return predicate.Video(sql.FieldNEQ(FieldUploaderURL, v))
+// UploaderUrlNEQ applies the NEQ predicate on the "uploaderUrl" field.
+func UploaderUrlNEQ(v string) predicate.Video {
+	return predicate.Video(sql.FieldNEQ(FieldUploaderUrl, v))
 }
 
-// UploaderURLIn applies the In predicate on the "uploader_url" field.
-func UploaderURLIn(vs ...string) predicate.Video {
-	return predicate.Video(sql.FieldIn(FieldUploaderURL, vs...))
+// UploaderUrlIn applies the In predicate on the "uploaderUrl" field.
+func UploaderUrlIn(vs ...string) predicate.Video {
+	return predicate.Video(sql.FieldIn(FieldUploaderUrl, vs...))
 }
 
-// UploaderURLNotIn applies the NotIn predicate on the "uploader_url" field.
-func UploaderURLNotIn(vs ...string) predicate.Video {
-	return predicate.Video(sql.FieldNotIn(FieldUploaderURL, vs...))
+// UploaderUrlNotIn applies the NotIn predicate on the "uploaderUrl" field.
+func UploaderUrlNotIn(vs ...string) predicate.Video {
+	return predicate.Video(sql.FieldNotIn(FieldUploaderUrl, vs...))
 }
 
-// UploaderURLGT applies the GT predicate on the "uploader_url" field.
-func UploaderURLGT(v string) predicate.Video {
-	return predicate.Video(sql.FieldGT(FieldUploaderURL, v))
+// UploaderUrlGT applies the GT predicate on the "uploaderUrl" field.
+func UploaderUrlGT(v string) predicate.Video {
+	return predicate.Video(sql.FieldGT(FieldUploaderUrl, v))
 }
 
-// UploaderURLGTE applies the GTE predicate on the "uploader_url" field.
-func UploaderURLGTE(v string) predicate.Video {
-	return predicate.Video(sql.FieldGTE(FieldUploaderURL, v))
+// UploaderUrlGTE applies the GTE predicate on the "uploaderUrl" field.
+func UploaderUrlGTE(v string) predicate.Video {
+	return predicate.Video(sql.FieldGTE(FieldUploaderUrl, v))
 }
 
-// UploaderURLLT applies the LT predicate on the "uploader_url" field.
-func UploaderURLLT(v string) predicate.Video {
-	return predicate.Video(sql.FieldLT(FieldUploaderURL, v))
+// UploaderUrlLT applies the LT predicate on the "uploaderUrl" field.
+func UploaderUrlLT(v string) predicate.Video {
+	return predicate.Video(sql.FieldLT(FieldUploaderUrl, v))
 }
 
-// UploaderURLLTE applies the LTE predicate on the "uploader_url" field.
-func UploaderURLLTE(v string) predicate.Video {
-	return predicate.Video(sql.FieldLTE(FieldUploaderURL, v))
+// UploaderUrlLTE applies the LTE predicate on the "uploaderUrl" field.
+func UploaderUrlLTE(v string) predicate.Video {
+	return predicate.Video(sql.FieldLTE(FieldUploaderUrl, v))
 }
 
-// UploaderURLContains applies the Contains predicate on the "uploader_url" field.
-func UploaderURLContains(v string) predicate.Video {
-	return predicate.Video(sql.FieldContains(FieldUploaderURL, v))
+// UploaderUrlContains applies the Contains predicate on the "uploaderUrl" field.
+func UploaderUrlContains(v string) predicate.Video {
+	return predicate.Video(sql.FieldContains(FieldUploaderUrl, v))
 }
 
-// UploaderURLHasPrefix applies the HasPrefix predicate on the "uploader_url" field.
-func UploaderURLHasPrefix(v string) predicate.Video {
-	return predicate.Video(sql.FieldHasPrefix(FieldUploaderURL, v))
+// UploaderUrlHasPrefix applies the HasPrefix predicate on the "uploaderUrl" field.
+func UploaderUrlHasPrefix(v string) predicate.Video {
+	return predicate.Video(sql.FieldHasPrefix(FieldUploaderUrl, v))
 }
 
-// UploaderURLHasSuffix applies the HasSuffix predicate on the "uploader_url" field.
-func UploaderURLHasSuffix(v string) predicate.Video {
-	return predicate.Video(sql.FieldHasSuffix(FieldUploaderURL, v))
+// UploaderUrlHasSuffix applies the HasSuffix predicate on the "uploaderUrl" field.
+func UploaderUrlHasSuffix(v string) predicate.Video {
+	return predicate.Video(sql.FieldHasSuffix(FieldUploaderUrl, v))
 }
 
-// UploaderURLEqualFold applies the EqualFold predicate on the "uploader_url" field.
-func UploaderURLEqualFold(v string) predicate.Video {
-	return predicate.Video(sql.FieldEqualFold(FieldUploaderURL, v))
+// UploaderUrlEqualFold applies the EqualFold predicate on the "uploaderUrl" field.
+func UploaderUrlEqualFold(v string) predicate.Video {
+	return predicate.Video(sql.FieldEqualFold(FieldUploaderUrl, v))
 }
 
-// UploaderURLContainsFold applies the ContainsFold predicate on the "uploader_url" field.
-func UploaderURLContainsFold(v string) predicate.Video {
-	return predicate.Video(sql.FieldContainsFold(FieldUploaderURL, v))
+// UploaderUrlContainsFold applies the ContainsFold predicate on the "uploaderUrl" field.
+func UploaderUrlContainsFold(v string) predicate.Video {
+	return predicate.Video(sql.FieldContainsFold(FieldUploaderUrl, v))
 }
 
-// ThumbnailURLEQ applies the EQ predicate on the "thumbnail_url" field.
-func ThumbnailURLEQ(v string) predicate.Video {
-	return predicate.Video(sql.FieldEQ(FieldThumbnailURL, v))
+// ThumbnailUrlEQ applies the EQ predicate on the "thumbnailUrl" field.
+func ThumbnailUrlEQ(v string) predicate.Video {
+	return predicate.Video(sql.FieldEQ(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLNEQ applies the NEQ predicate on the "thumbnail_url" field.
-func ThumbnailURLNEQ(v string) predicate.Video {
-	return predicate.Video(sql.FieldNEQ(FieldThumbnailURL, v))
+// ThumbnailUrlNEQ applies the NEQ predicate on the "thumbnailUrl" field.
+func ThumbnailUrlNEQ(v string) predicate.Video {
+	return predicate.Video(sql.FieldNEQ(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLIn applies the In predicate on the "thumbnail_url" field.
-func ThumbnailURLIn(vs ...string) predicate.Video {
-	return predicate.Video(sql.FieldIn(FieldThumbnailURL, vs...))
+// ThumbnailUrlIn applies the In predicate on the "thumbnailUrl" field.
+func ThumbnailUrlIn(vs ...string) predicate.Video {
+	return predicate.Video(sql.FieldIn(FieldThumbnailUrl, vs...))
 }
 
-// ThumbnailURLNotIn applies the NotIn predicate on the "thumbnail_url" field.
-func ThumbnailURLNotIn(vs ...string) predicate.Video {
-	return predicate.Video(sql.FieldNotIn(FieldThumbnailURL, vs...))
+// ThumbnailUrlNotIn applies the NotIn predicate on the "thumbnailUrl" field.
+func ThumbnailUrlNotIn(vs ...string) predicate.Video {
+	return predicate.Video(sql.FieldNotIn(FieldThumbnailUrl, vs...))
 }
 
-// ThumbnailURLGT applies the GT predicate on the "thumbnail_url" field.
-func ThumbnailURLGT(v string) predicate.Video {
-	return predicate.Video(sql.FieldGT(FieldThumbnailURL, v))
+// ThumbnailUrlGT applies the GT predicate on the "thumbnailUrl" field.
+func ThumbnailUrlGT(v string) predicate.Video {
+	return predicate.Video(sql.FieldGT(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLGTE applies the GTE predicate on the "thumbnail_url" field.
-func ThumbnailURLGTE(v string) predicate.Video {
-	return predicate.Video(sql.FieldGTE(FieldThumbnailURL, v))
+// ThumbnailUrlGTE applies the GTE predicate on the "thumbnailUrl" field.
+func ThumbnailUrlGTE(v string) predicate.Video {
+	return predicate.Video(sql.FieldGTE(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLLT applies the LT predicate on the "thumbnail_url" field.
-func ThumbnailURLLT(v string) predicate.Video {
-	return predicate.Video(sql.FieldLT(FieldThumbnailURL, v))
+// ThumbnailUrlLT applies the LT predicate on the "thumbnailUrl" field.
+func ThumbnailUrlLT(v string) predicate.Video {
+	return predicate.Video(sql.FieldLT(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLLTE applies the LTE predicate on the "thumbnail_url" field.
-func ThumbnailURLLTE(v string) predicate.Video {
-	return predicate.Video(sql.FieldLTE(FieldThumbnailURL, v))
+// ThumbnailUrlLTE applies the LTE predicate on the "thumbnailUrl" field.
+func ThumbnailUrlLTE(v string) predicate.Video {
+	return predicate.Video(sql.FieldLTE(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLContains applies the Contains predicate on the "thumbnail_url" field.
-func ThumbnailURLContains(v string) predicate.Video {
-	return predicate.Video(sql.FieldContains(FieldThumbnailURL, v))
+// ThumbnailUrlContains applies the Contains predicate on the "thumbnailUrl" field.
+func ThumbnailUrlContains(v string) predicate.Video {
+	return predicate.Video(sql.FieldContains(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLHasPrefix applies the HasPrefix predicate on the "thumbnail_url" field.
-func ThumbnailURLHasPrefix(v string) predicate.Video {
-	return predicate.Video(sql.FieldHasPrefix(FieldThumbnailURL, v))
+// ThumbnailUrlHasPrefix applies the HasPrefix predicate on the "thumbnailUrl" field.
+func ThumbnailUrlHasPrefix(v string) predicate.Video {
+	return predicate.Video(sql.FieldHasPrefix(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLHasSuffix applies the HasSuffix predicate on the "thumbnail_url" field.
-func ThumbnailURLHasSuffix(v string) predicate.Video {
-	return predicate.Video(sql.FieldHasSuffix(FieldThumbnailURL, v))
+// ThumbnailUrlHasSuffix applies the HasSuffix predicate on the "thumbnailUrl" field.
+func ThumbnailUrlHasSuffix(v string) predicate.Video {
+	return predicate.Video(sql.FieldHasSuffix(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLEqualFold applies the EqualFold predicate on the "thumbnail_url" field.
-func ThumbnailURLEqualFold(v string) predicate.Video {
-	return predicate.Video(sql.FieldEqualFold(FieldThumbnailURL, v))
+// ThumbnailUrlEqualFold applies the EqualFold predicate on the "thumbnailUrl" field.
+func ThumbnailUrlEqualFold(v string) predicate.Video {
+	return predicate.Video(sql.FieldEqualFold(FieldThumbnailUrl, v))
 }
 
-// ThumbnailURLContainsFold applies the ContainsFold predicate on the "thumbnail_url" field.
-func ThumbnailURLContainsFold(v string) predicate.Video {
-	return predicate.Video(sql.FieldContainsFold(FieldThumbnailURL, v))
+// ThumbnailUrlContainsFold applies the ContainsFold predicate on the "thumbnailUrl" field.
+func ThumbnailUrlContainsFold(v string) predicate.Video {
+	return predicate.Video(sql.FieldContainsFold(FieldThumbnailUrl, v))
 }
 
 // HasLikeVideos applies the HasEdge predicate on the "like_videos" edge.

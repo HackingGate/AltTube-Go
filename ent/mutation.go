@@ -3029,10 +3029,10 @@ type VideoMutation struct {
 	update_time        *time.Time
 	title              *string
 	description        *string
-	upload_date        *time.Time
+	uploadDate         *time.Time
 	uploader           *string
-	uploader_url       *string
-	thumbnail_url      *string
+	uploaderUrl        *string
+	thumbnailUrl       *string
 	clearedFields      map[string]struct{}
 	like_videos        map[int]struct{}
 	removedlike_videos map[int]struct{}
@@ -3290,21 +3290,21 @@ func (m *VideoMutation) ResetDescription() {
 	m.description = nil
 }
 
-// SetUploadDate sets the "upload_date" field.
+// SetUploadDate sets the "uploadDate" field.
 func (m *VideoMutation) SetUploadDate(t time.Time) {
-	m.upload_date = &t
+	m.uploadDate = &t
 }
 
-// UploadDate returns the value of the "upload_date" field in the mutation.
+// UploadDate returns the value of the "uploadDate" field in the mutation.
 func (m *VideoMutation) UploadDate() (r time.Time, exists bool) {
-	v := m.upload_date
+	v := m.uploadDate
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUploadDate returns the old "upload_date" field's value of the Video entity.
+// OldUploadDate returns the old "uploadDate" field's value of the Video entity.
 // If the Video object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *VideoMutation) OldUploadDate(ctx context.Context) (v time.Time, err error) {
@@ -3321,9 +3321,9 @@ func (m *VideoMutation) OldUploadDate(ctx context.Context) (v time.Time, err err
 	return oldValue.UploadDate, nil
 }
 
-// ResetUploadDate resets all changes to the "upload_date" field.
+// ResetUploadDate resets all changes to the "uploadDate" field.
 func (m *VideoMutation) ResetUploadDate() {
-	m.upload_date = nil
+	m.uploadDate = nil
 }
 
 // SetUploader sets the "uploader" field.
@@ -3362,76 +3362,76 @@ func (m *VideoMutation) ResetUploader() {
 	m.uploader = nil
 }
 
-// SetUploaderURL sets the "uploader_url" field.
-func (m *VideoMutation) SetUploaderURL(s string) {
-	m.uploader_url = &s
+// SetUploaderUrl sets the "uploaderUrl" field.
+func (m *VideoMutation) SetUploaderUrl(s string) {
+	m.uploaderUrl = &s
 }
 
-// UploaderURL returns the value of the "uploader_url" field in the mutation.
-func (m *VideoMutation) UploaderURL() (r string, exists bool) {
-	v := m.uploader_url
+// UploaderUrl returns the value of the "uploaderUrl" field in the mutation.
+func (m *VideoMutation) UploaderUrl() (r string, exists bool) {
+	v := m.uploaderUrl
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUploaderURL returns the old "uploader_url" field's value of the Video entity.
+// OldUploaderUrl returns the old "uploaderUrl" field's value of the Video entity.
 // If the Video object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *VideoMutation) OldUploaderURL(ctx context.Context) (v string, err error) {
+func (m *VideoMutation) OldUploaderUrl(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUploaderURL is only allowed on UpdateOne operations")
+		return v, errors.New("OldUploaderUrl is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUploaderURL requires an ID field in the mutation")
+		return v, errors.New("OldUploaderUrl requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUploaderURL: %w", err)
+		return v, fmt.Errorf("querying old value for OldUploaderUrl: %w", err)
 	}
-	return oldValue.UploaderURL, nil
+	return oldValue.UploaderUrl, nil
 }
 
-// ResetUploaderURL resets all changes to the "uploader_url" field.
-func (m *VideoMutation) ResetUploaderURL() {
-	m.uploader_url = nil
+// ResetUploaderUrl resets all changes to the "uploaderUrl" field.
+func (m *VideoMutation) ResetUploaderUrl() {
+	m.uploaderUrl = nil
 }
 
-// SetThumbnailURL sets the "thumbnail_url" field.
-func (m *VideoMutation) SetThumbnailURL(s string) {
-	m.thumbnail_url = &s
+// SetThumbnailUrl sets the "thumbnailUrl" field.
+func (m *VideoMutation) SetThumbnailUrl(s string) {
+	m.thumbnailUrl = &s
 }
 
-// ThumbnailURL returns the value of the "thumbnail_url" field in the mutation.
-func (m *VideoMutation) ThumbnailURL() (r string, exists bool) {
-	v := m.thumbnail_url
+// ThumbnailUrl returns the value of the "thumbnailUrl" field in the mutation.
+func (m *VideoMutation) ThumbnailUrl() (r string, exists bool) {
+	v := m.thumbnailUrl
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldThumbnailURL returns the old "thumbnail_url" field's value of the Video entity.
+// OldThumbnailUrl returns the old "thumbnailUrl" field's value of the Video entity.
 // If the Video object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *VideoMutation) OldThumbnailURL(ctx context.Context) (v string, err error) {
+func (m *VideoMutation) OldThumbnailUrl(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldThumbnailURL is only allowed on UpdateOne operations")
+		return v, errors.New("OldThumbnailUrl is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldThumbnailURL requires an ID field in the mutation")
+		return v, errors.New("OldThumbnailUrl requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldThumbnailURL: %w", err)
+		return v, fmt.Errorf("querying old value for OldThumbnailUrl: %w", err)
 	}
-	return oldValue.ThumbnailURL, nil
+	return oldValue.ThumbnailUrl, nil
 }
 
-// ResetThumbnailURL resets all changes to the "thumbnail_url" field.
-func (m *VideoMutation) ResetThumbnailURL() {
-	m.thumbnail_url = nil
+// ResetThumbnailUrl resets all changes to the "thumbnailUrl" field.
+func (m *VideoMutation) ResetThumbnailUrl() {
+	m.thumbnailUrl = nil
 }
 
 // AddLikeVideoIDs adds the "like_videos" edge to the LikeVideo entity by ids.
@@ -3535,17 +3535,17 @@ func (m *VideoMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, video.FieldDescription)
 	}
-	if m.upload_date != nil {
+	if m.uploadDate != nil {
 		fields = append(fields, video.FieldUploadDate)
 	}
 	if m.uploader != nil {
 		fields = append(fields, video.FieldUploader)
 	}
-	if m.uploader_url != nil {
-		fields = append(fields, video.FieldUploaderURL)
+	if m.uploaderUrl != nil {
+		fields = append(fields, video.FieldUploaderUrl)
 	}
-	if m.thumbnail_url != nil {
-		fields = append(fields, video.FieldThumbnailURL)
+	if m.thumbnailUrl != nil {
+		fields = append(fields, video.FieldThumbnailUrl)
 	}
 	return fields
 }
@@ -3567,10 +3567,10 @@ func (m *VideoMutation) Field(name string) (ent.Value, bool) {
 		return m.UploadDate()
 	case video.FieldUploader:
 		return m.Uploader()
-	case video.FieldUploaderURL:
-		return m.UploaderURL()
-	case video.FieldThumbnailURL:
-		return m.ThumbnailURL()
+	case video.FieldUploaderUrl:
+		return m.UploaderUrl()
+	case video.FieldThumbnailUrl:
+		return m.ThumbnailUrl()
 	}
 	return nil, false
 }
@@ -3592,10 +3592,10 @@ func (m *VideoMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldUploadDate(ctx)
 	case video.FieldUploader:
 		return m.OldUploader(ctx)
-	case video.FieldUploaderURL:
-		return m.OldUploaderURL(ctx)
-	case video.FieldThumbnailURL:
-		return m.OldThumbnailURL(ctx)
+	case video.FieldUploaderUrl:
+		return m.OldUploaderUrl(ctx)
+	case video.FieldThumbnailUrl:
+		return m.OldThumbnailUrl(ctx)
 	}
 	return nil, fmt.Errorf("unknown Video field %s", name)
 }
@@ -3647,19 +3647,19 @@ func (m *VideoMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUploader(v)
 		return nil
-	case video.FieldUploaderURL:
+	case video.FieldUploaderUrl:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUploaderURL(v)
+		m.SetUploaderUrl(v)
 		return nil
-	case video.FieldThumbnailURL:
+	case video.FieldThumbnailUrl:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetThumbnailURL(v)
+		m.SetThumbnailUrl(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Video field %s", name)
@@ -3728,11 +3728,11 @@ func (m *VideoMutation) ResetField(name string) error {
 	case video.FieldUploader:
 		m.ResetUploader()
 		return nil
-	case video.FieldUploaderURL:
-		m.ResetUploaderURL()
+	case video.FieldUploaderUrl:
+		m.ResetUploaderUrl()
 		return nil
-	case video.FieldThumbnailURL:
-		m.ResetThumbnailURL()
+	case video.FieldThumbnailUrl:
+		m.ResetThumbnailUrl()
 		return nil
 	}
 	return fmt.Errorf("unknown Video field %s", name)

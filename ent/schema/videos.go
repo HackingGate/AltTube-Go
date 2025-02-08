@@ -23,11 +23,11 @@ func (Video) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").Unique().NotEmpty(),
 		field.String("title").NotEmpty(),
-		field.String("description").NotEmpty(),
-		field.Time("upload_date"),
+		field.String("description"),
+		field.Time("uploadDate"),
 		field.String("uploader").NotEmpty(),
-		field.String("uploader_url").NotEmpty(),
-		field.String("thumbnail_url").NotEmpty(),
+		field.String("uploaderUrl"),
+		field.String("thumbnailUrl"),
 	}
 }
 

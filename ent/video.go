@@ -25,14 +25,14 @@ type Video struct {
 	Title string `json:"title,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
-	// UploadDate holds the value of the "upload_date" field.
-	UploadDate time.Time `json:"upload_date,omitempty"`
+	// UploadDate holds the value of the "uploadDate" field.
+	UploadDate time.Time `json:"uploadDate,omitempty"`
 	// Uploader holds the value of the "uploader" field.
 	Uploader string `json:"uploader,omitempty"`
-	// UploaderURL holds the value of the "uploader_url" field.
-	UploaderURL string `json:"uploader_url,omitempty"`
-	// ThumbnailURL holds the value of the "thumbnail_url" field.
-	ThumbnailURL string `json:"thumbnail_url,omitempty"`
+	// UploaderUrl holds the value of the "uploaderUrl" field.
+	UploaderUrl string `json:"uploaderUrl,omitempty"`
+	// ThumbnailUrl holds the value of the "thumbnailUrl" field.
+	ThumbnailUrl string `json:"thumbnailUrl,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the VideoQuery when eager-loading is set.
 	Edges        VideoEdges `json:"edges"`
@@ -62,7 +62,7 @@ func (*Video) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case video.FieldID, video.FieldTitle, video.FieldDescription, video.FieldUploader, video.FieldUploaderURL, video.FieldThumbnailURL:
+		case video.FieldID, video.FieldTitle, video.FieldDescription, video.FieldUploader, video.FieldUploaderUrl, video.FieldThumbnailUrl:
 			values[i] = new(sql.NullString)
 		case video.FieldCreateTime, video.FieldUpdateTime, video.FieldUploadDate:
 			values[i] = new(sql.NullTime)
@@ -113,7 +113,7 @@ func (v *Video) assignValues(columns []string, values []any) error {
 			}
 		case video.FieldUploadDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field upload_date", values[i])
+				return fmt.Errorf("unexpected type %T for field uploadDate", values[i])
 			} else if value.Valid {
 				v.UploadDate = value.Time
 			}
@@ -123,17 +123,17 @@ func (v *Video) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				v.Uploader = value.String
 			}
-		case video.FieldUploaderURL:
+		case video.FieldUploaderUrl:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field uploader_url", values[i])
+				return fmt.Errorf("unexpected type %T for field uploaderUrl", values[i])
 			} else if value.Valid {
-				v.UploaderURL = value.String
+				v.UploaderUrl = value.String
 			}
-		case video.FieldThumbnailURL:
+		case video.FieldThumbnailUrl:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field thumbnail_url", values[i])
+				return fmt.Errorf("unexpected type %T for field thumbnailUrl", values[i])
 			} else if value.Valid {
-				v.ThumbnailURL = value.String
+				v.ThumbnailUrl = value.String
 			}
 		default:
 			v.selectValues.Set(columns[i], values[i])
@@ -188,17 +188,17 @@ func (v *Video) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(v.Description)
 	builder.WriteString(", ")
-	builder.WriteString("upload_date=")
+	builder.WriteString("uploadDate=")
 	builder.WriteString(v.UploadDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("uploader=")
 	builder.WriteString(v.Uploader)
 	builder.WriteString(", ")
-	builder.WriteString("uploader_url=")
-	builder.WriteString(v.UploaderURL)
+	builder.WriteString("uploaderUrl=")
+	builder.WriteString(v.UploaderUrl)
 	builder.WriteString(", ")
-	builder.WriteString("thumbnail_url=")
-	builder.WriteString(v.ThumbnailURL)
+	builder.WriteString("thumbnailUrl=")
+	builder.WriteString(v.ThumbnailUrl)
 	builder.WriteByte(')')
 	return builder.String()
 }

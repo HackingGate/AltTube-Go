@@ -22,14 +22,14 @@ const (
 	FieldTitle = "title"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldUploadDate holds the string denoting the upload_date field in the database.
+	// FieldUploadDate holds the string denoting the uploaddate field in the database.
 	FieldUploadDate = "upload_date"
 	// FieldUploader holds the string denoting the uploader field in the database.
 	FieldUploader = "uploader"
-	// FieldUploaderURL holds the string denoting the uploader_url field in the database.
-	FieldUploaderURL = "uploader_url"
-	// FieldThumbnailURL holds the string denoting the thumbnail_url field in the database.
-	FieldThumbnailURL = "thumbnail_url"
+	// FieldUploaderUrl holds the string denoting the uploaderurl field in the database.
+	FieldUploaderUrl = "uploader_url"
+	// FieldThumbnailUrl holds the string denoting the thumbnailurl field in the database.
+	FieldThumbnailUrl = "thumbnail_url"
 	// EdgeLikeVideos holds the string denoting the like_videos edge name in mutations.
 	EdgeLikeVideos = "like_videos"
 	// Table holds the table name of the video in the database.
@@ -52,8 +52,8 @@ var Columns = []string{
 	FieldDescription,
 	FieldUploadDate,
 	FieldUploader,
-	FieldUploaderURL,
-	FieldThumbnailURL,
+	FieldUploaderUrl,
+	FieldThumbnailUrl,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -75,14 +75,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
-	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
-	DescriptionValidator func(string) error
 	// UploaderValidator is a validator for the "uploader" field. It is called by the builders before save.
 	UploaderValidator func(string) error
-	// UploaderURLValidator is a validator for the "uploader_url" field. It is called by the builders before save.
-	UploaderURLValidator func(string) error
-	// ThumbnailURLValidator is a validator for the "thumbnail_url" field. It is called by the builders before save.
-	ThumbnailURLValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(string) error
 )
@@ -115,7 +109,7 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByUploadDate orders the results by the upload_date field.
+// ByUploadDate orders the results by the uploadDate field.
 func ByUploadDate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUploadDate, opts...).ToFunc()
 }
@@ -125,14 +119,14 @@ func ByUploader(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUploader, opts...).ToFunc()
 }
 
-// ByUploaderURL orders the results by the uploader_url field.
-func ByUploaderURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUploaderURL, opts...).ToFunc()
+// ByUploaderUrl orders the results by the uploaderUrl field.
+func ByUploaderUrl(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUploaderUrl, opts...).ToFunc()
 }
 
-// ByThumbnailURL orders the results by the thumbnail_url field.
-func ByThumbnailURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldThumbnailURL, opts...).ToFunc()
+// ByThumbnailUrl orders the results by the thumbnailUrl field.
+func ByThumbnailUrl(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldThumbnailUrl, opts...).ToFunc()
 }
 
 // ByLikeVideosCount orders the results by like_videos count.
