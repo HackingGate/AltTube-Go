@@ -1,199 +1,392 @@
--- change_to_ent.sql
--- This migration converts your old schema into the new Atlas target schema.
--- It performs:
---   - Column type changes (e.g. converting text IDs to UUID)
---   - Renaming of timestamp columns (created_at/updated_at to create_time/update_time)
---   - Dropping of unused columns/indexes (deleted_at)
---   - Re-adding foreign key constraints with explicit names
+--
+-- MIGRATION SCRIPT: from old schema (GORM) to new schema (Ent)
+--
 
-------------------------------------------------------------
--- STEP 1: Drop Existing Foreign Key Constraints
-------------------------------------------------------------
 BEGIN;
--- Drop all FKs that reference columns that will be altered.
-ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS fk_refresh_tokens_user;
-ALTER TABLE access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_user;
-ALTER TABLE access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_refresh_token;
-ALTER TABLE like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_user;
-ALTER TABLE like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_video;
-COMMIT;
 
-------------------------------------------------------------
--- STEP 2: Migrate the "users" Table
-------------------------------------------------------------
-BEGIN;
--- Convert id from text to uuid (assumes existing values are valid UUIDs).
-ALTER TABLE users
-ALTER COLUMN id TYPE uuid USING id::uuid;
+--------------------------------------------------------------------------
+-- STEP 0: Drop existing foreign keys and constraints that we will recreate
+--------------------------------------------------------------------------
 
--- Rename timestamp columns.
-ALTER TABLE users RENAME COLUMN created_at TO create_time;
-ALTER TABLE users RENAME COLUMN updated_at TO update_time;
+-- access_tokens
+ALTER TABLE IF EXISTS public.access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_refresh_token;
+ALTER TABLE IF EXISTS public.access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_user;
+-- The old PK name is the same in both schemas (access_tokens_pkey), so we leave it
+-- unless we decide to drop/recreate it. We'll handle the IDENTITY update separately.
 
--- Drop the deleted_at column and its index.
-DROP INDEX IF EXISTS idx_users_deleted_at;
-ALTER TABLE users DROP COLUMN IF EXISTS deleted_at;
+-- like_videos
+ALTER TABLE IF EXISTS public.like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_user;
+ALTER TABLE IF EXISTS public.like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_video;
+-- old PK is like_videos_pkey, same name in new schema, so we keep it.
 
--- Enforce NOT NULL on the new timestamp columns.
-ALTER TABLE users ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE users ALTER COLUMN update_time SET NOT NULL;
+-- refresh_tokens
+ALTER TABLE IF EXISTS public.refresh_tokens DROP CONSTRAINT IF EXISTS fk_refresh_tokens_user;
+-- old PK is refresh_tokens_pkey, same name in new schema, so we keep it.
 
--- Convert email and password from text to character varying.
-ALTER TABLE users ALTER COLUMN email TYPE character varying;
-ALTER TABLE users ALTER COLUMN password TYPE character varying;
+-- users
+-- Drop the old unique constraint on email:
+ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS uni_users_email;
+-- Drop the old PK named uni_users_id; new schema calls it users_pkey:
+ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS uni_users_id;
 
--- Enforce NOT NULL on email and password.
-ALTER TABLE users ALTER COLUMN email SET NOT NULL;
-ALTER TABLE users ALTER COLUMN password SET NOT NULL;
+-- videos
+-- Drop the old PK named uni_videos_id; new schema calls it videos_pkey:
+ALTER TABLE IF EXISTS public.videos DROP CONSTRAINT IF EXISTS uni_videos_id;
 
 COMMIT;
 
-------------------------------------------------------------
--- STEP 3: Migrate the "refresh_tokens" Table
-------------------------------------------------------------
+
 BEGIN;
--- Convert user_id from text to uuid.
-ALTER TABLE refresh_tokens
-ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
 
--- Rename timestamp columns.
-ALTER TABLE refresh_tokens RENAME COLUMN created_at TO create_time;
-ALTER TABLE refresh_tokens RENAME COLUMN updated_at TO update_time;
+--------------------------------------------------------------------------------
+-- STEP 1: Drop old/obsolete indexes that do not appear in the new schema
+--------------------------------------------------------------------------------
 
--- Drop the deleted_at column and its index.
-DROP INDEX IF EXISTS idx_refresh_tokens_deleted_at;
-ALTER TABLE refresh_tokens DROP COLUMN IF EXISTS deleted_at;
+-- Access tokens indexes
+DROP INDEX IF EXISTS public.idx_access_tokens_deleted_at;
+DROP INDEX IF EXISTS public.idx_access_tokens_refresh_token_id;
+DROP INDEX IF EXISTS public.idx_access_tokens_user_id;
 
--- Enforce NOT NULL on the new timestamp columns.
-ALTER TABLE refresh_tokens ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE refresh_tokens ALTER COLUMN update_time SET NOT NULL;
+-- Like videos indexes
+DROP INDEX IF EXISTS public.idx_like_videos_deleted_at;
+DROP INDEX IF EXISTS public.idx_like_videos_video_id;
 
--- Enforce NOT NULL on user_id.
-ALTER TABLE refresh_tokens ALTER COLUMN user_id SET NOT NULL;
+-- Refresh tokens indexes
+DROP INDEX IF EXISTS public.idx_refresh_tokens_deleted_at;
+DROP INDEX IF EXISTS public.idx_refresh_tokens_user_id;
+DROP INDEX IF EXISTS public.idx_token;  -- on refresh_tokens(token)
 
--- Convert token, user_agent, and ip_address from text to character varying.
-ALTER TABLE refresh_tokens ALTER COLUMN token TYPE character varying;
-ALTER TABLE refresh_tokens ALTER COLUMN user_agent TYPE character varying;
-ALTER TABLE refresh_tokens ALTER COLUMN ip_address TYPE character varying;
+-- Users
+DROP INDEX IF EXISTS public.idx_users_deleted_at;
+
+-- Videos
+DROP INDEX IF EXISTS public.idx_videos_deleted_at;
 
 COMMIT;
 
-------------------------------------------------------------
--- STEP 4: Migrate the "access_tokens" Table
-------------------------------------------------------------
+
 BEGIN;
--- Convert user_id from text to uuid.
-ALTER TABLE access_tokens
-ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
 
--- Rename timestamp columns.
-ALTER TABLE access_tokens RENAME COLUMN created_at TO create_time;
-ALTER TABLE access_tokens RENAME COLUMN updated_at TO update_time;
+--------------------------------------------------------------------------------
+-- STEP 2: Remove deleted_at columns, rename created_at/updated_at -> create_time/update_time, set NOT NULL
+--------------------------------------------------------------------------------
 
--- Enforce NOT NULL on the new timestamp columns.
-ALTER TABLE access_tokens ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE access_tokens ALTER COLUMN update_time SET NOT NULL;
+-- 2.1: access_tokens
+ALTER TABLE public.access_tokens
+    DROP COLUMN IF EXISTS deleted_at;
+ALTER TABLE public.access_tokens
+    RENAME COLUMN created_at TO create_time;
+ALTER TABLE public.access_tokens
+    RENAME COLUMN updated_at TO update_time;
+ALTER TABLE public.access_tokens
+    ALTER COLUMN create_time SET NOT NULL;
+ALTER TABLE public.access_tokens
+    ALTER COLUMN update_time SET NOT NULL;
 
--- Drop the deleted_at column and its index.
-DROP INDEX IF EXISTS idx_access_tokens_deleted_at;
-ALTER TABLE access_tokens DROP COLUMN IF EXISTS deleted_at;
+-- 2.2: like_videos
+ALTER TABLE public.like_videos
+    DROP COLUMN IF EXISTS deleted_at;
+ALTER TABLE public.like_videos
+    RENAME COLUMN created_at TO create_time;
+ALTER TABLE public.like_videos
+    RENAME COLUMN updated_at TO update_time;
+ALTER TABLE public.like_videos
+    ALTER COLUMN create_time SET NOT NULL;
+ALTER TABLE public.like_videos
+    ALTER COLUMN update_time SET NOT NULL;
 
--- Enforce NOT NULL on user_id.
-ALTER TABLE access_tokens ALTER COLUMN user_id SET NOT NULL;
+-- 2.3: refresh_tokens
+ALTER TABLE public.refresh_tokens
+    DROP COLUMN IF EXISTS deleted_at;
+ALTER TABLE public.refresh_tokens
+    RENAME COLUMN created_at TO create_time;
+ALTER TABLE public.refresh_tokens
+    RENAME COLUMN updated_at TO update_time;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN create_time SET NOT NULL;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN update_time SET NOT NULL;
 
--- Enforce NOT NULL on refresh_token_id.
-ALTER TABLE access_tokens ALTER COLUMN refresh_token_id SET NOT NULL;
+-- 2.4: users
+ALTER TABLE public.users
+    DROP COLUMN IF EXISTS deleted_at;
+ALTER TABLE public.users
+    RENAME COLUMN created_at TO create_time;
+ALTER TABLE public.users
+    RENAME COLUMN updated_at TO update_time;
+ALTER TABLE public.users
+    ALTER COLUMN create_time SET NOT NULL;
+ALTER TABLE public.users
+    ALTER COLUMN update_time SET NOT NULL;
 
--- Convert token from text to character varying.
-ALTER TABLE access_tokens ALTER COLUMN token TYPE character varying;
+-- 2.5: videos
+ALTER TABLE public.videos
+    DROP COLUMN IF EXISTS deleted_at;
+ALTER TABLE public.videos
+    RENAME COLUMN created_at TO create_time;
+ALTER TABLE public.videos
+    RENAME COLUMN updated_at TO update_time;
+ALTER TABLE public.videos
+    ALTER COLUMN create_time SET NOT NULL;
+ALTER TABLE public.videos
+    ALTER COLUMN update_time SET NOT NULL;
+
 COMMIT;
 
-------------------------------------------------------------
--- STEP 5: Migrate the "videos" Table
-------------------------------------------------------------
+
 BEGIN;
--- Rename timestamp columns.
-ALTER TABLE videos RENAME COLUMN created_at TO create_time;
-ALTER TABLE videos RENAME COLUMN updated_at TO update_time;
 
--- Drop the deleted_at column and its index.
-DROP INDEX IF EXISTS idx_videos_deleted_at;
-ALTER TABLE videos DROP COLUMN IF EXISTS deleted_at;
+--------------------------------------------------------------------------------
+-- STEP 3: Convert column types, enforce NOT NULL
+--------------------------------------------------------------------------------
 
--- Enforce NOT NULL on the new timestamp columns.
-ALTER TABLE videos ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE videos ALTER COLUMN update_time SET NOT NULL;
+-- access_tokens:
+--   user_id: text -> uuid
+--   token: text -> character varying
+--   refresh_token_id: stays bigint, but enforce NOT NULL
+--   expiry: stays timestamp with time zone
+ALTER TABLE public.access_tokens
+    ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
+ALTER TABLE public.access_tokens
+    ALTER COLUMN token TYPE character varying;
+ALTER TABLE public.access_tokens
+    ALTER COLUMN refresh_token_id SET NOT NULL;
+ALTER TABLE public.access_tokens
+    ALTER COLUMN user_id SET NOT NULL;
 
--- Convert id, title, description, uploader, uploader_url, and thumbnail_url from text to character varying.
-ALTER TABLE videos ALTER COLUMN id TYPE character varying;
-ALTER TABLE videos ALTER COLUMN title TYPE character varying;
-ALTER TABLE videos ALTER COLUMN description TYPE character varying;
-ALTER TABLE videos ALTER COLUMN uploader TYPE character varying;
-ALTER TABLE videos ALTER COLUMN uploader_url TYPE character varying;
-ALTER TABLE videos ALTER COLUMN thumbnail_url TYPE character varying;
+-- like_videos:
+--   user_id: text -> uuid
+--   video_id: text -> character varying
+ALTER TABLE public.like_videos
+    ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
+ALTER TABLE public.like_videos
+    ALTER COLUMN video_id TYPE character varying;
+ALTER TABLE public.like_videos
+    ALTER COLUMN user_id SET NOT NULL;
+ALTER TABLE public.like_videos
+    ALTER COLUMN video_id SET NOT NULL;
+
+-- refresh_tokens:
+--   user_id: text -> uuid
+--   token, user_agent, ip_address: text -> character varying
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN token TYPE character varying;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN user_agent TYPE character varying;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN ip_address TYPE character varying;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN user_id SET NOT NULL;
+
+-- users:
+--   id: text -> uuid
+--   email: text -> character varying NOT NULL
+--   password: text -> character varying NOT NULL
+ALTER TABLE public.users
+    ALTER COLUMN id TYPE uuid USING id::uuid;
+ALTER TABLE public.users
+    ALTER COLUMN email TYPE character varying;
+ALTER TABLE public.users
+    ALTER COLUMN email SET NOT NULL;
+ALTER TABLE public.users
+    ALTER COLUMN password TYPE character varying;
+ALTER TABLE public.users
+    ALTER COLUMN password SET NOT NULL;
+
+-- videos:
+--   id: text -> character varying
+--   title, description, uploader, uploader_url, thumbnail_url: text -> character varying
+ALTER TABLE public.videos
+    ALTER COLUMN id TYPE character varying;
+ALTER TABLE public.videos
+    ALTER COLUMN title TYPE character varying;
+ALTER TABLE public.videos
+    ALTER COLUMN description TYPE character varying;
+ALTER TABLE public.videos
+    ALTER COLUMN uploader TYPE character varying;
+ALTER TABLE public.videos
+    ALTER COLUMN uploader_url TYPE character varying;
+ALTER TABLE public.videos
+    ALTER COLUMN thumbnail_url TYPE character varying;
+
 COMMIT;
 
-------------------------------------------------------------
--- STEP 6: Migrate the "like_videos" Table
-------------------------------------------------------------
+
 BEGIN;
--- Convert user_id from text to uuid.
-ALTER TABLE like_videos
-ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
 
--- Rename timestamp columns.
-ALTER TABLE like_videos RENAME COLUMN created_at TO create_time;
-ALTER TABLE like_videos RENAME COLUMN updated_at TO update_time;
+--------------------------------------------------------------------------------
+-- STEP 4: Convert numeric ID columns to Postgres identity
+--         (replacing old sequences/SET DEFAULT nextval)
+--------------------------------------------------------------------------------
 
--- Drop the deleted_at column and its index.
-DROP INDEX IF EXISTS idx_like_videos_deleted_at;
-ALTER TABLE like_videos DROP COLUMN IF EXISTS deleted_at;
+-- 4.1: access_tokens.id
+-- Drop default nextval if it exists, then add IDENTITY
+ALTER TABLE public.access_tokens
+    ALTER COLUMN id DROP DEFAULT;
 
--- Enforce NOT NULL on the new timestamp columns.
-ALTER TABLE like_videos ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE like_videos ALTER COLUMN update_time SET NOT NULL;
+ALTER TABLE public.access_tokens
+    ALTER COLUMN id
+        ADD GENERATED BY DEFAULT AS IDENTITY (
+        SEQUENCE NAME public.access_tokens_id_seq
+        START WITH 1
+        INCREMENT BY 1
+        NO MINVALUE
+        NO MAXVALUE
+        CACHE 1
+        );
 
--- Convert video_id from text to character varying.
-ALTER TABLE like_videos ALTER COLUMN video_id TYPE character varying;
+-- 4.2: like_videos.id
+ALTER TABLE public.like_videos
+    ALTER COLUMN id DROP DEFAULT;
 
--- Enforce NOT NULL on user_id and video_id.
-ALTER TABLE like_videos ALTER COLUMN user_id SET NOT NULL;
-ALTER TABLE like_videos ALTER COLUMN video_id SET NOT NULL;
+ALTER TABLE public.like_videos
+    ALTER COLUMN id
+        ADD GENERATED BY DEFAULT AS IDENTITY (
+        SEQUENCE NAME public.like_videos_id_seq
+        START WITH 1
+        INCREMENT BY 1
+        NO MINVALUE
+        NO MAXVALUE
+        CACHE 1
+        );
+
+-- 4.3: refresh_tokens.id
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN id DROP DEFAULT;
+
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN id
+        ADD GENERATED BY DEFAULT AS IDENTITY (
+        SEQUENCE NAME public.refresh_tokens_id_seq
+        START WITH 1
+        INCREMENT BY 1
+        NO MINVALUE
+        NO MAXVALUE
+        CACHE 1
+        );
+
+-- users.id and videos.id remain text/uuid/character varying, so no identity needed.
+
 COMMIT;
 
-------------------------------------------------------------
--- STEP 7: Re-add Foreign Key Constraints
-------------------------------------------------------------
+
 BEGIN;
--- (Extra drop commands make this step idempotent in case the migration is re-run.)
-ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS fk_refresh_tokens_user;
-ALTER TABLE access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_user;
-ALTER TABLE access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_refresh_token;
-ALTER TABLE like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_user;
-ALTER TABLE like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_video;
 
--- Recreate foreign key from refresh_tokens.user_id to users.id.
-ALTER TABLE refresh_tokens ADD CONSTRAINT refresh_tokens_users_refresh_tokens
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION;
+--------------------------------------------------------------------------------
+-- STEP 5: Recreate new PK constraints or unique indexes as needed
+--------------------------------------------------------------------------------
 
--- Recreate foreign key from access_tokens.user_id to users.id.
-ALTER TABLE access_tokens ADD CONSTRAINT access_tokens_users_access_tokens
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION;
+-- 5.1: users -> new PK name = users_pkey, plus unique index on email
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
--- Recreate foreign key from access_tokens.refresh_token_id to refresh_tokens.id.
-ALTER TABLE access_tokens ADD CONSTRAINT access_tokens_refresh_tokens_access_tokens
-    FOREIGN KEY (refresh_token_id) REFERENCES refresh_tokens(id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION;
+CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email);
 
--- Recreate foreign key from like_videos.user_id to users.id.
-ALTER TABLE like_videos ADD CONSTRAINT like_videos_users_like_videos
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION;
+-- 5.2: videos -> new PK name = videos_pkey
+ALTER TABLE ONLY public.videos
+    ADD CONSTRAINT videos_pkey PRIMARY KEY (id);
 
--- Recreate foreign key from like_videos.video_id to videos.id.
-ALTER TABLE like_videos ADD CONSTRAINT like_videos_videos_like_videos
-    FOREIGN KEY (video_id) REFERENCES videos(id)
-        ON UPDATE NO ACTION ON DELETE NO ACTION;
+-- For access_tokens, like_videos, refresh_tokens the old PK names (xxx_pkey) match the new schema,
+-- so we don't need to re-add them unless we explicitly dropped them in Step 0.
+
 COMMIT;
+
+
+BEGIN;
+
+--------------------------------------------------------------------------------
+-- STEP 6: Re-add foreign key constraints with new constraint names
+--------------------------------------------------------------------------------
+
+-- access_tokens -> refresh_tokens
+ALTER TABLE ONLY public.access_tokens
+    ADD CONSTRAINT access_tokens_refresh_tokens_access_tokens
+        FOREIGN KEY (refresh_token_id) REFERENCES public.refresh_tokens(id);
+
+-- access_tokens -> users
+ALTER TABLE ONLY public.access_tokens
+    ADD CONSTRAINT access_tokens_users_access_tokens
+        FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+-- like_videos -> users
+ALTER TABLE ONLY public.like_videos
+    ADD CONSTRAINT like_videos_users_like_videos
+        FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+-- like_videos -> videos
+ALTER TABLE ONLY public.like_videos
+    ADD CONSTRAINT like_videos_videos_like_videos
+        FOREIGN KEY (video_id) REFERENCES public.videos(id);
+
+-- refresh_tokens -> users
+ALTER TABLE ONLY public.refresh_tokens
+    ADD CONSTRAINT refresh_tokens_users_refresh_tokens
+        FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+COMMIT;
+
+
+BEGIN;
+
+-------------------------------------------------------------------------
+-- STEP 7: Recreate indexes that are in the new schema but not the old
+-------------------------------------------------------------------------
+
+-- Drop the old sequence so we can reuse its name in the identity column.
+DROP SEQUENCE IF EXISTS public.access_tokens_id_seq CASCADE;
+
+-- Now convert the column to an identity column, giving it the same sequence name.
+ALTER TABLE public.access_tokens
+    ALTER COLUMN id DROP DEFAULT;  -- drop any "nextval" default if still present
+ALTER TABLE public.access_tokens
+    ALTER COLUMN id
+        ADD GENERATED BY DEFAULT AS IDENTITY (
+        SEQUENCE NAME public.access_tokens_id_seq
+        START WITH 1
+        INCREMENT BY 1
+        NO MINVALUE
+        NO MAXVALUE
+        CACHE 1
+        );
+
+COMMIT;
+
+BEGIN;
+
+-- like_videos
+DROP SEQUENCE IF EXISTS public.like_videos_id_seq CASCADE;
+
+ALTER TABLE public.like_videos
+    ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.like_videos
+    ALTER COLUMN id
+        ADD GENERATED BY DEFAULT AS IDENTITY (
+        SEQUENCE NAME public.like_videos_id_seq
+        START WITH 1
+        INCREMENT BY 1
+        NO MINVALUE
+        NO MAXVALUE
+        CACHE 1
+        );
+
+-- refresh_tokens
+DROP SEQUENCE IF EXISTS public.refresh_tokens_id_seq CASCADE;
+
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.refresh_tokens
+    ALTER COLUMN id
+        ADD GENERATED BY DEFAULT AS IDENTITY (
+        SEQUENCE NAME public.refresh_tokens_id_seq
+        START WITH 1
+        INCREMENT BY 1
+        NO MINVALUE
+        NO MAXVALUE
+        CACHE 1
+        );
+
+COMMIT;
+
+-- Done!

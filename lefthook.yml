@@ -18,3 +18,8 @@ pre-commit:
         - "handlers/*.go"
       run: |
         swag init --parseDependency --parseInternal --parseDepth 1
+    atlas-hash:
+      glob:
+        - "ent/migrate/migrations/*.sql"
+      run: |
+        atlas migrate hash --dir "file://ent/migrate/migrations"
