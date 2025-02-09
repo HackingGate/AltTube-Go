@@ -19,6 +19,10 @@ table "access_tokens" {
     null = true
     type = character_varying
   }
+  column "user_id" {
+    null = false
+    type = uuid
+  }
   column "expiry" {
     null = true
     type = timestamptz
@@ -26,10 +30,6 @@ table "access_tokens" {
   column "refresh_token_id" {
     null = false
     type = bigint
-  }
-  column "user_id" {
-    null = false
-    type = uuid
   }
   primary_key {
     columns = [column.id]
@@ -141,6 +141,14 @@ table "users" {
     null = false
     type = uuid
   }
+  column "email" {
+    null = false
+    type = character_varying
+  }
+  column "password" {
+    null = false
+    type = character_varying
+  }
   column "create_time" {
     null = false
     type = timestamptz
@@ -148,14 +156,6 @@ table "users" {
   column "update_time" {
     null = false
     type = timestamptz
-  }
-  column "email" {
-    null = true
-    type = character_varying
-  }
-  column "password" {
-    null = false
-    type = character_varying
   }
   primary_key {
     columns = [column.id]
@@ -170,14 +170,6 @@ table "videos" {
   column "id" {
     null = false
     type = character_varying
-  }
-  column "create_time" {
-    null = false
-    type = timestamptz
-  }
-  column "update_time" {
-    null = false
-    type = timestamptz
   }
   column "title" {
     null = false
@@ -202,6 +194,14 @@ table "videos" {
   column "thumbnail_url" {
     null = false
     type = character_varying
+  }
+  column "create_time" {
+    null = false
+    type = timestamptz
+  }
+  column "update_time" {
+    null = false
+    type = timestamptz
   }
   primary_key {
     columns = [column.id]
