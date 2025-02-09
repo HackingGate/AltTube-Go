@@ -2,139 +2,139 @@
 -- MIGRATION SCRIPT: from old schema (GORM) to new schema (Ent)
 --
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------
 -- STEP 0: Drop existing foreign keys and constraints that we will recreate
 --------------------------------------------------------------------------
 
 -- access_tokens
-ALTER TABLE IF EXISTS public.access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_refresh_token;
-ALTER TABLE IF EXISTS public.access_tokens DROP CONSTRAINT IF EXISTS fk_access_tokens_user;
+alter table if exists public.access_tokens drop constraint if exists fk_access_tokens_refresh_token;
+alter table if exists public.access_tokens drop constraint if exists fk_access_tokens_user;
 -- The old PK name is the same in both schemas (access_tokens_pkey), so we leave it
 -- unless we decide to drop/recreate it. We'll handle the IDENTITY update separately.
 
 -- like_videos
-ALTER TABLE IF EXISTS public.like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_user;
-ALTER TABLE IF EXISTS public.like_videos DROP CONSTRAINT IF EXISTS fk_like_videos_video;
+alter table if exists public.like_videos drop constraint if exists fk_like_videos_user;
+alter table if exists public.like_videos drop constraint if exists fk_like_videos_video;
 -- old PK is like_videos_pkey, same name in new schema, so we keep it.
 
 -- refresh_tokens
-ALTER TABLE IF EXISTS public.refresh_tokens DROP CONSTRAINT IF EXISTS fk_refresh_tokens_user;
+alter table if exists public.refresh_tokens drop constraint if exists fk_refresh_tokens_user;
 -- old PK is refresh_tokens_pkey, same name in new schema, so we keep it.
 
 -- users
 -- Drop the old unique constraint on email:
-ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS uni_users_email;
+alter table if exists public.users drop constraint if exists uni_users_email;
 -- Drop the old PK named uni_users_id; new schema calls it users_pkey:
-ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS uni_users_id;
+alter table if exists public.users drop constraint if exists uni_users_id;
 
 -- videos
 -- Drop the old PK named uni_videos_id; new schema calls it videos_pkey:
-ALTER TABLE IF EXISTS public.videos DROP CONSTRAINT IF EXISTS uni_videos_id;
+alter table if exists public.videos drop constraint if exists uni_videos_id;
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------------
 -- STEP 1: Drop old/obsolete indexes that do not appear in the new schema
 --------------------------------------------------------------------------------
 
 -- Access tokens indexes
-DROP INDEX IF EXISTS public.idx_access_tokens_deleted_at;
-DROP INDEX IF EXISTS public.idx_access_tokens_refresh_token_id;
-DROP INDEX IF EXISTS public.idx_access_tokens_user_id;
+drop index if exists public.idx_access_tokens_deleted_at;
+drop index if exists public.idx_access_tokens_refresh_token_id;
+drop index if exists public.idx_access_tokens_user_id;
 
 -- Like videos indexes
-DROP INDEX IF EXISTS public.idx_like_videos_deleted_at;
-DROP INDEX IF EXISTS public.idx_like_videos_video_id;
+drop index if exists public.idx_like_videos_deleted_at;
+drop index if exists public.idx_like_videos_video_id;
 
 -- Refresh tokens indexes
-DROP INDEX IF EXISTS public.idx_refresh_tokens_deleted_at;
-DROP INDEX IF EXISTS public.idx_refresh_tokens_user_id;
-DROP INDEX IF EXISTS public.idx_token;  -- on refresh_tokens(token)
+drop index if exists public.idx_refresh_tokens_deleted_at;
+drop index if exists public.idx_refresh_tokens_user_id;
+drop index if exists public.idx_token;  -- on refresh_tokens(token)
 
 -- Users
-DROP INDEX IF EXISTS public.idx_users_deleted_at;
+drop index if exists public.idx_users_deleted_at;
 
 -- Videos
-DROP INDEX IF EXISTS public.idx_videos_deleted_at;
+drop index if exists public.idx_videos_deleted_at;
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------------
 -- STEP 2: Remove deleted_at columns, rename created_at/updated_at -> create_time/update_time, set NOT NULL
 --------------------------------------------------------------------------------
 
 -- 2.1: access_tokens
-ALTER TABLE public.access_tokens
-    DROP COLUMN IF EXISTS deleted_at;
-ALTER TABLE public.access_tokens
-    RENAME COLUMN created_at TO create_time;
-ALTER TABLE public.access_tokens
-    RENAME COLUMN updated_at TO update_time;
-ALTER TABLE public.access_tokens
-    ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE public.access_tokens
-    ALTER COLUMN update_time SET NOT NULL;
+alter table public.access_tokens
+drop column if exists deleted_at;
+alter table public.access_tokens
+rename column created_at to create_time;
+alter table public.access_tokens
+rename column updated_at to update_time;
+alter table public.access_tokens
+alter column create_time set not null;
+alter table public.access_tokens
+alter column update_time set not null;
 
 -- 2.2: like_videos
-ALTER TABLE public.like_videos
-    DROP COLUMN IF EXISTS deleted_at;
-ALTER TABLE public.like_videos
-    RENAME COLUMN created_at TO create_time;
-ALTER TABLE public.like_videos
-    RENAME COLUMN updated_at TO update_time;
-ALTER TABLE public.like_videos
-    ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE public.like_videos
-    ALTER COLUMN update_time SET NOT NULL;
+alter table public.like_videos
+drop column if exists deleted_at;
+alter table public.like_videos
+rename column created_at to create_time;
+alter table public.like_videos
+rename column updated_at to update_time;
+alter table public.like_videos
+alter column create_time set not null;
+alter table public.like_videos
+alter column update_time set not null;
 
 -- 2.3: refresh_tokens
-ALTER TABLE public.refresh_tokens
-    DROP COLUMN IF EXISTS deleted_at;
-ALTER TABLE public.refresh_tokens
-    RENAME COLUMN created_at TO create_time;
-ALTER TABLE public.refresh_tokens
-    RENAME COLUMN updated_at TO update_time;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN update_time SET NOT NULL;
+alter table public.refresh_tokens
+drop column if exists deleted_at;
+alter table public.refresh_tokens
+rename column created_at to create_time;
+alter table public.refresh_tokens
+rename column updated_at to update_time;
+alter table public.refresh_tokens
+alter column create_time set not null;
+alter table public.refresh_tokens
+alter column update_time set not null;
 
 -- 2.4: users
-ALTER TABLE public.users
-    DROP COLUMN IF EXISTS deleted_at;
-ALTER TABLE public.users
-    RENAME COLUMN created_at TO create_time;
-ALTER TABLE public.users
-    RENAME COLUMN updated_at TO update_time;
-ALTER TABLE public.users
-    ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE public.users
-    ALTER COLUMN update_time SET NOT NULL;
+alter table public.users
+drop column if exists deleted_at;
+alter table public.users
+rename column created_at to create_time;
+alter table public.users
+rename column updated_at to update_time;
+alter table public.users
+alter column create_time set not null;
+alter table public.users
+alter column update_time set not null;
 
 -- 2.5: videos
-ALTER TABLE public.videos
-    DROP COLUMN IF EXISTS deleted_at;
-ALTER TABLE public.videos
-    RENAME COLUMN created_at TO create_time;
-ALTER TABLE public.videos
-    RENAME COLUMN updated_at TO update_time;
-ALTER TABLE public.videos
-    ALTER COLUMN create_time SET NOT NULL;
-ALTER TABLE public.videos
-    ALTER COLUMN update_time SET NOT NULL;
+alter table public.videos
+drop column if exists deleted_at;
+alter table public.videos
+rename column created_at to create_time;
+alter table public.videos
+rename column updated_at to update_time;
+alter table public.videos
+alter column create_time set not null;
+alter table public.videos
+alter column update_time set not null;
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------------
 -- STEP 3: Convert column types, enforce NOT NULL
@@ -145,76 +145,76 @@ BEGIN;
 --   token: text -> character varying
 --   refresh_token_id: stays bigint, but enforce NOT NULL
 --   expiry: stays timestamp with time zone
-ALTER TABLE public.access_tokens
-    ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
-ALTER TABLE public.access_tokens
-    ALTER COLUMN token TYPE character varying;
-ALTER TABLE public.access_tokens
-    ALTER COLUMN refresh_token_id SET NOT NULL;
-ALTER TABLE public.access_tokens
-    ALTER COLUMN user_id SET NOT NULL;
+alter table public.access_tokens
+alter column user_id type uuid using user_id::uuid;
+alter table public.access_tokens
+alter column token type character varying;
+alter table public.access_tokens
+alter column refresh_token_id set not null;
+alter table public.access_tokens
+alter column user_id set not null;
 
 -- like_videos:
 --   user_id: text -> uuid
 --   video_id: text -> character varying
-ALTER TABLE public.like_videos
-    ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
-ALTER TABLE public.like_videos
-    ALTER COLUMN video_id TYPE character varying;
-ALTER TABLE public.like_videos
-    ALTER COLUMN user_id SET NOT NULL;
-ALTER TABLE public.like_videos
-    ALTER COLUMN video_id SET NOT NULL;
+alter table public.like_videos
+alter column user_id type uuid using user_id::uuid;
+alter table public.like_videos
+alter column video_id type character varying;
+alter table public.like_videos
+alter column user_id set not null;
+alter table public.like_videos
+alter column video_id set not null;
 
 -- refresh_tokens:
 --   user_id: text -> uuid
 --   token, user_agent, ip_address: text -> character varying
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN token TYPE character varying;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN user_agent TYPE character varying;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN ip_address TYPE character varying;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN user_id SET NOT NULL;
+alter table public.refresh_tokens
+alter column user_id type uuid using user_id::uuid;
+alter table public.refresh_tokens
+alter column token type character varying;
+alter table public.refresh_tokens
+alter column user_agent type character varying;
+alter table public.refresh_tokens
+alter column ip_address type character varying;
+alter table public.refresh_tokens
+alter column user_id set not null;
 
 -- users:
 --   id: text -> uuid
 --   email: text -> character varying NOT NULL
 --   password: text -> character varying NOT NULL
-ALTER TABLE public.users
-    ALTER COLUMN id TYPE uuid USING id::uuid;
-ALTER TABLE public.users
-    ALTER COLUMN email TYPE character varying;
-ALTER TABLE public.users
-    ALTER COLUMN email SET NOT NULL;
-ALTER TABLE public.users
-    ALTER COLUMN password TYPE character varying;
-ALTER TABLE public.users
-    ALTER COLUMN password SET NOT NULL;
+alter table public.users
+alter column id type uuid using id::uuid;
+alter table public.users
+alter column email type character varying;
+alter table public.users
+alter column email set not null;
+alter table public.users
+alter column password type character varying;
+alter table public.users
+alter column password set not null;
 
 -- videos:
 --   id: text -> character varying
 --   title, description, uploader, uploader_url, thumbnail_url: text -> character varying
-ALTER TABLE public.videos
-    ALTER COLUMN id TYPE character varying;
-ALTER TABLE public.videos
-    ALTER COLUMN title TYPE character varying;
-ALTER TABLE public.videos
-    ALTER COLUMN description TYPE character varying;
-ALTER TABLE public.videos
-    ALTER COLUMN uploader TYPE character varying;
-ALTER TABLE public.videos
-    ALTER COLUMN uploader_url TYPE character varying;
-ALTER TABLE public.videos
-    ALTER COLUMN thumbnail_url TYPE character varying;
+alter table public.videos
+alter column id type character varying;
+alter table public.videos
+alter column title type character varying;
+alter table public.videos
+alter column description type character varying;
+alter table public.videos
+alter column uploader type character varying;
+alter table public.videos
+alter column uploader_url type character varying;
+alter table public.videos
+alter column thumbnail_url type character varying;
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------------
 -- STEP 4: Convert numeric ID columns to Postgres identity
@@ -223,170 +223,170 @@ BEGIN;
 
 -- 4.1: access_tokens.id
 -- Drop default nextval if it exists, then add IDENTITY
-ALTER TABLE public.access_tokens
-    ALTER COLUMN id DROP DEFAULT;
+alter table public.access_tokens
+alter column id drop default;
 
-ALTER TABLE public.access_tokens
-    ALTER COLUMN id
-        ADD GENERATED BY DEFAULT AS IDENTITY (
-        SEQUENCE NAME public.access_tokens_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        NO MINVALUE
-        NO MAXVALUE
-        CACHE 1
-        );
+alter table public.access_tokens
+alter column id
+add generated by default as identity (
+    sequence name public.access_tokens_id_seq
+    start with 1
+    increment by 1
+    no minvalue
+    no maxvalue
+    cache 1
+);
 
 -- 4.2: like_videos.id
-ALTER TABLE public.like_videos
-    ALTER COLUMN id DROP DEFAULT;
+alter table public.like_videos
+alter column id drop default;
 
-ALTER TABLE public.like_videos
-    ALTER COLUMN id
-        ADD GENERATED BY DEFAULT AS IDENTITY (
-        SEQUENCE NAME public.like_videos_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        NO MINVALUE
-        NO MAXVALUE
-        CACHE 1
-        );
+alter table public.like_videos
+alter column id
+add generated by default as identity (
+    sequence name public.like_videos_id_seq
+    start with 1
+    increment by 1
+    no minvalue
+    no maxvalue
+    cache 1
+);
 
 -- 4.3: refresh_tokens.id
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN id DROP DEFAULT;
+alter table public.refresh_tokens
+alter column id drop default;
 
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN id
-        ADD GENERATED BY DEFAULT AS IDENTITY (
-        SEQUENCE NAME public.refresh_tokens_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        NO MINVALUE
-        NO MAXVALUE
-        CACHE 1
-        );
+alter table public.refresh_tokens
+alter column id
+add generated by default as identity (
+    sequence name public.refresh_tokens_id_seq
+    start with 1
+    increment by 1
+    no minvalue
+    no maxvalue
+    cache 1
+);
 
 -- users.id and videos.id remain text/uuid/character varying, so no identity needed.
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------------
 -- STEP 5: Recreate new PK constraints or unique indexes as needed
 --------------------------------------------------------------------------------
 
 -- 5.1: users -> new PK name = users_pkey, plus unique index on email
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+alter table only public.users
+add constraint users_pkey primary key (id);
 
-CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email);
+create unique index users_email_key on public.users using btree (email);
 
 -- 5.2: videos -> new PK name = videos_pkey
-ALTER TABLE ONLY public.videos
-    ADD CONSTRAINT videos_pkey PRIMARY KEY (id);
+alter table only public.videos
+add constraint videos_pkey primary key (id);
 
 -- For access_tokens, like_videos, refresh_tokens the old PK names (xxx_pkey) match the new schema,
 -- so we don't need to re-add them unless we explicitly dropped them in Step 0.
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 --------------------------------------------------------------------------------
 -- STEP 6: Re-add foreign key constraints with new constraint names
 --------------------------------------------------------------------------------
 
 -- access_tokens -> refresh_tokens
-ALTER TABLE ONLY public.access_tokens
-    ADD CONSTRAINT access_tokens_refresh_tokens_access_tokens
-        FOREIGN KEY (refresh_token_id) REFERENCES public.refresh_tokens(id);
+alter table only public.access_tokens
+add constraint access_tokens_refresh_tokens_access_tokens
+foreign key (refresh_token_id) references public.refresh_tokens (id);
 
 -- access_tokens -> users
-ALTER TABLE ONLY public.access_tokens
-    ADD CONSTRAINT access_tokens_users_access_tokens
-        FOREIGN KEY (user_id) REFERENCES public.users(id);
+alter table only public.access_tokens
+add constraint access_tokens_users_access_tokens
+foreign key (user_id) references public.users (id);
 
 -- like_videos -> users
-ALTER TABLE ONLY public.like_videos
-    ADD CONSTRAINT like_videos_users_like_videos
-        FOREIGN KEY (user_id) REFERENCES public.users(id);
+alter table only public.like_videos
+add constraint like_videos_users_like_videos
+foreign key (user_id) references public.users (id);
 
 -- like_videos -> videos
-ALTER TABLE ONLY public.like_videos
-    ADD CONSTRAINT like_videos_videos_like_videos
-        FOREIGN KEY (video_id) REFERENCES public.videos(id);
+alter table only public.like_videos
+add constraint like_videos_videos_like_videos
+foreign key (video_id) references public.videos (id);
 
 -- refresh_tokens -> users
-ALTER TABLE ONLY public.refresh_tokens
-    ADD CONSTRAINT refresh_tokens_users_refresh_tokens
-        FOREIGN KEY (user_id) REFERENCES public.users(id);
+alter table only public.refresh_tokens
+add constraint refresh_tokens_users_refresh_tokens
+foreign key (user_id) references public.users (id);
 
-COMMIT;
+commit;
 
 
-BEGIN;
+begin;
 
 -------------------------------------------------------------------------
 -- STEP 7: Recreate indexes that are in the new schema but not the old
 -------------------------------------------------------------------------
 
 -- Drop the old sequence so we can reuse its name in the identity column.
-DROP SEQUENCE IF EXISTS public.access_tokens_id_seq CASCADE;
+drop sequence if exists public.access_tokens_id_seq cascade;
 
 -- Now convert the column to an identity column, giving it the same sequence name.
-ALTER TABLE public.access_tokens
-    ALTER COLUMN id DROP DEFAULT;  -- drop any "nextval" default if still present
-ALTER TABLE public.access_tokens
-    ALTER COLUMN id
-        ADD GENERATED BY DEFAULT AS IDENTITY (
-        SEQUENCE NAME public.access_tokens_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        NO MINVALUE
-        NO MAXVALUE
-        CACHE 1
-        );
+alter table public.access_tokens
+alter column id drop default;  -- drop any "nextval" default if still present
+alter table public.access_tokens
+alter column id
+add generated by default as identity (
+    sequence name public.access_tokens_id_seq
+    start with 1
+    increment by 1
+    no minvalue
+    no maxvalue
+    cache 1
+);
 
-COMMIT;
+commit;
 
-BEGIN;
+begin;
 
 -- like_videos
-DROP SEQUENCE IF EXISTS public.like_videos_id_seq CASCADE;
+drop sequence if exists public.like_videos_id_seq cascade;
 
-ALTER TABLE public.like_videos
-    ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE public.like_videos
-    ALTER COLUMN id
-        ADD GENERATED BY DEFAULT AS IDENTITY (
-        SEQUENCE NAME public.like_videos_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        NO MINVALUE
-        NO MAXVALUE
-        CACHE 1
-        );
+alter table public.like_videos
+alter column id drop default;
+alter table public.like_videos
+alter column id
+add generated by default as identity (
+    sequence name public.like_videos_id_seq
+    start with 1
+    increment by 1
+    no minvalue
+    no maxvalue
+    cache 1
+);
 
 -- refresh_tokens
-DROP SEQUENCE IF EXISTS public.refresh_tokens_id_seq CASCADE;
+drop sequence if exists public.refresh_tokens_id_seq cascade;
 
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE public.refresh_tokens
-    ALTER COLUMN id
-        ADD GENERATED BY DEFAULT AS IDENTITY (
-        SEQUENCE NAME public.refresh_tokens_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        NO MINVALUE
-        NO MAXVALUE
-        CACHE 1
-        );
+alter table public.refresh_tokens
+alter column id drop default;
+alter table public.refresh_tokens
+alter column id
+add generated by default as identity (
+    sequence name public.refresh_tokens_id_seq
+    start with 1
+    increment by 1
+    no minvalue
+    no maxvalue
+    cache 1
+);
 
-COMMIT;
+commit;
 
 -- Done!
