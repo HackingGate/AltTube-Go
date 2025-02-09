@@ -80,6 +80,10 @@ func init() {
 	user.DefaultUpdateTime = userDescUpdateTime.Default.(func() time.Time)
 	// user.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	user.UpdateDefaultUpdateTime = userDescUpdateTime.UpdateDefault.(func() time.Time)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[0].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
 	// userDescPassword is the schema descriptor for password field.
 	userDescPassword := userFields[1].Descriptor()
 	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.

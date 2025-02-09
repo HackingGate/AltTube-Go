@@ -96,7 +96,7 @@ var (
 		{Name: "id", Type: field.TypeUUID, Unique: true, SchemaType: map[string]string{"postgres": "uuid"}},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
 	}
 	// UsersTable holds the schema information for the "users" table.
