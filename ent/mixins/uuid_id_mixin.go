@@ -17,10 +17,6 @@ func (UuidIdMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
-			// For PostgreSQL, you can ensure the column is of type UUID.
-			SchemaType(map[string]string{
-				"postgres": "uuid",
-			}).
 			Immutable().
 			Unique(),
 	}
