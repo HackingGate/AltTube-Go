@@ -1,5 +1,14 @@
 definitions:
-  models.Device:
+  models.DeviceListResponse:
+    properties:
+      current_device_id:
+        type: integer
+      devices:
+        items:
+          $ref: '#/definitions/models.DeviceResponse'
+        type: array
+    type: object
+  models.DeviceResponse:
     properties:
       id:
         type: integer
@@ -9,15 +18,6 @@ definitions:
         type: string
       user_agent:
         type: string
-    type: object
-  models.DeviceList:
-    properties:
-      current_device_id:
-        type: integer
-      devices:
-        items:
-          $ref: '#/definitions/models.Device'
-        type: array
     type: object
   models.LikeVideoResponse:
     properties:
@@ -271,7 +271,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.DeviceList'
+            $ref: '#/definitions/models.DeviceListResponse'
       security:
       - AccessToken: []
       summary: Get devices
