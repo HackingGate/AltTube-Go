@@ -3,6 +3,7 @@ package user_handlers
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/hackinggate/alttube-go/database"
 	"github.com/hackinggate/alttube-go/models"
 
@@ -15,13 +16,13 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body models.EditEmail true "EditEmail"
+// @Param user body models.UpdateEmailRequest true "User"
 // @Success 200 {string} JSON "{"message": "Email updated successfully"}"
 // @Security AccessToken
 // @Router /user/email [patch]
 func EditEmail(ctx *gin.Context) {
-	var editEmail models.EditEmail
-	if err := ctx.ShouldBindJSON(&editEmail); err != nil {
+	var updateEmailRequest models.UpdateEmailRequest
+	if err := ctx.ShouldBindJSON(&updateEmailRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -32,13 +33,13 @@ func EditEmail(ctx *gin.Context) {
 		return
 	}
 
-	authUserID, ok := authUserIDInterface.(string)
+	authUserID, ok := authUserIDInterface.(uuid.UUID)
 	if !ok {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error - UserID format invalid"})
 		return
 	}
 
-	err := database.UpdateUserByID(authUserID, editEmail)
+	err := database.UpdateUserByID(ctx.Request.Context(), authUserID, updateEmailRequest)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating email"})
 		return

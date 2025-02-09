@@ -21,39 +21,52 @@ import (
 // @Router /user/refresh_token [post]
 func RefreshToken(ctx *gin.Context) {
 	// Get authorization header
-	tokenString := ctx.GetHeader("Authorization")
+	refreshTokenString := ctx.GetHeader("Authorization")
 	// Assuming token is provided as 'Bearer <token>'
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+	refreshTokenString = strings.TrimPrefix(refreshTokenString, "Bearer ")
 
-	uuid, exists := database.ValidateRefreshToken(tokenString)
+	exists, err := database.ValidateRefreshToken(ctx.Request.Context(), refreshTokenString)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error validating refresh token"})
+		return
+	}
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return
 	}
 
-	// Generate new tokens
-	accessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(uuid)
+	// Find user associated with the refresh token
+	user, err := database.GetUserByRefreshToken(ctx.Request.Context(), refreshTokenString)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
+		return
+	}
+
+	// Generate new access token
+	newAccessTokenString, accessTokenExpiry, err := auth.GenerateAccessToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating access token"})
 		return
 	}
 
-	refreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(uuid)
+	// Generate new refresh token
+	newRefreshTokenString, refreshTokenExpiry, err := auth.GenerateRefreshToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating refresh token"})
 		return
 	}
 
-	// Replace the old refresh token with the new one
-	err = database.RemoveRefreshTokenByToken(tokenString)
+	// Remove access tokens associated with the old refresh token
+	err = database.RemoveAccessTokenByRefreshToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing access token"})
 		return
 	}
 
-	user, err := database.GetUserByID(uuid)
+	// Remove the old refresh token
+	err = database.RemoveRefreshTokenByToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting user"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error removing old refresh token"})
 		return
 	}
 
@@ -64,26 +77,26 @@ func RefreshToken(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store the new refresh token
-	err = database.AddRefreshToken(refreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(ctx.Request.Context(), newRefreshTokenString, user, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token " + err.Error()})
 		return
 	}
 
-	refreshToken, err := database.GetRefreshTokenByToken(refreshTokenString)
+	refreshToken, err := database.GetRefreshTokenByToken(ctx.Request.Context(), newRefreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh token"})
 		return
 	}
 
-	err = database.AddAccessToken(accessTokenString, user, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(ctx.Request.Context(), newAccessTokenString, user, accessTokenExpiry, refreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token " + err.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"access_token":  accessTokenString,
-		"refresh_token": refreshTokenString,
+		"access_token":  newAccessTokenString,
+		"refresh_token": newRefreshTokenString,
 	})
 }

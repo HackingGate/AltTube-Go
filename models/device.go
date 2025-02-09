@@ -4,12 +4,12 @@ import (
 	"time"
 )
 
-type DeviceList struct {
-	CurrentDeviceID uint     `json:"current_device_id"`
-	Devices         []Device `json:"devices"`
+type DeviceListResponse struct {
+	CurrentDeviceID uint             `json:"current_device_id"`
+	Devices         []DeviceResponse `json:"devices"`
 }
 
-type Device struct {
+type DeviceResponse struct {
 	ID         uint      `json:"id"`
 	LastActive time.Time `json:"last_active"`
 	UserAgent  string    `json:"user_agent"`

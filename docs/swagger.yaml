@@ -1,5 +1,14 @@
 definitions:
-  models.Device:
+  models.DeviceListResponse:
+    properties:
+      current_device_id:
+        type: integer
+      devices:
+        items:
+          $ref: '#/definitions/models.DeviceResponse'
+        type: array
+    type: object
+  models.DeviceResponse:
     properties:
       id:
         type: integer
@@ -8,20 +17,6 @@ definitions:
       last_active:
         type: string
       user_agent:
-        type: string
-    type: object
-  models.DeviceList:
-    properties:
-      current_device_id:
-        type: integer
-      devices:
-        items:
-          $ref: '#/definitions/models.Device'
-        type: array
-    type: object
-  models.EditEmail:
-    properties:
-      email:
         type: string
     type: object
   models.LikeVideoResponse:
@@ -33,18 +28,23 @@ definitions:
       title:
         type: string
     type: object
-  models.Login:
+  models.LoginRequest:
     properties:
       email:
         type: string
       password:
         type: string
     type: object
-  models.Signup:
+  models.SignupRequest:
     properties:
       email:
         type: string
       password:
+        type: string
+    type: object
+  models.UpdateEmailRequest:
+    properties:
+      email:
         type: string
     type: object
 info:
@@ -271,7 +271,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.DeviceList'
+            $ref: '#/definitions/models.DeviceListResponse'
       security:
       - AccessToken: []
       summary: Get devices
@@ -283,12 +283,12 @@ paths:
       - application/json
       description: Edit email
       parameters:
-      - description: EditEmail
+      - description: User
         in: body
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.EditEmail'
+          $ref: '#/definitions/models.UpdateEmailRequest'
       produces:
       - application/json
       responses:
@@ -312,7 +312,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.Login'
+          $ref: '#/definitions/models.LoginRequest'
       produces:
       - application/json
       responses:
@@ -368,7 +368,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.Signup'
+          $ref: '#/definitions/models.SignupRequest'
       produces:
       - application/json
       responses:

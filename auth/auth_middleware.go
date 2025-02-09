@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/hackinggate/alttube-go/database"
-	"github.com/hackinggate/alttube-go/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -17,13 +16,19 @@ func Middleware() gin.HandlerFunc {
 		// Assuming token is provided as 'Bearer <token>'
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
-		claims := &models.Claims{}
+		claims := &tokenClaims{}
 
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 
-		_, exists := database.ValidateAccessToken(tokenString)
+		if err != nil {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "JWT error"})
+			ctx.Abort()
+			return
+		}
+
+		exists, err := database.ValidateAccessToken(ctx.Request.Context(), tokenString)
 		if !exists {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid access token"})
 			ctx.Abort()

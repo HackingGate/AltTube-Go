@@ -322,7 +322,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.DeviceList"
+                            "$ref": "#/definitions/models.DeviceListResponse"
                         }
                     }
                 }
@@ -388,12 +388,12 @@ const docTemplate = `{
                 "summary": "Edit email",
                 "parameters": [
                     {
-                        "description": "EditEmail",
+                        "description": "User",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EditEmail"
+                            "$ref": "#/definitions/models.UpdateEmailRequest"
                         }
                     }
                 ],
@@ -427,7 +427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Login"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
@@ -517,7 +517,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Signup"
+                            "$ref": "#/definitions/models.SignupRequest"
                         }
                     }
                 ],
@@ -533,7 +533,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Device": {
+        "models.DeviceListResponse": {
+            "type": "object",
+            "properties": {
+                "current_device_id": {
+                    "type": "integer"
+                },
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DeviceResponse"
+                    }
+                }
+            }
+        },
+        "models.DeviceResponse": {
             "type": "object",
             "properties": {
                 "id": {
@@ -546,28 +560,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_agent": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.DeviceList": {
-            "type": "object",
-            "properties": {
-                "current_device_id": {
-                    "type": "integer"
-                },
-                "devices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Device"
-                    }
-                }
-            }
-        },
-        "models.EditEmail": {
-            "type": "object",
-            "properties": {
-                "email": {
                     "type": "string"
                 }
             }
@@ -586,7 +578,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Login": {
+        "models.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -597,13 +589,21 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Signup": {
+        "models.SignupRequest": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateEmailRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 }
             }

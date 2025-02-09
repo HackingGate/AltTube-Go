@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/hackinggate/alttube-go/database"
-	"github.com/hackinggate/alttube-go/models"
+	"github.com/hackinggate/alttube-go/ent"
 	"github.com/hackinggate/alttube-go/utils"
 
 	"github.com/gin-gonic/gin"
@@ -74,25 +74,25 @@ func Streams(ctx *gin.Context) {
 
 	// Add Video to database if it doesn't exist
 	if resp.StatusCode == 200 {
-		var video models.Video
-		// Decode JSON and store in video
-		err := json.Unmarshal(modifiedBody, &video)
+		var videoToAdd ent.Video
+		// Decode JSON and store in videoToAdd
+		err := json.Unmarshal(modifiedBody, &videoToAdd)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal response from backend"})
 			return
 		}
 
-		video.ID = videoID
+		videoToAdd.ID = videoID
 
-		// Check if video already exists in the database
-		existingVideo := database.VideoExists(video.ID)
+		// Check if videoToAdd already exists in the database
+		existingVideo := database.VideoExists(ctx.Request.Context(), videoToAdd.ID)
 
 		if !existingVideo {
-			// Save the new video to the database
-			err = database.AddVideo(video)
+			// Save the new videoToAdd to the database
+			_, err = database.AddVideo(ctx.Request.Context(), videoToAdd)
 			if err != nil {
 				// Handle potential database error
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save video to database"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save videoToAdd to database"})
 				return
 			}
 		}

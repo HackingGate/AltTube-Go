@@ -1,0 +1,25 @@
+pre-commit:
+  parallel: true
+  commands:
+    golangci-lint:
+      glob:
+        - "**/*.go"
+      run: |
+        golangci-lint run --fix
+    ent:
+      glob:
+        - "ent/schema/*.go"
+        - "ent/mixins/*.go"
+      run: |
+        go generate ./ent
+    swag:
+      glob:
+        - "main.go"
+        - "handlers/*.go"
+      run: |
+        swag init --parseDependency --parseInternal --parseDepth 1
+    atlas-hash:
+      glob:
+        - "ent/migrate/migrations/*.sql"
+      run: |
+        atlas migrate hash --dir "file://ent/migrate/migrations"

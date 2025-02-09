@@ -16,29 +16,24 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body models.Signup true "User"
+// @Param user body models.SignupRequest true "User"
 // @Success 200 {string} JSON "{"message": "Registration successful"}"
 // @Router /user/signup [post]
-func Signup(c *gin.Context) {
-	var signup models.Signup
-	if err := c.ShouldBindJSON(&signup); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+func Signup(ctx *gin.Context) {
+	var signupRequest models.SignupRequest
+	if err := ctx.ShouldBindJSON(&signupRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var user models.User
-	user.Email = signup.Email
-	user.Password = signup.Password
-	user.ID = utils.GenerateUUID()
+	hashedPassword, _ := utils.HashPassword(signupRequest.Password) // Hash the password
+	signupRequest.Password = hashedPassword
 
-	hashedPassword, _ := utils.HashPassword(user.Password) // Hash the password
-	user.Password = hashedPassword
-
-	err := database.AddUser(user)
+	_, err := database.AddUser(ctx.Request.Context(), signupRequest)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error adding user"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error adding user"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
 }

@@ -17,23 +17,23 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param user body models.Login true "User"
+// @Param user body models.LoginRequest true "User"
 // @Success 200 {string} JSON "{"access_token": "access_token", "refresh_token": "refresh_token"}"
 // @Router /user/login [post]s
 func Login(ctx *gin.Context) {
-	var login models.Login
-	if err := ctx.ShouldBindJSON(&login); err != nil {
+	var loginRequest models.LoginRequest
+	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	foundUser, err := database.GetUserByEmail(login.Email)
+	foundUser, err := database.GetUserByEmail(ctx.Request.Context(), loginRequest.Email)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email"})
 		return
 	}
 
-	if !utils.CheckPasswordHash(login.Password, foundUser.Password) {
+	if !utils.CheckPasswordHash(loginRequest.Password, foundUser.Password) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
 		return
 	}
@@ -59,20 +59,20 @@ func Login(ctx *gin.Context) {
 	ipAddress := ctx.ClientIP()
 
 	// Store refresh token
-	err = database.AddRefreshToken(refreshTokenString, foundUser, refreshTokenExpiry, userAgent, ipAddress)
+	err = database.AddRefreshToken(ctx.Request.Context(), refreshTokenString, foundUser, refreshTokenExpiry, userAgent, ipAddress)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing refresh token"})
 		return
 	}
 
-	refreshToken, err := database.GetRefreshTokenByToken(refreshTokenString)
+	refreshToken, err := database.GetRefreshTokenByToken(ctx.Request.Context(), refreshTokenString)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting refresh token"})
 		return
 	}
 
 	// Store access token
-	err = database.AddAccessToken(accessTokenString, foundUser, accessTokenExpiry, refreshToken)
+	err = database.AddAccessToken(ctx.Request.Context(), accessTokenString, foundUser, accessTokenExpiry, refreshToken)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error storing access token"})
 		return

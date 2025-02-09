@@ -1,74 +1,98 @@
 package database
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
-	"github.com/hackinggate/alttube-go/models"
-
+	"github.com/hackinggate/alttube-go/ent"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	_ "github.com/lib/pq"
+
+	entsql "entgo.io/ent/dialect/sql" // Import the Ent SQL dialect package.
 )
 
-var dbInstance *gorm.DB
+// Client is the global Ent client instance.
+var Client *ent.Client
 
-func Init() {
-	// Load .env file
+// DB is the global standard SQL database instance.
+var DB *sql.DB
+
+// loadEnv loads the .env file.
+func loadEnv() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Failed to load .env file: %v", err)
 	}
+}
 
-	// Construct DSN from .env variables
-	dsn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s port=%s sslmode=%s",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_NAME"),
+// Init initializes the database connection and runs migrations.
+func Init() {
+	loadEnv()
+
+	// Construct DSN from .env variables.
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
 		os.Getenv("DB_SSLMODE"),
 	)
 
-	// Initialize GORM with Postgres
-	var db *gorm.DB
+	// Open the standard SQL DB first.
 	var err error
+	DB, err = sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalf("Failed to open standard SQL DB: %v", err)
+	}
 
-	for i := 0; i < 5; i++ {
-		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-		if err == nil {
-			break
+	// Attempt to ping the DB with retries.
+	maxRetries := 5
+	for i := 0; i < maxRetries; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		err = DB.PingContext(ctx)
+		cancel()
+		if err != nil {
+			log.Printf("Attempt %d: Failed to ping DB: %v. Retrying in 5 seconds...", i+1, err)
+			time.Sleep(5 * time.Second)
+			continue
 		}
-		log.Printf("Failed to connect to database: %v. Retrying in 5 seconds...", err)
-		time.Sleep(5 * time.Second)
+		// Successful ping.
+		break
+	}
+	if err != nil {
+		log.Fatalf("Failed to connect to database after %d attempts: %v", maxRetries, err)
 	}
 
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+	// Create the Ent client using the standard SQL DB.
+	drv := entsql.OpenDB("postgres", DB)
+	Client = ent.NewClient(ent.Driver(drv))
+
+	// Run database migrations using Atlas.
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := Client.Schema.Create(ctx); err != nil {
+		log.Fatalf("Failed to run database migrations: %v", err)
 	}
 
-	// Migrate the schema
-	err = db.AutoMigrate(&models.AccessToken{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.RefreshToken{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.User{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.Video{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	err = db.AutoMigrate(&models.LikeVideo{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
+	// Optionally, query the PostgreSQL version using raw SQL.
+	if err := getVersions(ctx); err != nil {
+		log.Printf("Warning: failed to get PostgreSQL version: %v", err)
 	}
 
-	dbInstance = db
+	log.Println("Database connection established and migrations completed successfully.")
+}
+
+// getVersions queries the PostgreSQL version using raw SQL.
+func getVersions(ctx context.Context) error {
+	var version string
+	err := DB.QueryRowContext(ctx, "SELECT version()").Scan(&version)
+	if err != nil {
+		return err
+	}
+	log.Printf("PostgreSQL version: %s", version)
+	return nil
 }

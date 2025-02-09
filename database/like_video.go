@@ -1,45 +1,61 @@
 package database
 
 import (
-	"errors"
+	"context"
 
-	"github.com/hackinggate/alttube-go/models"
-
-	"gorm.io/gorm"
+	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/ent/likevideo"
 )
 
-func AddLikeVideo(user *models.User, video *models.Video) error {
-	like := models.LikeVideo{
-		UserID:  user.ID,
-		User:    *user,
-		VideoID: video.ID,
-		Video:   *video,
-	}
-	return dbInstance.Create(&like).Error
+// AddLikeVideo adds a like to a video by a user.
+func AddLikeVideo(ctx context.Context, id uuid.UUID, videoID string) error {
+	_, err := Client.LikeVideo.
+		Create().
+		SetUserID(id).
+		SetVideoID(videoID).
+		Save(ctx)
+	return err
 }
 
-func ReadIsLikedVideo(user *models.User, video *models.Video) (bool, error) {
-	var like models.LikeVideo
-	dbResult := dbInstance.Where("user_id = ? AND video_id = ?", user.ID, video.ID).First(&like)
-	if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
-		return false, nil
-	}
-	if dbResult.Error != nil {
-		return false, dbResult.Error
-	}
-	return true, nil
+// ReadIsLikedVideo checks if a user has liked a video.
+func ReadIsLikedVideo(ctx context.Context, id uuid.UUID, videoID string) (bool, error) {
+	likedVideo, err := Client.LikeVideo.
+		Query().
+		Where(
+			likevideo.UserIDEQ(id),
+			likevideo.VideoIDEQ(videoID),
+		).
+		Only(ctx)
+	return likedVideo != nil, err
 }
 
-func RemoveLikeVideo(user *models.User, video *models.Video) error {
-	return dbInstance.Where("user_id = ? AND video_id = ?", user.ID, video.ID).Delete(&models.LikeVideo{}).Error
+// RemoveLikeVideo removes a like from a video by a user.
+func RemoveLikeVideo(ctx context.Context, id uuid.UUID, videoID string) error {
+	_, err := Client.LikeVideo.
+		Delete().
+		Where(
+			likevideo.UserIDEQ(id),
+			likevideo.VideoIDEQ(videoID),
+		).
+		Exec(ctx)
+	return err
 }
 
-func RemoveAllLikesByUserID(userID string) error {
-	return dbInstance.Unscoped().Where("user_id = ?", userID).Delete(&models.LikeVideo{}).Error
+// RemoveAllLikesByUserID removes all likes by a user.
+func RemoveAllLikesByUserID(ctx context.Context, id uuid.UUID) error {
+	_, err := Client.LikeVideo.
+		Delete().
+		Where(likevideo.UserIDEQ(id)).
+		Exec(ctx)
+	return err
 }
 
-func GetAllLikesByUserID(userID string) ([]models.LikeVideo, error) {
-	var likes []models.LikeVideo
-	dbResult := dbInstance.Where("user_id = ?", userID).Find(&likes)
-	return likes, dbResult.Error
+// GetAllLikesByUserID gets all likes by a user.
+func GetAllLikesByUserID(ctx context.Context, id uuid.UUID) ([]*ent.LikeVideo, error) {
+	likes, err := Client.LikeVideo.
+		Query().
+		Where(likevideo.UserIDEQ(id)).
+		All(ctx)
+	return likes, err
 }

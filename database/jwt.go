@@ -1,128 +1,188 @@
 package database
 
 import (
+	"context"
 	"time"
 
-	"github.com/hackinggate/alttube-go/models"
+	"github.com/google/uuid"
+	"github.com/hackinggate/alttube-go/ent"
+	"github.com/hackinggate/alttube-go/ent/accesstoken"
+	"github.com/hackinggate/alttube-go/ent/refreshtoken"
+	"github.com/hackinggate/alttube-go/ent/user"
 )
 
 // AddAccessToken creates and stores a new access token in the database.
-func AddAccessToken(token string, user *models.User, expiry time.Time, refreshToken models.RefreshToken) error {
-	accessToken := models.AccessToken{
-		Token:          token,
-		UserID:         user.ID,
-		User:           *user,
-		Expiry:         expiry,
-		RefreshTokenID: refreshToken.ID,
-		RefreshToken:   refreshToken,
-	}
-	return dbInstance.Create(&accessToken).Error
-}
-
-// ValidateAccessToken checks if the given token exists and is not expired.
-func ValidateAccessToken(token string) (string, bool) {
-	var accessToken models.AccessToken
-	result := dbInstance.Where("token = ? AND expiry > ?", token, time.Now()).First(&accessToken)
-	if result.Error != nil || result.RowsAffected == 0 {
-		return "", false // Token not found or expired
-	}
-	return accessToken.UserID, true
-}
-
-// RemoveAccessToken deletes an access token from the database.
-func RemoveAccessToken(token string) error {
-	result := dbInstance.Unscoped().Where("token = ?", token).Delete(&models.AccessToken{})
-	return result.Error
-}
-
-// GetAllAccessTokensByUserID returns all access tokens for a given user.
-func GetAllAccessTokensByUserID(userID string) ([]string, error) {
-	var accessTokens []models.AccessToken // Use a slice to hold multiple tokens
-	result := dbInstance.Where("user_id = ? AND expiry > ?", userID, time.Now()).Find(&accessTokens)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	// Extract the token strings from the accessTokens slice
-	var tokens []string
-	for _, accessToken := range accessTokens {
-		tokens = append(tokens, accessToken.Token)
-	}
-
-	return tokens, nil
-}
-
-func RemoveAllAccessTokensByRefreshTokenID(refreshTokenID uint) error {
-	result := dbInstance.Unscoped().Where("refresh_token_id = ?", refreshTokenID).Delete(&models.AccessToken{})
-	return result.Error
+func AddAccessToken(ctx context.Context, token string, user *ent.User, expiry time.Time, refreshToken *ent.RefreshToken) error {
+	// Create a new access token entity.
+	_, err := Client.AccessToken.
+		Create().
+		SetToken(token).
+		SetExpiry(expiry).
+		SetUser(user).
+		SetRefreshToken(refreshToken).
+		Save(ctx)
+	return err
 }
 
 // AddRefreshToken creates and stores a new refresh token in the database.
-func AddRefreshToken(token string, user *models.User, expiry time.Time, userAgent string, ipAddress string) error {
-	refreshToken := models.RefreshToken{
-		Token:     token,
-		UserID:    user.ID,
-		User:      *user,
-		Expiry:    expiry,
-		UserAgent: userAgent,
-		IPAddress: ipAddress,
+func AddRefreshToken(ctx context.Context, token string, user *ent.User, expiry time.Time, userAgent string, ipAddress string) error {
+	// Create a new refresh token entity.
+	_, err := Client.RefreshToken.
+		Create().
+		SetToken(token).
+		SetExpiry(expiry).
+		SetUser(user).
+		SetUserAgent(userAgent).
+		SetIPAddress(ipAddress).
+		Save(ctx)
+	return err
+}
+
+// RemoveAccessTokenByRefreshToken deletes all access tokens associated with the specified refresh token.
+func RemoveAccessTokenByRefreshToken(ctx context.Context, token string) error {
+	// Query the database for the refresh token with the given token.
+	refreshToken, err := Client.RefreshToken.
+		Query().
+		Where(
+			refreshtoken.Token(token),
+		).
+		Only(ctx)
+
+	// If an error occurs or no result is found, return the error.
+	if err != nil {
+		return err
 	}
-	return dbInstance.Create(&refreshToken).Error
+
+	// Delete all access tokens associated with the refresh token.
+	_, err = Client.AccessToken.
+		Delete().
+		Where(
+			accesstoken.HasRefreshTokenWith(refreshtoken.IDEQ(refreshToken.ID)),
+		).
+		Exec(ctx)
+	return err
+}
+
+// RemoveRefreshTokenByToken deletes the refresh token with the given token.
+func RemoveRefreshTokenByToken(ctx context.Context, token string) error {
+	// Delete the refresh token with the given token.
+	_, err := Client.RefreshToken.
+		Delete().
+		Where(
+			refreshtoken.Token(token),
+		).
+		Exec(ctx)
+	return err
 }
 
 // ValidateRefreshToken checks if the given token exists and is not expired.
-func ValidateRefreshToken(token string) (string, bool) {
-	var refreshToken models.RefreshToken
-	result := dbInstance.Where("token = ? AND expiry > ?", token, time.Now()).First(&refreshToken)
-	if result.Error != nil || result.RowsAffected == 0 {
-		return "", false // Token not found or expired
-	}
-	return refreshToken.UserID, true
-}
+func ValidateRefreshToken(ctx context.Context, tokenString string) (bool, error) {
+	// Query database for the token
+	_, err := Client.RefreshToken.
+		Query().
+		Where(
+			refreshtoken.Token(tokenString),
+			refreshtoken.ExpiryGT(time.Now()), // Ensure the token is still valid
+		).
+		Only(ctx)
 
-// RemoveRefreshTokenByToken deletes a refresh token from the database.
-func RemoveRefreshTokenByToken(token string) error {
-	// First, get the refresh token to get its ID
-	refreshToken, err := GetRefreshTokenByToken(token)
+	// If an error occurs or no result is found, return false
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	// Delete all access tokens associated with the refresh token
-	err = RemoveAllAccessTokensByRefreshTokenID(refreshToken.ID)
+	// Return success status
+	return true, nil
+}
+
+// ValidateAccessToken checks if the given token exists and is not expired.
+func ValidateAccessToken(ctx context.Context, tokenString string) (bool, error) {
+	// Query database for the token
+	_, err := Client.AccessToken.
+		Query().
+		Where(
+			accesstoken.Token(tokenString),
+			accesstoken.ExpiryGT(time.Now()), // Ensure the token is still valid
+		).
+		Only(ctx)
+
+	// If an error occurs or no result is found, return false
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	result := dbInstance.Unscoped().Where("token = ?", token).Delete(&models.RefreshToken{})
-	return result.Error
+	// Return success status
+	return true, nil
 }
 
-func RemoveRefreshTokensByID(ids []uint) error {
-	return dbInstance.Unscoped().Where("id IN ?", ids).Delete(&models.RefreshToken{}).Error
+// RemoveAccessToken deletes the access token with the given token.
+func RemoveAccessToken(ctx context.Context, token string) error {
+	// Delete the access token with the given token.
+	_, err := Client.AccessToken.
+		Delete().
+		Where(
+			accesstoken.Token(token),
+		).
+		Exec(ctx)
+	return err
 }
 
-func GetAllRefreshTokensByUserID(userID string) ([]models.RefreshToken, error) {
-	var refreshTokens []models.RefreshToken // Use a slice to hold multiple tokens
-	result := dbInstance.Where("user_id = ?", userID).Find(&refreshTokens)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return refreshTokens, nil
+// GetAllRefreshTokensByUserID returns all refresh tokens associated with the given user.
+func GetAllRefreshTokensByUserID(ctx context.Context, userID uuid.UUID) ([]*ent.RefreshToken, error) {
+	// Query the database for refresh tokens belonging to the user.
+	refreshTokens, err := Client.RefreshToken.
+		Query().
+		Where(
+			refreshtoken.HasUserWith(user.IDEQ(userID)),
+		).
+		All(ctx)
+	return refreshTokens, err
 }
 
-func GetRefreshTokenByToken(token string) (models.RefreshToken, error) {
-	var refreshToken models.RefreshToken
-	result := dbInstance.Where("token = ?", token).First(&refreshToken)
-	return refreshToken, result.Error
+// RemoveAllAccessTokensByRefreshTokenID deletes all access tokens associated with the specified refresh token.
+func RemoveAllAccessTokensByRefreshTokenID(ctx context.Context, refreshTokenID uint) error {
+	// Delete access tokens where the refresh token ID matches.
+	_, err := Client.AccessToken.
+		Delete().
+		Where(
+			accesstoken.HasRefreshTokenWith(refreshtoken.IDEQ(refreshTokenID)),
+		).
+		Exec(ctx)
+	return err
 }
 
-func GetRefreshTokenByAccessToken(accessToken string) (models.RefreshToken, error) {
-	var refreshToken models.RefreshToken
-	// AccessToken belongs to RefreshToken, AccessToken has a foreign key AccessToken.RefreshTokenID to RefreshToken
-	result := dbInstance.Joins("join access_tokens on access_tokens.refresh_token_id = refresh_tokens.id").Where("access_tokens.token = ?", accessToken).First(&refreshToken)
-	return refreshToken, result.Error
+// RemoveRefreshTokensByID deletes all refresh tokens with IDs contained in the provided slice.
+func RemoveRefreshTokensByID(ctx context.Context, ids []uint) error {
+	// Delete refresh tokens in batch using their IDs.
+	_, err := Client.RefreshToken.
+		Delete().
+		Where(
+			refreshtoken.IDIn(ids...),
+		).
+		Exec(ctx)
+	return err
+}
+
+// GetRefreshTokenByAccessToken retrieves the refresh token associated with the given access token.
+func GetRefreshTokenByAccessToken(ctx context.Context, accessToken string) (*ent.RefreshToken, error) {
+	// Query the database for the refresh token associated with the access token.
+	refreshToken, err := Client.RefreshToken.
+		Query().
+		Where(
+			refreshtoken.HasAccessTokensWith(accesstoken.Token(accessToken)),
+		).
+		Only(ctx)
+	return refreshToken, err
+}
+
+// GetRefreshTokenByToken retrieves the refresh token with the given token.
+func GetRefreshTokenByToken(ctx context.Context, token string) (*ent.RefreshToken, error) {
+	// Query the database for the refresh token with the given token.
+	refreshToken, err := Client.RefreshToken.
+		Query().
+		Where(
+			refreshtoken.Token(token),
+		).
+		Only(ctx)
+	return refreshToken, err
 }
