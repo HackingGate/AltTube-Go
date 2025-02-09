@@ -39,7 +39,31 @@ COMMIT;
 BEGIN;
 
 --------------------------------------------------------------------------------
--- STEP 1: Drop old/obsolete indexes that do not appear in the new schema
+-- STEP 1: Delete row if deleted_at is not null
+--------------------------------------------------------------------------------
+
+-- access_tokens
+DELETE FROM public.access_tokens WHERE deleted_at IS NOT NULL;
+
+-- like_videos
+DELETE FROM public.like_videos WHERE deleted_at IS NOT NULL;
+
+-- refresh_tokens
+DELETE FROM public.refresh_tokens WHERE deleted_at IS NOT NULL;
+
+-- users
+DELETE FROM public.users WHERE deleted_at IS NOT NULL;
+
+-- videos
+DELETE FROM public.videos WHERE deleted_at IS NOT NULL;
+
+COMMIT;
+
+
+BEGIN;
+
+--------------------------------------------------------------------------------
+-- STEP 2: Drop old/obsolete indexes that do not appear in the new schema
 --------------------------------------------------------------------------------
 
 -- Access tokens indexes
@@ -68,10 +92,10 @@ COMMIT;
 BEGIN;
 
 --------------------------------------------------------------------------------
--- STEP 2: Remove deleted_at columns, rename created_at/updated_at -> create_time/update_time, set NOT NULL
+-- STEP 3: Remove deleted_at columns, rename created_at/updated_at -> create_time/update_time, set NOT NULL
 --------------------------------------------------------------------------------
 
--- 2.1: access_tokens
+-- 3.1: access_tokens
 ALTER TABLE public.access_tokens
     DROP COLUMN IF EXISTS deleted_at;
 ALTER TABLE public.access_tokens
@@ -83,7 +107,7 @@ ALTER TABLE public.access_tokens
 ALTER TABLE public.access_tokens
     ALTER COLUMN update_time SET NOT NULL;
 
--- 2.2: like_videos
+-- 3.2: like_videos
 ALTER TABLE public.like_videos
     DROP COLUMN IF EXISTS deleted_at;
 ALTER TABLE public.like_videos
@@ -95,7 +119,7 @@ ALTER TABLE public.like_videos
 ALTER TABLE public.like_videos
     ALTER COLUMN update_time SET NOT NULL;
 
--- 2.3: refresh_tokens
+-- 3.3: refresh_tokens
 ALTER TABLE public.refresh_tokens
     DROP COLUMN IF EXISTS deleted_at;
 ALTER TABLE public.refresh_tokens
@@ -107,7 +131,7 @@ ALTER TABLE public.refresh_tokens
 ALTER TABLE public.refresh_tokens
     ALTER COLUMN update_time SET NOT NULL;
 
--- 2.4: users
+-- 3.4: users
 ALTER TABLE public.users
     DROP COLUMN IF EXISTS deleted_at;
 ALTER TABLE public.users
@@ -119,7 +143,7 @@ ALTER TABLE public.users
 ALTER TABLE public.users
     ALTER COLUMN update_time SET NOT NULL;
 
--- 2.5: videos
+-- 3.5: videos
 ALTER TABLE public.videos
     DROP COLUMN IF EXISTS deleted_at;
 ALTER TABLE public.videos
@@ -137,7 +161,7 @@ COMMIT;
 BEGIN;
 
 --------------------------------------------------------------------------------
--- STEP 3: Convert column types, enforce NOT NULL
+-- STEP 4: Convert column types, enforce NOT NULL
 --------------------------------------------------------------------------------
 
 -- access_tokens:
@@ -217,11 +241,11 @@ COMMIT;
 BEGIN;
 
 --------------------------------------------------------------------------------
--- STEP 4: Convert numeric ID columns to Postgres identity
+-- STEP 5: Convert numeric ID columns to Postgres identity
 --         (replacing old sequences/SET DEFAULT nextval)
 --------------------------------------------------------------------------------
 
--- 4.1: access_tokens.id
+-- 5.1: access_tokens.id
 -- Drop default nextval if it exists, then add IDENTITY
 ALTER TABLE public.access_tokens
     ALTER COLUMN id DROP DEFAULT;
@@ -237,7 +261,7 @@ ALTER TABLE public.access_tokens
         CACHE 1
         );
 
--- 4.2: like_videos.id
+-- 5.2: like_videos.id
 ALTER TABLE public.like_videos
     ALTER COLUMN id DROP DEFAULT;
 
@@ -252,7 +276,7 @@ ALTER TABLE public.like_videos
         CACHE 1
         );
 
--- 4.3: refresh_tokens.id
+-- 5.3: refresh_tokens.id
 ALTER TABLE public.refresh_tokens
     ALTER COLUMN id DROP DEFAULT;
 
@@ -275,16 +299,16 @@ COMMIT;
 BEGIN;
 
 --------------------------------------------------------------------------------
--- STEP 5: Recreate new PK constraints or unique indexes as needed
+-- STEP 6: Recreate new PK constraints or unique indexes as needed
 --------------------------------------------------------------------------------
 
--- 5.1: users -> new PK name = users_pkey, plus unique index on email
+-- 6.1: users -> new PK name = users_pkey, plus unique index on email
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email);
 
--- 5.2: videos -> new PK name = videos_pkey
+-- 6.2: videos -> new PK name = videos_pkey
 ALTER TABLE ONLY public.videos
     ADD CONSTRAINT videos_pkey PRIMARY KEY (id);
 
@@ -297,7 +321,7 @@ COMMIT;
 BEGIN;
 
 --------------------------------------------------------------------------------
--- STEP 6: Re-add foreign key constraints with new constraint names
+-- STEP 7: Re-add foreign key constraints with new constraint names
 --------------------------------------------------------------------------------
 
 -- access_tokens -> refresh_tokens
@@ -331,7 +355,7 @@ COMMIT;
 BEGIN;
 
 -------------------------------------------------------------------------
--- STEP 7: Recreate indexes that are in the new schema but not the old
+-- STEP 8: Recreate indexes that are in the new schema but not the old
 -------------------------------------------------------------------------
 
 -- Drop the old sequence so we can reuse its name in the identity column.
