@@ -2,6 +2,7 @@
 
 [![Lint](https://github.com/HackingGate/AltTube-Go/actions/workflows/lint.yml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/lint.yml)
 [![golangci-lint](https://github.com/HackingGate/AltTube-Go/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/golangci-lint.yml)
+[![Atlas](https://github.com/HackingGate/AltTube-Go/actions/workflows/ci-atlas.yaml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/ci-atlas.yaml)
 [![Build and Test](https://github.com/HackingGate/AltTube-Go/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/build-and-test.yml)
 [![CodeQL](https://github.com/HackingGate/AltTube-Go/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/github-code-scanning/codeql)
 [![Dependabot Updates](https://github.com/HackingGate/AltTube-Go/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/HackingGate/AltTube-Go/actions/workflows/dependabot/dependabot-updates)
@@ -47,6 +48,43 @@ Build and run in background in one command
 docker compose up --build -d
 ```
 
+## Database Development
+
+#### Dependencies
+
+- [ent](https://entgo.io)
+- [atlas](https://atlasgo.io)
+
+#### Generate ent if ent/schema is updated
+
+```sh
+go generate ./ent
+```
+
+#### Generate Migration SQL
+
+```sh
+atlas migrate diff add_something_awesome \
+  --dir "file://ent/migrate/migrations" \
+  --to "ent://ent/schema" \
+  --dev-url "postgres://AltTube:AltTube@localhost:5432/AltTube?search_path=public&sslmode=disable"
+```
+
+#### Apply Migration SQL
+
+```sh
+atlas migrate apply \
+  --dir "file://ent/migrate/migrations" \
+  -u "postgres://AltTube:AltTube@localhost:5432/AltTube?search_path=public&sslmode=disable"
+```
+
+#### Visualize Database Schema
+
+```sh
+atlas schema inspect -w \
+  -u "postgres://AltTube:AltTube@localhost:5432/AltTube?search_path=public&sslmode=disable"
+```
+
 ## API Documentation
 
 #### Generate
@@ -68,7 +106,3 @@ swag init --parseDependency --parseInternal --parseDepth 1
 http://localhost:8072/swagger/index.html
 
 https://efficiency-node-alttube.hackinggate.com/swagger/index.html
-
-## Database Diagram
-
-![DB_Diagram](https://github.com/HackingGate/AltTube-Go/assets/8541644/d5eee81d-75be-489c-8db9-91b0a054b642)
